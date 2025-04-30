@@ -16,6 +16,7 @@ class ClientAccount extends Model
       'credit',
       'opening_balance_debit',
       'opening_balance_credit',
+        'balance',
       'user_ins',
       'user_upd'
     ];

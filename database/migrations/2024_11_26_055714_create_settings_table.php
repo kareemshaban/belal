@@ -15,7 +15,11 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table -> decimal('apsents_hours_to_deduct_one_day') ;
+            $table -> decimal('buffalo_milk_price') ;
+            $table -> decimal('bovine_milk_price') ;
+            $table -> timestamp('morning_bonus_time') ;
+            $table -> timestamp('evening_bonus_time') ;
+            $table -> decimal('bonus_value') ;
             $table -> integer('user_ins');
             $table -> integer('user_upd') -> default(0);
             $table->timestamps();

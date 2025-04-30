@@ -15,6 +15,14 @@ class CreateClientAccountsTable extends Migration
     {
         Schema::create('client_accounts', function (Blueprint $table) {
             $table->id();
+            $table -> integer('client_id');
+            $table -> decimal('debit');
+            $table -> decimal('credit');
+            $table -> decimal('opening_balance_debit');
+            $table -> decimal('opening_balance_credit');
+            $table -> decimal('balance');
+            $table -> integer('user_ins') -> default(0);
+            $table -> integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

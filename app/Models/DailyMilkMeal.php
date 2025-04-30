@@ -17,6 +17,7 @@ class DailyMilkMeal extends Model
       'supplier_id',
       'buffalo_weight',
       'bovine_weight',
+        'hasBonus',
       'notes',
         'user_ins',
         'user_upd'
