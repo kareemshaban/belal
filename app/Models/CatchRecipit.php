@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Client extends Model
+class CatchRecipit extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-      'id',
-      'type',
-      'name',
-      'phone',
-      'buffalo_min_limit',
-      'buffalo_max_limit',
-      'bovine_min_limit',
-      'bovine_max_limit',
-      'address',
+        'id',
+        'date',
+        'bill_number',
+        'client_id',
+        'amount',
+        'payment_method',
+        'safe_id',
+        'notes',
         'user_ins',
         'user_upd',
     ];

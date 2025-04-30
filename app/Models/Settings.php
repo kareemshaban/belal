@@ -9,10 +9,13 @@ class Settings extends Model
 {
     use HasFactory;
     protected $fillable = [
-       'id' ,
-       'enteringTax',
-       'monthly_cooling_tax_per_box',
-       'user_ins',
-       'user_upd'
+     'id' ,
+      'buffalo_milk_price',
+        'bovine_milk_price',
+        'morning_bonus_time',
+        'evening_bonus_time',
+        'bonus_value',
+        'user_ins',
+        'user_upd',
     ];
 }

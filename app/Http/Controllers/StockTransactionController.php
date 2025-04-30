@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
+use App\Models\StockTransaction;
 use Illuminate\Http\Request;
 
-class ClientController extends Controller
+class StockTransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\StockTransaction  $stockTransaction
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show(StockTransaction $stockTransaction)
     {
         //
     }
@@ -52,10 +52,10 @@ class ClientController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\StockTransaction  $stockTransaction
      * @return \Illuminate\Http\Response
      */
-    public function edit(Client $client)
+    public function edit(StockTransaction $stockTransaction)
     {
         //
     }
@@ -64,10 +64,10 @@ class ClientController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\StockTransaction  $stockTransaction
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Client $client)
+    public function update(Request $request, StockTransaction $stockTransaction)
     {
         //
     }
@@ -75,10 +75,10 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\StockTransaction  $stockTransaction
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy(StockTransaction $stockTransaction)
     {
         //
     }

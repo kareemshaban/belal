@@ -5,20 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Client extends Model
+class Store extends Model
 {
     use HasFactory;
+
     protected $fillable = [
       'id',
-      'type',
+      'code',
       'name',
-      'phone',
-      'buffalo_min_limit',
-      'buffalo_max_limit',
-      'bovine_min_limit',
-      'bovine_max_limit',
-      'address',
+      'details',
         'user_ins',
-        'user_upd',
+        'user_upd'
     ];
 }

@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Client extends Model
+class DailyMilkMeal extends Model
 {
     use HasFactory;
     protected $fillable = [
       'id',
+      'code',
+      'weakly_meal_id',
       'type',
-      'name',
-      'phone',
-      'buffalo_min_limit',
-      'buffalo_max_limit',
-      'bovine_min_limit',
-      'bovine_max_limit',
-      'address',
+      'date',
+      'supplier_id',
+      'buffalo_weight',
+      'bovine_weight',
+      'notes',
         'user_ins',
-        'user_upd',
+        'user_upd'
     ];
 }

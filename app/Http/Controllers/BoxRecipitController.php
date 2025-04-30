@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
+use App\Models\BoxRecipit;
 use Illuminate\Http\Request;
 
-class ClientController extends Controller
+class BoxRecipitController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\BoxRecipit  $boxRecipit
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show(BoxRecipit $boxRecipit)
     {
         //
     }
@@ -52,10 +52,10 @@ class ClientController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\BoxRecipit  $boxRecipit
      * @return \Illuminate\Http\Response
      */
-    public function edit(Client $client)
+    public function edit(BoxRecipit $boxRecipit)
     {
         //
     }
@@ -64,10 +64,10 @@ class ClientController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\BoxRecipit  $boxRecipit
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Client $client)
+    public function update(Request $request, BoxRecipit $boxRecipit)
     {
         //
     }
@@ -75,10 +75,10 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Client  $client
+     * @param  \App\Models\BoxRecipit  $boxRecipit
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy(BoxRecipit $boxRecipit)
     {
         //
     }
