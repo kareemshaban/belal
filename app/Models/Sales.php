@@ -18,6 +18,7 @@ class Sales extends Model
       'total',
       'discount',
       'net',
+        'notes',
         'user_ins',
         'user_upd'
     ];

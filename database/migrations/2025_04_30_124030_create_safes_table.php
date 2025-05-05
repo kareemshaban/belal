@@ -15,6 +15,11 @@ class CreateSafesTable extends Migration
     {
         Schema::create('safes', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('code');
+            $table->text('details');
+            $table->integer('user_ins') -> default(0);
+            $table->integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

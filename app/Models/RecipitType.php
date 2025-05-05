@@ -13,6 +13,7 @@ class RecipitType extends Model
       'id',
       'name',
       'code',
+       'description',
       'user_ins',
       'user_upd'
     ];

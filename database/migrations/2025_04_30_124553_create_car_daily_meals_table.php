@@ -15,6 +15,19 @@ class CreateCarDailyMealsTable extends Migration
     {
         Schema::create('car_daily_meals', function (Blueprint $table) {
             $table->id();
+            $table -> string("code");
+            $table -> integer('car_id');
+            $table -> integer("weakly_meal_id");
+            $table -> integer("type");
+            $table -> timestamp("date") -> useCurrent();
+            $table -> integer("supplier_id");
+            $table -> decimal("buffalo_weight");
+            $table -> decimal("bovine_weight");
+            $table -> text("notes");
+            $table -> decimal('buffalo_weight_difference') ;
+            $table -> decimal('bovine_weight_difference') ;
+            $table -> integer('user_ins') -> default(0);
+            $table -> integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

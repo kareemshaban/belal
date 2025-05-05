@@ -15,6 +15,13 @@ class CreateStockTransactionsTable extends Migration
     {
         Schema::create('stock_transactions', function (Blueprint $table) {
             $table->id();
+            $table -> integer('bill_number');
+            $table -> timestamp('date') -> useCurrent();
+            $table -> integer('from_store');
+            $table -> integer('to_store');
+            $table -> text('notes');
+            $table -> integer('user_ins') -> default(0);
+            $table -> integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

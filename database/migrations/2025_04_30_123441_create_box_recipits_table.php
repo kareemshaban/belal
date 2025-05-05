@@ -15,6 +15,13 @@ class CreateBoxRecipitsTable extends Migration
     {
         Schema::create('box_recipits', function (Blueprint $table) {
             $table->id();
+            $table -> string('bill_number');
+            $table -> integer('recipit_type');
+            $table -> decimal('amount');
+            $table -> integer('safe_id');
+            $table -> text('notes');
+            $table -> integer('user_ins') -> default(0);
+            $table -> integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

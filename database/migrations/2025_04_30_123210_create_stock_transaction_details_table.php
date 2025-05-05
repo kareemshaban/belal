@@ -15,6 +15,12 @@ class CreateStockTransactionDetailsTable extends Migration
     {
         Schema::create('stock_transaction_details', function (Blueprint $table) {
             $table->id();
+            $table -> integer('transaction_id');
+            $table -> integer('item_id');
+            $table -> decimal('quantity');
+            $table -> decimal('weight');
+            $table -> integer('user_ins') -> default(0);
+            $table -> integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

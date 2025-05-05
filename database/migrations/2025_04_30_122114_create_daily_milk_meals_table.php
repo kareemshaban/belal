@@ -26,7 +26,6 @@ class CreateDailyMilkMealsTable extends Migration
             $table -> integer('hasBonus') -> default(0);
             $table -> integer('user_ins') -> default(0);
             $table -> integer('user_upd') -> default(0);
-            $table -> timestamps();
 
             $table->timestamps();
         });

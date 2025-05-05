@@ -12,7 +12,7 @@ class CarDailyMeal extends Model
     protected $fillable = [
         'id',
         'code',
-        'car_id',
+            'car_id',
         'weakly_meal_id',
         'type',
         'date',
@@ -20,8 +20,8 @@ class CarDailyMeal extends Model
         'buffalo_weight',
         'bovine_weight',
         'notes',
-        'quantity_difference',
-        'difference_type',
+        'buffalo_weight_difference',
+        'bovine_weight_difference',
         'user_ins',
         'user_upd'
     ];

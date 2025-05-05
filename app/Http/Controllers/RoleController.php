@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +20,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::all();
+        return view('admin.Roles.index', compact('roles'));
     }
 
     /**
@@ -35,27 +42,37 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if($request -> id == 0){
+            Role::create([
+                'name' => $request -> name,
+                'user_ins' => Auth::user()->id,
+            ]);
+            return redirect()->route('roles')->with('success', __('main.saved'));
+        } else {
+            return $this -> update($request);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function show(Role $role)
+    public function show($id)
     {
-        //
+        $role = Role::find($id);
+        echo json_encode($role);
+        exit();
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Role  $roles
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit(Role $roles)
     {
         //
     }
@@ -64,22 +81,33 @@ class RoleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Role  $roles
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request)
     {
-        //
+        $role = Role::find($request -> id);
+        if($role){
+            $role -> update([
+                'name' => $request -> name,
+                'user_upd' => Auth::user()->id,
+            ]);
+            return redirect()->route('roles')->with('success', __('main.updated'));
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Role  $roles
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy($id)
     {
-        //
+        $role = Role::find($id);
+        if($role){
+            $role -> delete();
+            return redirect()->route('roles')->with('success', __('main.deleted'));
+        }
     }
 }

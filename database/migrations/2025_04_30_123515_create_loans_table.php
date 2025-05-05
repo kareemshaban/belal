@@ -15,6 +15,19 @@ class CreateLoansTable extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
+            $table -> timestamp('date') -> useCurrent();
+            $table -> string('bill_number');
+            $table -> integer('supplier_id');
+            $table -> integer('safe_id');
+            $table -> decimal('amount');
+            $table -> decimal('installment_amount');
+            $table -> integer('installment_count');
+            $table -> timestamp('start_date') -> useCurrent();
+            $table -> integer('remaining_installments');
+            $table -> integer('paid_installments');
+            $table -> text('notes') ;
+            $table -> integer('user_ins') -> default(0);
+            $table -> integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

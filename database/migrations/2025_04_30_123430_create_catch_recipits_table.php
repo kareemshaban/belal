@@ -15,6 +15,15 @@ class CreateCatchRecipitsTable extends Migration
     {
         Schema::create('catch_recipits', function (Blueprint $table) {
             $table->id();
+            $table ->timestamp('date') -> useCurrent();
+            $table -> string('bill_number');
+            $table -> integer('client_id');
+            $table -> decimal('amount');
+            $table -> integer('payment_method');
+            $table -> integer('safe_id');
+            $table -> text('notes');
+            $table -> integer('user_ins') -> default(0);
+            $table -> integer('user_upd') -> default(0);
             $table->timestamps();
         });
     }

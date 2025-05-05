@@ -15,6 +15,7 @@ class Loan extends Model
         'date',
         'bill_number',
         'supplier_id',
+        'safe_id',
         'amount',
         'installment_amount',
         'installment_count',

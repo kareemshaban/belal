@@ -15,6 +15,12 @@ class CreateRecipitTypesTable extends Migration
     {
         Schema::create('recipit_types', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('code');
+            $table -> text('description') ;
+            $table->integer('user_ins') -> default(0);
+            $table->integer('user_upd') -> default(0);
+
             $table->timestamps();
         });
     }

@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +21,8 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //
+        $suppliers = Client::all();
+        return view('admin.Client.index', compact('suppliers'));
     }
 
     /**
@@ -35,7 +43,33 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if($request -> id == 0){
+            $request->validate([
+                    'name' => 'required|unique:clients,name',
+                    'type' => 'required',
+                ]
+                , [
+                    'type.required' => __('main.type_required'),
+                    'name.required' => __('main.name_required'),
+                    'name.unique'   => __('main.name_unique'),
+                ]
+            );
+            Client::create([
+                'type' => $request -> type, // 0 client , 1 supplier , 2 both
+                'name' => $request -> name,
+                'phone' => $request -> phone ?? "",
+                'buffalo_min_limit' => $request -> buffalo_min_limit ?? 0,
+                'buffalo_max_limit' => $request -> buffalo_max_limit ?? 0,
+                'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
+                'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
+                'address' => $request -> address ?? "",
+                'user_ins' => Auth::user() -> id,
+                'user_upd' => 0,
+            ]);
+            return redirect()->route('suppliers') -> with('success', __('main.saved'));
+        } else{
+            return  $this -> update($request);
+        }
     }
 
     /**
@@ -44,9 +78,11 @@ class ClientController extends Controller
      * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show($id)
     {
-        //
+        $supplier = Client::find($id);
+        echo json_encode($supplier);
+        exit();
     }
 
     /**
@@ -67,9 +103,37 @@ class ClientController extends Controller
      * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Client $client)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'type' => [
+                'required'
+            ],
+            'name' => [
+                'required',
+                Rule::unique('clients', 'name')->ignore($request -> id),
+            ],
+        ], [
+            'type.required' => __('main.type_required'),
+            'name.required' => __('main.name_required'),
+            'name.unique'   => __('main.name_unique'),
+        ]);
+        $client = Client::find($request -> id);
+        if($client){
+            $client -> update([
+                'type' => $request -> type, // 0 client , 1 supplier , 2 both
+                'name' => $request -> name,
+                'phone' => $request -> phone ?? "",
+                'buffalo_min_limit' => $request -> buffalo_min_limit ?? 0,
+                'buffalo_max_limit' => $request -> buffalo_max_limit ?? 0,
+                'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
+                'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
+                'address' => $request -> address ?? "",
+                'user_upd' => Auth::user() -> id
+            ]);
+
+            return redirect()->route('suppliers') -> with('success', __('main.updated'));
+        }
     }
 
     /**
@@ -78,8 +142,12 @@ class ClientController extends Controller
      * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy($id)
     {
-        //
+        $supplier = Client::find($id);
+        if($supplier){
+            $supplier -> delete();
+            return redirect()->route('suppliers') -> with('success', __('main.deleted'));
+        }
     }
 }
