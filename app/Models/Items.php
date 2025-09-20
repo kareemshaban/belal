@@ -15,8 +15,12 @@ class Items extends Model
         'name',
         'details',
         'default_selling_price',
+        'type', // 0 item , 1 cream , 2 protein
         'user_ins',
-        'user_upd'
+        'user_upd',
+        'available_quantity',
+        'cheese_meal_id',
+        'item_store_id'
 
         ];
 }

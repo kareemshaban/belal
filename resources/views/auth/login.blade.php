@@ -11,13 +11,26 @@
 
 	<link rel="stylesheet" href="{{asset('assets/auth/css/style.css')}}">
 
+      <style>
+          @font-face {
+              font-family: 'icomoon';
+              src: url("{{asset('assets/fonts/ArbFONTS-The-Sans-Plain.otf')}}");
+              src: url("{{asset('assets/fonts/ArbFONTS-The-Sans-Plain.otf')}}");
+              font-weight: normal;
+              font-style: normal;
+          }
+
+          *:not(.fa) {
+              font-family: 'icomoon' !important;
+          }
+      </style>
 	</head>
-	<body class="img js-fullheight" style="background-image: url('{{asset("assets/auth/images/bg1.jpg")}}');">
+	<body class="img js-fullheight" style="background-image: url('{{asset("assets/auth/images/bg.jpg")}}');">
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">{{__('main.programme_title')}}</h2>
+					<h2 class="heading-section">أولاد بلال </h2>
 				</div>
 			</div>
 			<div class="row justify-content-center">

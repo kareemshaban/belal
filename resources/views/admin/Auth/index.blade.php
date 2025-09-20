@@ -29,11 +29,13 @@
                         <h4 class="fw-bold py-3 mb-4">
                             <span class="text-muted fw-light">{{__('main.users_list')}} /</span> {{__('main.auth')}}
                         </h4>
+                        @can('page-access', [22, 'edit'])
                        <a href="{{route('authCreate')}}">
                            <button type="button" class="btn btn-primary"   style="height: 45px">
                                {{__('main.update_auth')}}  <span class="tf-icons bx bx-plus"></span>&nbsp;
                            </button>
                        </a>
+                        @endcan
 
 
                     </div>
@@ -105,8 +107,8 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 
-@include('cpanel.Roles.create')
-@include('cpanel.Roles.deleteModal')
+@include('admin.Roles.create')
+@include('admin.Roles.deleteModal')
 @include('layouts.footer')
 <script type="text/javascript">
     var id = 0 ;

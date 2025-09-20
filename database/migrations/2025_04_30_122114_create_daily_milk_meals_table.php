@@ -23,7 +23,11 @@ class CreateDailyMilkMealsTable extends Migration
             $table -> decimal("buffalo_weight");
             $table -> decimal("bovine_weight");
             $table -> text("notes");
+            $table -> decimal("bonus") -> default(0);
+            $table -> decimal("total") -> default(0);
             $table -> integer('hasBonus') -> default(0);
+            $table -> integer('isManufactured') -> default(0);
+            $table -> integer('car_meal_id') -> default(0);
             $table -> integer('user_ins') -> default(0);
             $table -> integer('user_upd') -> default(0);
 

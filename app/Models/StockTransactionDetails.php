@@ -12,11 +12,14 @@ class StockTransactionDetails extends Model
     protected $fillable = [
         'id',
         'transaction_id',
+        'meal_id',
+        'store_id',
         'item_id',
         'quantity',
         'weight',
         'user_ins',
-        'user_upd'
+        'user_upd',
+        'available_quantity'
 
         ];
 }

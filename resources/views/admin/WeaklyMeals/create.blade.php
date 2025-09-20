@@ -22,8 +22,8 @@
                                 <div class="form-group">
                                     <label>{{ __('main.code') }} <span style="font-size: 14px ; color: red">*</span></label>
                                     <input type="text" name="code" id="code"
-                                           class="form-control @error('name') is-invalid @enderror"
-                                           placeholder="{{ __('main.name') }}" autofocus required readonly/>
+                                           class="form-control @error('code') is-invalid @enderror"
+                                           placeholder="{{ __('main.code') }}" autofocus required readonly/>
                                     @error('code')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

@@ -22,6 +22,7 @@ class CreateCatchRecipitsTable extends Migration
             $table -> integer('payment_method');
             $table -> integer('safe_id');
             $table -> text('notes');
+            $table -> integer('loan_id') -> default(0);
             $table -> integer('user_ins') -> default(0);
             $table -> integer('user_upd') -> default(0);
             $table->timestamps();

@@ -16,6 +16,7 @@ class StockTransaction extends Model
       'from_store',
       'to_store',
       'notes',
+        'state',
       'user_ins',
       'user_upd'
     ];

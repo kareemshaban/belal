@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BoxRecipit;
+use App\Models\CatchRecipit;
+use App\Models\Loan;
+use App\Models\Recipit;
 use App\Models\Safe;
+use App\Models\SafeBalance;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class SafeController extends Controller
@@ -21,7 +28,17 @@ class SafeController extends Controller
      */
     public function index()
     {
-        $safes = Safe::all();
+        if (!Gate::allows('page-access', [2, 'view'])) {
+            abort(403);
+        }
+        $safes = DB::table('safes')
+            ->join('safe_balances', 'safes.id', '=', 'safe_balances.safe_id')
+            ->select(
+                'safes.*',
+                DB::raw('(safe_balances.balance + safe_balances.opening_balance) as balance')
+            )
+            ->get();
+
         return view('admin.Safe.index', compact('safes'));
     }
 
@@ -55,13 +72,26 @@ class SafeController extends Controller
                     'name.unique'   => __('main.name_unique'),
                 ]
             );
-            Safe::create([
+
+            if($request -> isDefault == 1){
+                $safes = Safe::where('isDefault' , '=' , 1) -> get() -> first();
+                if($safes){
+                    $safes -> update([
+                        'isDefault' => 0,
+                    ]);
+                }
+            }
+
+          $id = Safe::create([
                 'name' => $request -> name,
                 'code' => $request -> code,
                 'details' => $request -> details ?? "",
+                'isDefault' => $request -> isDefault ?? 0,
                 'user_ins' => Auth::user()->id,
                 'user_upd' => 0
-            ]);
+            ]) -> id;
+
+           $this -> createSafeBalance($id);
 
             return  redirect() -> route('safes') -> with('success', __('main.saved'));
         } else {
@@ -69,6 +99,16 @@ class SafeController extends Controller
         }
     }
 
+    function createSafeBalance($id)
+    {
+        SafeBalance::create([
+            'safe_id' => $id,
+            'opening_balance' => 0,
+            'income' => 0,
+            'outcome' => 0,
+            'balance' => 0,
+        ]);
+    }
     /**
      * Display the specified resource.
      *
@@ -119,9 +159,20 @@ class SafeController extends Controller
         ]);
         $safe = Safe::find($request -> id);
         if($safe){
+
+            if($request -> isDefault == 1){
+                $safes = Safe::where('isDefault' , '=' , 1) -> get() -> first();
+                if($safes){
+                    $safes -> update([
+                        'isDefault' => 0,
+                    ]);
+                }
+            }
+
             $safe -> update([
                 'name' => $request -> name,
                 'code' => $request -> code,
+                'isDefault' => $request -> isDefault,
                 'details' => $request -> details ?? "",
                 'user_upd' => Auth::user()->id
             ]);
@@ -140,8 +191,17 @@ class SafeController extends Controller
     {
         $safe = Safe::find($id);
         if($safe){
-            $safe -> delete();
-            return  redirect() -> route('safes') -> with('success', __('main.deleted'));
+            $recipits = Recipit::where('safe_id' , $id) -> get();
+            $catshes = CatchRecipit::where('safe_id' , $id) -> get();
+            $boxRecipits = BoxRecipit::where('safe_id' , $id) -> get();
+            $loans = Loan::where('safe_id' , $id) -> get();
+            if(count($recipits) == 0 && count($catshes) == 0 && count($boxRecipits) == 0 && count($loans) == 0){
+                $safe -> delete();
+                return  redirect() -> route('safes') -> with('success', __('main.deleted'));
+            } else {
+                return  redirect() -> route('safes') -> with('warning', __('main.can_not_delete'));
+            }
+
         }
     }
 }

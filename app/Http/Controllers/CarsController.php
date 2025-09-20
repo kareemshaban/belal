@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarDailyMeal;
 use App\Models\Cars;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -131,7 +132,7 @@ class CarsController extends Controller
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0
             ]);
-            return  redirect() ->route('cars') -> with('success', __('main.update'));
+            return  redirect() ->route('cars') -> with('success', __('main.updated'));
         }
     }
 
@@ -145,8 +146,14 @@ class CarsController extends Controller
     {
         $car = Cars::find($id);
         if($car){
-            $car -> delete();
-            return  redirect() ->route('cars') -> with('success', __('main.delete'));
+            $meals = CarDailyMeal::where('car_id', $id)->get();
+            if(count($meals) == 0){
+                $car -> delete();
+                return  redirect() ->route('cars') -> with('success', __('main.delete'));
+            } else {
+                return  redirect() ->route('cars') -> with('warning', __('main.can_not_delete'));
+            }
+
         }
     }
 }

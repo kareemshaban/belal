@@ -17,6 +17,7 @@ class BoxRecipit extends Model
         'amount',
         'safe_id',
         'notes',
+        'state',
         'user_ins',
         'user_upd',
     ];

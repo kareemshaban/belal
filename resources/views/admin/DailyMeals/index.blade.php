@@ -54,6 +54,8 @@
                                     <th class="text-center">{{__('main.buffalo_weight')}}</th>
                                     <th class="text-center">{{__('main.bovine_weight')}}</th>
                                     <th class="text-center">{{__('main.hasBonus')}}</th>
+                                    <th class="text-center">{{__('main.bonus_value')}}</th>
+                                    <th class="text-center">{{__('main.total_cash')}}</th>
                                     <th class="text-center">{{__('main.actions')}}</th>
                                 </tr>
                                 </thead>
@@ -70,7 +72,7 @@
                                         <td class="text-center">
                                             @if($meal -> type == 0)
                                                 <span class="badge bg-primary">{{__('main.daily_meal_type0')}}</span>
-                                            @elseif($meal -> state == 1)
+                                            @elseif($meal -> type == 1)
                                                 <span class="badge bg-info">{{__('main.daily_meal_type1')}}</span>
                                             @endif
 
@@ -86,6 +88,8 @@
                                                 <span class="badge bg-success">{{__('main.hasBonus1')}}</span>
                                             @endif
                                         </td>
+                                        <td class="text-center">{{$meal -> bonus}}</td>
+                                        <td class="text-center">{{$meal -> total}}</td>
                                         <td class="text-center">
 
                                             <div style="display: flex ; gap: 10px ; justify-content: center ">
@@ -167,6 +171,15 @@
                 $(".modal-body #buffalo_max_limit").val("0");
                 $(".modal-body #bovine_min_limit").val("0");
                 $(".modal-body #bovine_max_limit").val("0");
+                $(".modal-body #bonus").val("0");
+                $(".modal-body #total").val("0");
+                $(".modal-body #buffalo_price").val("0");
+                $(".modal-body #bovine_price").val("0");
+                $(".modal-body #weakly_meal_id_hidden").val( "0" );
+                $(".modal-body #weak_meal").hide();
+                $(".modal-body #weakly_meal_id").show();
+
+
                 checkForBouns();
                 $(".modal-body #notes").val("");
                 var translatedText = "{{ __('main.newData') }}";
@@ -224,12 +237,21 @@
                             $(".modal-body #code").val( response.code );
                             $(".modal-body #date").val(start_date );
                             $(".modal-body #weakly_meal_id").val( response.weakly_meal_id );
+                            $(".modal-body #weakly_meal_id_hidden").val( response.weakly_meal_id );
+                             $(".modal-body #weak_meal").val( response.weak_meal );
                             $(".modal-body #type").val( response.type );
                             $(".modal-body #supplier_id").val( response.supplier_id );
                             $(".modal-body #buffalo_weight").val( response.buffalo_weight );
                             $(".modal-body #bovine_weight").val( response.bovine_weight );
                             $(".modal-body #hasBonus").val( response.hasBonus );
                             $(".modal-body #notes").val( response.notes );
+                            $(".modal-body #bonus").val(response.bonus);
+                            $(".modal-body #total").val(response.total);
+                            $(".modal-body #buffalo_price").val(response.buffalo_price);
+                            $(".modal-body #bovine_price").val(response.bovine_price);
+                            $(".modal-body #weak_meal").show();
+                            $(".modal-body #weakly_meal_id").hide();
+
                             $(".modal-body #id").val(response.id);
                             var translatedText = "{{ __('main.editData') }}";
                             $(".modelTitle").html(translatedText);
@@ -307,7 +329,11 @@
         getSupplier(id);
     });
 
-
+    $(document).on('change', '.modal-body #date', function () {
+        const date = $(this).val();
+        console.log(date);
+        checkForBouns();
+    });
 
     function getDailyMealCode(meal_id){
         $.ajax({
@@ -330,7 +356,7 @@
     function checkForBouns(){
         $.ajax({
             type:'get',
-            url:'/bouns-check' + '/' + $('.modal-body #type').val(),
+            url:'/bouns-check' + '/' + $('.modal-body #type').val() + '/' + $('.modal-body #date').val(),
             dataType: 'json',
 
             success:function(bouns){

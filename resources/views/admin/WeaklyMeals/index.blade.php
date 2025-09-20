@@ -67,7 +67,7 @@
                                             @if($meal -> state == 0)
                                                 <span class="badge bg-success">{{__('main.mealState0')}}</span>
                                             @elseif($meal -> state == 1)
-                                                <span class="badge bg-danger">{{__('main.client_type1')}}</span>
+                                                <span class="badge bg-danger">{{__('main.mealState1')}}</span>
                                             @endif
 
                                         </td>
@@ -77,10 +77,18 @@
                                         <td class="text-center">
 
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
+                                                    @if($meal -> state == 0)
                                                     <i class='bx bxs-edit-alt text-success editBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
                                                        id="{{$meal -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                     <i class='bx bxs-trash text-danger deleteBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
                                                        id="{{$meal -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+                                                    @endif
+
+                                                    <a href="{{route('view_weakly_meal' , $meal -> id)}}">
+                                                        <i class='bx bx-show text-primary' data-toggle="tooltip" data-placement="top" title="{{__('main.view_action')}}"
+                                                           style="font-size: 25px ; cursor: pointer"></i>
+                                                    </a>
+
                                                 </div>
 
                                         </td>
@@ -186,7 +194,7 @@
         let href = $(this).attr('data-attr');
         $.ajax({
             type:'get',
-            url:'/weakly_meals-show' + '/' + id,
+            url:'/weakly_meals-show' + '/' + id + '/' + '0',
             dataType: 'json',
 
             success:function(response){

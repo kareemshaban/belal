@@ -27,14 +27,19 @@ class DailyMilkMealController extends Controller
     public function index()
     {
         $meals = DB::table('daily_milk_meals')
-            -> join('weakly_milk_meals' , 'daily_milk_meals.weakly_meal_id' , '=' , 'weakly_milk_meals.id')
-            ->join('clients' , 'daily_milk_meals.supplier_id' , '=' , 'clients.id')
-            -> select('daily_milk_meals.*' , 'clients.name as client_name' ,
+            ->join('weakly_milk_meals', 'daily_milk_meals.weakly_meal_id', '=', 'weakly_milk_meals.id')
+            ->join('clients', 'daily_milk_meals.supplier_id', '=', 'clients.id')
+            ->select(
+                'daily_milk_meals.*',
+                'clients.name as client_name',
                 'weakly_milk_meals.code as weakly_meal_code',
-            'weakly_milk_meals.start_date as start_date' , 'weakly_milk_meals.end_date as end_date')
-            -> get();
+                'weakly_milk_meals.start_date as start_date',
+                'weakly_milk_meals.end_date as end_date'
+            )
+            ->orderBy('daily_milk_meals.id', 'asc') // or 'desc' for descending
+            ->get();
         $suppliers = Client::where('type' , '<>' , 0) -> get();
-        $weaklyMeals = WeaklyMilkMeal::where('state' , '=' , 0 ) -> get();
+        $weaklyMeals = WeaklyMilkMeal::where('state' , '=' , 0) -> get();
 
         return view('admin.DailyMeals.index', compact('meals' , 'suppliers' , 'weaklyMeals'));
 
@@ -78,23 +83,41 @@ class DailyMilkMealController extends Controller
                     'bovine_weight.required_without'   => __('main.one_milk_weight_required'),
                 ]
             );
-            DailyMilkMeal::create([
-                'code' => $request -> code,
-                'weakly_meal_id' => $request -> weakly_meal_id,
-                'type' => $request -> type,
-                'date' => Carbon::parse($request -> date),
-                'supplier_id' => $request -> supplier_id,
-                'buffalo_weight' => $request -> buffalo_weight ,
-                'bovine_weight' => $request -> bovine_weight,
-                'hasBonus' => $request -> hasBonus ?? 0,
-                'notes' => $request -> notes ?? "",
-                'user_ins' => Auth::user() -> id,
-                'user_upd' => 0
-            ]);
+            $wMeal = WeaklyMilkMeal::find($request -> weakly_meal_id);
+            if($wMeal -> state == 0){
+               $id = DailyMilkMeal::create([
+                    'code' => $request -> code,
+                    'weakly_meal_id' => $request -> weakly_meal_id,
+                    'type' => $request -> type,
+                    'date' => Carbon::parse($request -> date),
+                    'supplier_id' => $request -> supplier_id,
+                    'buffalo_weight' => $request -> buffalo_weight ,
+                    'bovine_weight' => $request -> bovine_weight,
+                    'hasBonus' => $request -> hasBonus ?? 0,
+                    'notes' => $request -> notes ?? "",
+                    'user_ins' => Auth::user() -> id,
+                    'user_upd' => 0
+                ]) -> id ;
+               if($id > 0){
+                   $this -> updateWeaklyMilkMealWeight($request -> buffalo_weight  , $request -> bovine_weight , $request -> weakly_meal_id);
 
-            return redirect() -> route('daily_meals') -> with('success', __('main.saved'));
+               }
+                return redirect() -> route('daily_meals') -> with('success', __('main.saved'));
+            }  else {
+                return redirect() -> route('daily_meals') -> with('warning', __('main.can_not_add_to_posted_meal'));
+            }
+
+
+
+
         } else {
-            return $this -> update($request);
+            $wMeal = WeaklyMilkMeal::find($request -> weakly_meal_id_hidden);
+            if($wMeal -> state == 0){
+                return $this -> update($request);
+            } else {
+                return redirect() -> route('daily_meals') -> with('warning', __('main.can_not_edit_posted_meal'));
+            }
+
         }
     }
 
@@ -106,7 +129,17 @@ class DailyMilkMealController extends Controller
      */
     public function show($id)
     {
-        $meal = DailyMilkMeal::find($id);
+        $meal = DB::table('daily_milk_meals') ->
+        join('weakly_milk_meals', 'daily_milk_meals.weakly_meal_id',
+            '=', 'weakly_milk_meals.id') ->
+        where('daily_milk_meals.id', '=', $id)
+            -> select('daily_milk_meals.*' , 'weakly_milk_meals.code as weak_meal')
+            -> get() -> first();
+
+        $wMeal = WeaklyMilkMeal::find( $meal -> weakly_meal_id) ;
+        $meal -> buffalo_price = $wMeal -> price_buffalo ;
+        $meal -> bovine_price = $wMeal -> price_bovine ;
+        $meal -> state = $wMeal -> state ;
         echo json_encode($meal);
         exit();
     }
@@ -163,6 +196,8 @@ class DailyMilkMealController extends Controller
 
         $meal = DailyMilkMeal::find($request -> id);
         if($meal){
+            $old_buffalo_weight = $meal -> buffalo_weight ;
+            $old_bovine_weight = $meal -> bovine_weight ;
             $meal -> update([
                 'code' => $request -> code,
                 'weakly_meal_id' => $request -> weakly_meal_id,
@@ -175,6 +210,14 @@ class DailyMilkMealController extends Controller
                 'notes' => $request -> notes ?? "",
                 'user_upd' => Auth::user() -> id
             ]);
+
+            $buffalo_weight = $request -> buffalo_weight - $old_buffalo_weight ;
+            $bovine_weight = $request -> bovine_weight - $old_bovine_weight ;
+
+
+            $this -> updateWeaklyMilkMealWeight($buffalo_weight , $bovine_weight , $meal -> weakly_meal_id);
+
+
             return redirect() -> route('daily_meals') -> with('success', __('main.updated'));
         }
     }
@@ -188,29 +231,53 @@ class DailyMilkMealController extends Controller
     public function destroy($id)
     {
         $dailyMeal = DailyMilkMeal::find($id);
-        if($dailyMeal){
-            $dailyMeal -> delete();
-            return redirect() -> route('daily_meals') -> with('success', __('main.deleted'));
-        }
-    }
+        $wMeal = WeaklyMilkMeal::find( $dailyMeal -> weakly_meal_id );
+        if($wMeal -> state == 0){
+            if($dailyMeal){
+                $old_buffalo_weight = $dailyMeal -> buffalo_weight ;
+                $old_bovine_weight = $dailyMeal -> bovine_weight ;
+                $buffalo_weight =  -1 * $old_buffalo_weight ;
+                $bovine_weight =  -1 * $old_bovine_weight ;
 
-    public function getCode($id)
-    {
-        $meals = DailyMilkMeal::where('id' , '=' , $id) -> get();
-        $id = 0;
-        if (count($meals) > 0) {
-            $id = $meals[count($meals) - 1]->id + 1;
+                $this -> updateWeaklyMilkMealWeight($buffalo_weight , $bovine_weight , $dailyMeal -> weakly_meal_id);
+
+                $dailyMeal -> delete();
+
+
+
+
+                return redirect() -> route('daily_meals') -> with('success', __('main.deleted'));
+            }
         } else {
-            $id = 1;
-        }
+            return redirect() -> route('daily_meals') -> with('warning', __('main.can_not_delete_posted_meal'));
 
-        $padded = str_pad($id, 4, '0', STR_PAD_LEFT); // Result: "0001"    }
-        echo json_encode($padded);
-        exit();
+        }
 
     }
 
-    public function bounsCheck($type)
+    public function getCode(Request $request , $id)
+    {
+        $meals = DailyMilkMeal::where('weakly_meal_id' , '=' , $id) -> get();
+        $dId = 0;
+        if (count($meals) > 0) {
+            $dId = count($meals)  + 1;
+        } else {
+            $dId = 1;
+        }
+
+        $padded = str_pad($dId, 4, '0', STR_PAD_LEFT); // Result: "0001"    }
+        $code = $id . '-' . $padded;
+        if ($request->ajax()) {
+            echo json_encode($code);
+            exit();
+        } else {
+            return $code ;
+        }
+
+
+    }
+
+    public function bounsCheck($type , $date)
     {
         $setting = Settings::all() -> first();
         if($setting){
@@ -219,12 +286,12 @@ class DailyMilkMealController extends Controller
                 $time = Carbon::parse($setting->morning_bonus_time)->format('H:i');
                 $bonusTime = Carbon::createFromFormat('H:i', $time);
 
-                $time2 = Carbon::now()->format('H:i');
+                $time2 = Carbon::parse($date)->format('H:i');
                 $currentTime = Carbon::createFromFormat('H:i', $time2);
 
 
 
-                if ($currentTime > $bonusTime) {
+                if ($currentTime <= $bonusTime) {
                    echo json_encode("1");
                    exit();
                 } else {
@@ -234,20 +301,70 @@ class DailyMilkMealController extends Controller
             }
             //evening
             else {
-                $time = Carbon::parse($setting->morning_bonus_time)->format('H:i');
+                $time = Carbon::parse($setting->evening_bonus_time)->format('H:i');
                 $bonusTime = Carbon::createFromFormat('H:i', $time);
 
-                $time2 = Carbon::now()->format('H:i');
+                $time2 = Carbon::parse($date)->format('H:i');
                 $currentTime = Carbon::createFromFormat('H:i', $time2);
 
-                if ($currentTime > $bonusTime) {
-                    echo json_encode("0");
+                if ($currentTime <= $bonusTime) {
+                    echo json_encode("1");
                     exit();
                 } else {
-                    echo json_encode("1");
+                    echo json_encode("0");
                     exit();
                 }
             }
         }
+    }
+
+    public function updateWeaklyMilkMealWeight($buffalo_weight , $bovine_weight , $weakly_meal_id){
+        $meal = WeaklyMilkMeal::find($weakly_meal_id) ;
+        if($meal){
+            $meal -> update([
+                'total_buffalo_weight' => $meal -> total_buffalo_weight + $buffalo_weight,
+                'total_bovine_weight' => $meal -> total_bovine_weight + $bovine_weight,
+            ]);
+
+        }
+    }
+
+    public function getMealByCode($code)
+    {
+
+
+        $meal = DB::table('daily_milk_meals') ->
+        join('weakly_milk_meals', 'daily_milk_meals.weakly_meal_id',
+            '=', 'weakly_milk_meals.id') ->
+        where('daily_milk_meals.code', '=', $code)
+            -> select('daily_milk_meals.*' , 'weakly_milk_meals.code as weak_meal')
+            -> get() -> first();
+
+
+        $wMeal = WeaklyMilkMeal::find( $meal -> weakly_meal_id) ;
+        $meal -> buffalo_price = $wMeal -> price_buffalo ;
+        $meal -> bovine_price = $wMeal -> price_bovine ;
+        $meal -> state = $wMeal -> state ;
+        echo json_encode($meal);
+        exit();
+    }
+
+    public function dailyMealTotalMilk($id)
+    {
+        $meal = DailyMilkMeal::find($id);
+       if($meal != null){
+           $sum = DB::table('daily_milk_meals')
+               ->whereDate('date', '=', Carbon::parse($meal -> date) )
+               ->where('type', '=', $meal -> type)
+               ->where('weakly_meal_id', '=', $meal -> weakly_meal_id)
+               ->where('isManufactured', '=', 0)
+               ->selectRaw(' SUM(buffalo_weight) as total_buffalo_weight, SUM(bovine_weight) as
+               total_bovine_weight') ->first();
+
+         echo  json_encode($sum) ;
+         exit();
+       }
+
+
     }
 }

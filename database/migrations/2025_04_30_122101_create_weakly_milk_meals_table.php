@@ -26,6 +26,7 @@ class CreateWeaklyMilkMealsTable extends Migration
             $table -> decimal('total_money');
             $table -> integer('number_of_daily_meals');
             $table -> text('notes');
+            $table -> timestamp('post_date') -> useCurrent();
             $table -> integer('user_ins') -> default(0);
             $table -> integer('user_upd') -> default(0);
 

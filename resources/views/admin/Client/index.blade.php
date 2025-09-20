@@ -9,7 +9,7 @@
     <div class="layout-container">
         <!-- Menu -->
 
-        @include('layouts.sidebar' , ['slag' => 2 , 'subSlag' => 21])
+        @include('layouts.sidebar' , ['slag' => 2 , 'subSlag' => $type == 0 ? 22 :  21])
         <!-- / Menu -->
 
         <!-- Layout container -->
@@ -27,11 +27,14 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div style="display: flex ; justify-content: space-between ; align-items: center">
                         <h4 class="fw-bold py-3 mb-4">
-                            <span class="text-muted fw-light">{{__('main.factory_department')}} /</span> {{__('main.suppliers_list')}}
+                            <span class="text-muted fw-light">{{__('main.factory_department')}} /</span>
+                             {{ $type == 0 ? __('main.clients_list')  : __('main.suppliers_list')}}
                         </h4>
+                        @can('page-access', [7, 'edit'])
                         <button type="button" class="btn btn-primary"  id="createButton" style="height: 45px">
                             {{__('main.add_new')}}  <span class="tf-icons bx bx-plus"></span>&nbsp;
                         </button>
+                        @endcan
 
                     </div>
 
@@ -69,13 +72,16 @@
                                         </td>
                                         <td class="text-center">{{$supplier -> phone}}</td>
                                         <td class="text-center">
-
+                                            @can('page-access', [7, 'edit'])
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
                                                     <i class='bx bxs-edit-alt text-success editBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
                                                        id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                     <i class='bx bxs-trash text-danger deleteBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
                                                        id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+                                                    <i class='bx bx-money text-primary moneyBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
+                                                       data-id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                 </div>
+                                            @endcan
 
                                         </td>
                                     </tr>
@@ -106,6 +112,7 @@
 
 @include('admin.Client.create')
 @include('admin.Client.deleteModal')
+@include('admin.Client.balance')
 @include('layouts.footer')
 <script type="text/javascript">
     var id = 0 ;
@@ -123,13 +130,14 @@
             success: function (result) {
                 $('#createModal').modal("show");
                 $(".modal-body #id").val(0);
-                $(".modal-body #type").val("0");
+                $(".modal-body #type").val(@json($type));
                 $(".modal-body #name").val("");
                 $(".modal-body #phone").val("");
                 $(".modal-body #buffalo_min_limit").val("0");
                 $(".modal-body #buffalo_max_limit").val("0");
                 $(".modal-body #bovine_min_limit").val("0");
                 $(".modal-body #bovine_max_limit").val("0");
+                $(".modal-body #car_id").val("0");
                 $(".modal-body #address").val("");
 
                 var translatedText = "{{ __('main.newData') }}";
@@ -147,6 +155,54 @@
             },
             timeout: 8000
         })
+    });
+    $(document).on('click', '.moneyBtn', function(event) {
+        let id = $(this).data('id');
+        console.log(id);
+        event.preventDefault();
+        let href = $(this).attr('data-attr');
+        $.ajax({
+            type:'get',
+            url:'/supplier-account-show' + '/' + id,
+            dataType: 'json',
+
+            success:function(response){
+                console.log(response);
+
+                let href = $(this).attr('data-attr');
+                $.ajax({
+                    url: href,
+                    beforeSend: function() {
+                        $('#loader').show();
+                    },
+                    // return the result
+                    success: function(result) {
+                        $('#balanceModal').modal("show");
+                        $(".modal-body #opening_balance_credit").val( response ? response.opening_balance_credit : 0 );
+                        $(".modal-body #opening_balance_debit").val( response ? response.opening_balance_debit : 0 );
+                        $(".modal-body #debit").val( response ? response.debit : 0 );
+                        $(".modal-body #credit").val(response ?  response.credit : 0 );
+                        $(".modal-body #balance").val(response ?
+                            (Number(response.debit)  + Number(response.opening_balance_debit)  - Number(response.credit)  - Number(response.opening_balance_credit) ) : 0 );
+                        $(".modal-body #id").val(id);
+                        var translatedText = "{{ __('main.editData') }}";
+
+                        $("#balanceModal .modelTitle").html(translatedText);
+
+                    },
+                    complete: function() {
+                        $('#loader').hide();
+                    },
+                    error: function(jqXHR, testStatus, error) {
+                        console.log(error);
+                        alert("Page " + href + " cannot open. Error:" + error);
+                        $('#loader').hide();
+                    },
+                    timeout: 8000
+                })
+
+            }
+        });
     });
     $(document).on('click', '.editBtn', function(event) {
         let id = event.currentTarget.id ;
@@ -179,6 +235,7 @@
                             $(".modal-body #bovine_max_limit").val( response.bovine_max_limit );
                             $(".modal-body #address").val( response.address );
                             $(".modal-body #id").val(response.id);
+                            $(".modal-body #car_id").val(response.car_id);
                             var translatedText = "{{ __('main.editData') }}";
                             $(".modelTitle").html(translatedText);
 

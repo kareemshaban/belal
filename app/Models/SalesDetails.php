@@ -14,6 +14,8 @@ class SalesDetails extends Model
       'bill_id',
       'date',
       'item_id',
+      'meal_id',
+      'store_id',
       'quantity',
       'weight',
       'price',

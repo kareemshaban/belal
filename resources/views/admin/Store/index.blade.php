@@ -29,9 +29,11 @@
                         <h4 class="fw-bold py-3 mb-4">
                             <span class="text-muted fw-light">{{__('main.basicData')}} /</span> {{__('main.stores')}}
                         </h4>
+                        @can('page-access', [1, 'edit'])
                         <button type="button" class="btn btn-primary"  id="createButton" style="height: 45px">
                             {{__('main.add_new')}}  <span class="tf-icons bx bx-plus"></span>&nbsp;
                         </button>
+                        @endcan
 
                     </div>
 
@@ -48,6 +50,7 @@
                                     <th class="text-center">#</th>
                                     <th class="text-center"> {{__('main.code')}}</th>
                                     <th class="text-center">{{__('main.name')}}</th>
+                                    <th class="text-center">{{__('main.isDefault')}}</th>
                                     <th class="text-center">{{__('main.actions')}}</th>
                                 </tr>
                                 </thead>
@@ -57,15 +60,23 @@
                                         <th scope="row" class="text-center">{{$loop -> index +1}}</th>
                                         <td class="text-center">{{$store -> code}}</td>
                                         <td class="text-center">{{$store -> name}}</td>
+                                        <td class="text-center">
+                                            @if($store -> isDefault == 0)
+                                                <span class="badge bg-danger">{{__('main.isDefault0')}}</span>
+                                            @elseif($store -> isDefault == 1)
+                                                <span class="badge bg-success">{{__('main.isDefault1')}}</span>
+                                            @endif
+                                        </td>
 
                                         <td class="text-center">
-
+                                            @can('page-access', [1, 'edit'])
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
                                                     <i class='bx bxs-edit-alt text-success editBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
                                                        id="{{$store -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                     <i class='bx bxs-trash text-danger deleteBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
                                                        id="{{$store -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                 </div>
+                                            @endcan
 
                                         </td>
                                     </tr>
@@ -116,6 +127,7 @@
                 $(".modal-body #code").val("");
                 $(".modal-body #name").val("");
                 $(".modal-body #details").val("");
+                $(".modal-body #isDefault").val("0");
                 var translatedText = "{{ __('main.newData') }}";
                 $(".modelTitle").html(translatedText);
 
@@ -158,6 +170,7 @@
                             $(".modal-body #name").val( response.name );
                             $(".modal-body #details").val( response.details );
                             $(".modal-body #id").val(response.id);
+                            $(".modal-body #isDefault").val(response.isDefault);
                             var translatedText = "{{ __('main.editData') }}";
                             $(".modelTitle").html(translatedText);
 

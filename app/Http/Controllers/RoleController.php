@@ -6,6 +6,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class RoleController extends Controller
 {
@@ -20,6 +21,11 @@ class RoleController extends Controller
      */
     public function index()
     {
+
+        if (!Gate::allows('page-access', [21, 'view'])) {
+            abort(403);
+        }
+
         $roles = Role::all();
         return view('admin.Roles.index', compact('roles'));
     }

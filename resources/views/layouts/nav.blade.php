@@ -73,7 +73,7 @@
                         <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item" @if(Config::get('app.locale')=='ar' ) style="text-align: right" @endif href="{{route('index' , auth() -> user() -> id)}}">
+                        <a class="dropdown-item" @if(Config::get('app.locale')=='ar' ) style="text-align: right" @endif href="{{route('getUserProfile' , auth() -> user() -> id)}}">
                             <i class="bx bx-user me-2"></i>
                             <span class="align-middle">{{__('main.profile' )}}</span>
                         </a>

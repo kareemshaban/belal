@@ -18,7 +18,10 @@ class Client extends Model
       'bovine_min_limit',
       'bovine_max_limit',
       'address',
+      'car_id',
         'user_ins',
         'user_upd',
+        'buffalo_price',
+        'bovine_price',
     ];
 }

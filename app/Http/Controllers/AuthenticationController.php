@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Authentication;
+use App\Models\Role;
 use App\Models\Roles;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class AuthenticationController extends Controller
 {
@@ -24,16 +26,19 @@ class AuthenticationController extends Controller
      */
     public function index()
     {
+        if (!Gate::allows('page-access', [22, 'view'])) {
+            abort(403);
+        }
+
         $data = DB::table('authentications')
             -> join('roles', 'roles.id', '=', 'authentications.role_id')
             -> join('forms', 'forms.id', '=', 'authentications.form_id')
-            -> select('authentications.*', 'roles.name_ar as role_ar' , 'roles.name_en as role_en' ,
-                'forms.name_ar as form_ar' , 'forms.name_en as form_en')
+            -> select('authentications.*', 'roles.name as role' ,'forms.name as form' )
             -> get();
 
         //return $data ;
 
-        return view('cpanel.Auth.index', compact('data'));
+        return view('admin.Auth.index', compact('data'));
     }
 
     /**
@@ -43,8 +48,8 @@ class AuthenticationController extends Controller
      */
     public function create()
     {
-        $roles = Roles::all();
-        return view('cpanel.Auth.create' , compact('roles'));
+        $roles = Role::all();
+        return view('admin.Auth.create' , compact('roles'));
     }
 
     /**
@@ -149,9 +154,8 @@ class AuthenticationController extends Controller
 
     public function getRoleAuthForms($id)
     {
-        $role = Roles::find($id) ;
-        $role_ar = $role -> name_ar;
-        $role_en = $role -> name_en;
+        $role = Role::find($id) ;
+        $role_name = $role -> name;
         $data = DB::table('forms')
             ->leftJoin('authentications', function ($join) use ($id) {
                 $join->on('forms.id', '=', 'authentications.form_id')
@@ -159,12 +163,11 @@ class AuthenticationController extends Controller
             })
             ->select(
                 'forms.id as form_id',
-                'forms.name_ar as form_ar',
-                'forms.name_en as form_en',
+                'forms.name as form',
+                'forms.name as form',
                 'authentications.access_level',
                 DB::raw($id . ' as role_id') ,
-                DB::raw("'" . $role_ar . "' as role_ar"),
-                DB::raw("'" . $role_en . "' as role_en"),
+                DB::raw("'" . $role_name . "' as role"),
                 DB::raw('COALESCE(authentications.id, 0) as auth_id')
             )
             ->get();

@@ -6,7 +6,7 @@
                 document.write(new Date().getFullYear());
             </script>
             , made with ❤️ by
-            <a href="https://nilearc.com" target="_blank" class="footer-link fw-bolder">NileArc</a>
+            <a href="https://wa.me/201014974471?text=Hello%2C%20I%E2%80%99d%20like%20to%20get%20in%20touch%20with%20you." target="_blank" class="footer-link fw-bolder">DevTeam</a>
         </div>
 
     </div>

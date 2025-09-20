@@ -49,7 +49,18 @@
                             </div>
                         </div>
                         <div class="row" style="margin-top: 10px">
-                            <div class="col-12">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label> {{__('main.isDefault')}} </label>
+                                    <select id="isDefault" name="isDefault" class="form-control">
+                                        <option value="0"> {{__('main.isDefault0')}} </option>
+                                        <option value="1"> {{__('main.isDefault1')}} </option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label>{{ __('main.details') }} </label>
                                     <textarea type="text" name="details" id="details"
@@ -63,6 +74,8 @@
 
                                 </div>
                             </div>
+
+
                         </div>
 
 

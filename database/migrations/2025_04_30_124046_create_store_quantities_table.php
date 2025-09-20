@@ -16,6 +16,7 @@ class CreateStoreQuantitiesTable extends Migration
         Schema::create('store_quantities', function (Blueprint $table) {
             $table->id();
             $table -> integer('store_id');
+            $table -> integer('item_id');
             $table -> decimal('opening_quantity');
             $table -> decimal('quantity_in');
             $table -> decimal('quantity_out');

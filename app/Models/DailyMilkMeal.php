@@ -17,9 +17,20 @@ class DailyMilkMeal extends Model
       'supplier_id',
       'buffalo_weight',
       'bovine_weight',
-        'hasBonus',
+      'hasBonus',
+      'bonus',
+      'total',
       'notes',
-        'user_ins',
-        'user_upd'
+      'isManufactured',
+      'car_meal_id' ,
+      'user_ins',
+      'user_upd',
+      'buffalo_price',
+      'bovine_price',
+      'state',  // 0 => new , 1 => posted
+      'isPaid', // 0 notPaid , 1 paid
+      'paid',
+      'cheese_meal_id'
+
     ];
 }

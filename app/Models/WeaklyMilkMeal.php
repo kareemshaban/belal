@@ -20,9 +20,11 @@ class WeaklyMilkMeal extends Model
       'total_buffalo_weight',
       'total_bovine_weight',
       'total_money',
-          'number_of_daily_meals',
+      'number_of_daily_meals',
       'notes',
-        'user_ins',
-        'user_upd'
+      'post_date',
+      'user_ins',
+      'user_upd',
+      'isManufactured'
     ];
 }

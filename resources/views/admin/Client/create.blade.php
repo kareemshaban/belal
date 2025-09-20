@@ -18,7 +18,7 @@
                           enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label>{{ __('main.name') }} <span style="font-size: 14px ; color: red">*</span></label>
                                     <input type="text" name="name" id="name"
@@ -33,7 +33,7 @@
                                 </div>
                                 <input type="hidden" id="id" name="id">
                             </div>
-                            <div class="col-6">
+                            <div class="col-6" hidden="hidden">
                                 <div class="form-group">
                                     <label>{{ __('main.client_type') }} <span style="font-size: 14px ; color: red">*</span></label>
                                     <select type="text" name="type" id="type"
@@ -42,6 +42,7 @@
                                         <option value="1"> {{__('main.client_type1')}} </option>
                                         <option value="2"> {{__('main.client_type2')}} </option>
                                     </select>
+                                    <input type="hidden" name="type" id="type">
                                     @error('type')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -51,7 +52,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row" style="margin-top: 10px">
+                        <div class="row" style="margin-top: 10px" hidden="hidden">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>{{ __('main.buffalo_min_limit') }} </label>
@@ -82,7 +83,7 @@
                             </div>
 
                         </div>
-                        <div class="row" style="margin-top: 10px">
+                        <div class="row" style="margin-top: 10px" hidden="hidden">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>{{ __('main.bovine_min_limit') }} </label>
@@ -128,11 +129,30 @@
 
                                 </div>
                             </div>
-                            <div class="col-6">
+                            @if($type == 1)
+                            <div class="col-6" >
+                                <div class="form-group">
+                                    <label> {{__('main.car')}} </label>
+                                    <select class="form-control" id="car_id" name="car_id" >
+                                        <option value="0"> {{__('main.select')}} </option>
+                                        @foreach($cars as $car)
+                                            <option value="{{$car -> id}}"> {{$car -> car_number}} -- {{$car -> driver_name}}</option>
+                                        @endforeach
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                            @endif
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
                                 <div class="form-group">
                                     <label>{{ __('main.address') }} </label>
                                     <textarea type="text" name="address" id="address"
-                                           class="form-control @error('address') is-invalid @enderror"
+                                              class="form-control @error('address') is-invalid @enderror"
                                               placeholder="{{__('main.address')}}" autofocus rows="2"> </textarea>
                                     @error('address')
                                     <span class="invalid-feedback" role="alert">
@@ -142,6 +162,7 @@
 
                                 </div>
                             </div>
+
                         </div>
 
 

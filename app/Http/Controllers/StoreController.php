@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Safe;
 use App\Models\Store;
+use App\Models\StoreQuantity;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class StoreController extends Controller
@@ -23,6 +27,11 @@ class StoreController extends Controller
      */
     public function index()
     {
+
+        if (!Gate::allows('page-access', [1, 'view'])) {
+            abort(403);
+        }
+
         $stores = Store::all();
         return view('admin.Store.index', compact('stores'));
     }
@@ -57,13 +66,26 @@ class StoreController extends Controller
                     'name.unique'   => __('main.name_unique'),
                 ]
             );
+
+            if($request -> isDefault == 1){
+                $stores = Store::where('isDefault' , '=' , 1) -> get() -> first();
+                if($stores){
+                    $stores -> update([
+                        'isDefault' => 0,
+                    ]);
+                }
+            }
+
             Store::create([
                 'code' => $request -> code,
                 'name' => $request -> name,
                 'details' => $request -> details ?? "",
+                'isDefault' => $request -> isDefault ?? 0,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0
             ]);
+
+
             return redirect()->route('stores') -> with('success', __('main.saved'));
 
         } else {
@@ -82,6 +104,32 @@ class StoreController extends Controller
         $store = Store::find($id);
         echo json_encode($store);
         exit();
+    }
+
+    public function store_balance($id)
+    {
+        $store = Store::find($id);
+       $stores = DB::table('store_quantities')
+        ->join('stores', 'store_quantities.store_id', '=', 'stores.id')
+        ->join('items', 'store_quantities.item_id', '=', 'items.id')
+        ->select(
+            'items.id as item_id',
+            'items.name as item_name',
+            DB::raw('SUM(store_quantities.balance + store_quantities.opening_quantity) as total_quantity')
+        )
+        ->where('stores.id', '=', $id)
+        ->groupBy('items.id', 'items.name')
+        ->get();
+
+
+
+
+
+        return response()->json([
+            'state' => 'success',
+            'stores' => $stores,
+            'store' => $store
+        ]);
     }
 
     /**
@@ -121,10 +169,21 @@ class StoreController extends Controller
         ]);
         $store = Store::find($request -> id);
         if($store){
+
+            if($request -> isDefault == 1){
+                $stores = Store::where('isDefault' , '=' , 1) -> get() -> first();
+                if($stores){
+                    $stores -> update([
+                        'isDefault' => 0,
+                    ]);
+                }
+            }
+
             $store -> update([
                 'code' => $request -> code,
                 'name' => $request -> name,
                 'details' => $request -> details ?? "",
+                'isDefault' => $request -> isDefault,
                 'user_upd' => Auth::user() -> id,
             ]);
             return redirect()->route('stores') -> with('success', __('main.updated'));
@@ -142,8 +201,14 @@ class StoreController extends Controller
     {
         $store = Store::find($id);
         if($store){
-            $store -> delete();
-            return redirect()->route('stores') -> with('success', __('main.deleted'));
+            $storeQuantities = StoreQuantity::where('store_id' , '=' , $id) -> get();
+            if(count($storeQuantities) > 0 ){
+                return redirect()->route('stores') -> with('warning', __('main.can_not_delete'));
+            } else {
+                $store -> delete();
+                return redirect()->route('stores') -> with('success', __('main.deleted'));
+            }
+
         }
     }
 }

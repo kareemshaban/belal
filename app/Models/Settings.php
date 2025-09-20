@@ -15,6 +15,10 @@ class Settings extends Model
         'morning_bonus_time',
         'evening_bonus_time',
         'bonus_value',
+        'protein_price',
+        'cream_price',
+        'cheese_price',
+        'white_cheese_price',
         'user_ins',
         'user_upd',
     ];

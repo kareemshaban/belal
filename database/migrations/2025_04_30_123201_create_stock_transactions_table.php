@@ -20,6 +20,7 @@ class CreateStockTransactionsTable extends Migration
             $table -> integer('from_store');
             $table -> integer('to_store');
             $table -> text('notes');
+            $table -> integer('state') -> default(0);
             $table -> integer('user_ins') -> default(0);
             $table -> integer('user_upd') -> default(0);
             $table->timestamps();

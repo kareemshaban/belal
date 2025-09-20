@@ -23,6 +23,7 @@ class CreateSalesTable extends Migration
             $table -> decimal("discount");
             $table -> decimal("net");
             $table -> text('notes');
+            $table -> integer("state") -> default(0);
             $table -> integer("user_ins") -> default(0);
             $table -> integer("user_upd") -> default(0);
             $table->timestamps();

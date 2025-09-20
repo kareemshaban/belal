@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BoxRecipit;
 use App\Models\RecipitType;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class RecipitTypeController extends Controller
@@ -21,6 +23,11 @@ class RecipitTypeController extends Controller
      */
     public function index()
     {
+
+        if (!Gate::allows('page-access', [1, 'view'])) {
+            abort(403);
+        }
+
         $types = RecipitType::all();
         return view('admin.ExpensesType.index', compact('types'));
     }
@@ -139,8 +146,15 @@ class RecipitTypeController extends Controller
     {
         $type = RecipitType::find($id);
         if($type){
-            $type -> delete();
-            return  redirect() -> route('expenses_types') -> with('success', __('main.deleted'));
+            $boxs = BoxRecipit::where('recipit_type' , $id) -> get();
+            if(count($boxs) > 0){
+                return  redirect() -> route('expenses_types') -> with('warning', __('main.can_not_delete'));
+
+            } else {
+                $type -> delete();
+                return  redirect() -> route('expenses_types') -> with('success', __('main.deleted'));
+            }
+
         }
     }
 }

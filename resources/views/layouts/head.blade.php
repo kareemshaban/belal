@@ -13,9 +13,10 @@
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Dashboard - Shoonah</title>
+    <title>Dashboard - Belal</title>
 
     <meta name="description" content="" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{asset('assets/img/favicon/favicon.ico')}}" />
@@ -55,8 +56,29 @@
     <link rel="stylesheet" href="{{asset('assets/css/choices.min.css')}}" />
     <!-- JS -->
     <script src="{{asset('assets/js/choices.min.js')}}"></script>
+        <link rel="stylesheet" href="{{asset('assets/css/datatables/dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/datatables/buttons.dataTables.min.css')}}">
+    <link href="{{asset('assets/css/toastr.min.css')}}" rel="stylesheet"/>
+
 </head>
 <style>
+
+    .choices__list--dropdown {
+        bottom: auto !important;
+        top: 100% !important;
+    }
+    .dataTables_filter {
+        margin-left: 10px !important;
+        margin-right: 10px !important;;
+    }
+    .dt-buttons {
+        margin-left: 10px !important;;
+        margin-right: 10px !important;;
+    }
+    .dataTables_info {
+        margin-left: 10px !important;;
+        margin-right: 10px !important;;
+    }
     @font-face {
         font-family: 'icomoon';
         src: url("{{asset('assets/fonts/ArbFONTS-The-Sans-Plain.otf')}}");
@@ -348,3 +370,56 @@
 
 
 @endif
+
+<style>
+    #loading-overlay  {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.85);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        display: none;
+    }
+    #closing-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.85);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        display: none;
+    }
+
+    .loader {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #007bff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+        margin-top: 15px;
+        font-size: 18px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+</style>

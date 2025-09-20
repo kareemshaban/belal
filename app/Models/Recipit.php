@@ -18,6 +18,8 @@ class Recipit extends Model
       'payment_method',
       'safe_id',
       'notes',
+      'isPayment',
+      'state',
       'user_ins',
       'user_upd',
     ];

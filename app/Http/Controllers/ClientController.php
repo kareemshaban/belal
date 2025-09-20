@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cars;
 use App\Models\Client;
+use App\Models\ClientAccount;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class ClientController extends Controller
@@ -19,10 +22,16 @@ class ClientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($type)
     {
-        $suppliers = Client::all();
-        return view('admin.Client.index', compact('suppliers'));
+
+        if (!Gate::allows('page-access', [7, 'view'])) {
+            abort(403);
+        }
+
+        $suppliers = Client::where('type' , $type)->get();
+        $cars = Cars::all();
+        return view('admin.Client.index', compact('suppliers' , 'type' , 'cars'));
     }
 
     /**
@@ -63,10 +72,11 @@ class ClientController extends Controller
                 'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
                 'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
+                'car_id' => $request -> car_id ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
             ]);
-            return redirect()->route('suppliers') -> with('success', __('main.saved'));
+            return redirect()->route('suppliers' ,$request -> type) -> with('success', __('main.saved'));
         } else{
             return  $this -> update($request);
         }
@@ -129,10 +139,11 @@ class ClientController extends Controller
                 'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
                 'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
+                'car_id' => $request -> car_id ,
                 'user_upd' => Auth::user() -> id
             ]);
 
-            return redirect()->route('suppliers') -> with('success', __('main.updated'));
+            return redirect()->route('suppliers' , $request -> type) -> with('success', __('main.updated'));
         }
     }
 
@@ -147,7 +158,42 @@ class ClientController extends Controller
         $supplier = Client::find($id);
         if($supplier){
             $supplier -> delete();
-            return redirect()->route('suppliers') -> with('success', __('main.deleted'));
+            return redirect()->route('suppliers' , $supplier -> type) -> with('success', __('main.deleted'));
         }
+    }
+
+    public function showBalance($id){
+        $account = ClientAccount::where('client_id', $id) -> first();
+        echo json_encode($account);
+        exit();
+    }
+
+    public function updateBalance(Request $request){
+
+        $account = ClientAccount::where('client_id', $request -> id) -> first();
+        if($account){
+            $account -> update([
+                'opening_balance_debit' => $request -> opening_balance_debit ?? 0,
+                'opening_balance_credit' => $request -> opening_balance_credit ?? 0,
+                'user_upd' => Auth::user() -> id,
+            ]);
+        } else {
+            ClientAccount::create([
+                'client_id' => $request -> id ,
+                'debit' => 0 ,
+                'credit' => 0 ,
+                'balance' => 0 ,
+                'opening_balance_debit' => $request -> opening_balance_debit ?? 0,
+                'opening_balance_credit' => $request -> opening_balance_credit ?? 0,
+                'user_ins' => Auth::user() -> id,
+                'user_upd' => 0,
+            ]);
+
+        }
+
+
+       $type = Client::find($request -> id) -> type ;
+        return redirect()->route('suppliers' , $type) -> with('success', __('main.updated'));
+
     }
 }

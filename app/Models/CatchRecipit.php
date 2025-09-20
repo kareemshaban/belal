@@ -17,7 +17,9 @@ class CatchRecipit extends Model
         'amount',
         'payment_method',
         'safe_id',
+        'loan_id',
         'notes',
+        'state',
         'user_ins',
         'user_upd',
     ];

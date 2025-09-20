@@ -14,7 +14,8 @@ class Store extends Model
       'code',
       'name',
       'details',
-        'user_ins',
-        'user_upd'
+      'isDefault' ,
+      'user_ins',
+      'user_upd'
     ];
 }

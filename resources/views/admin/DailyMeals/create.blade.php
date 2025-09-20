@@ -43,6 +43,8 @@
                                             <option value="{{$meal -> id}}"> {{$meal -> code}} </option>
                                         @endforeach
                                     </select>
+                                    <input name="weak_meal" id="weak_meal" type="text" class="form-control" readonly>
+                                    <input name="weakly_meal_id_hidden" id="weakly_meal_id_hidden" type="hidden">
                                     @error('weakly_meal_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -56,8 +58,9 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>{{ __('main.supplier') }} <span style="font-size: 14px ; color: red">*</span> </label>
-                                    <select  name="supplier_id" id="supplier_id"
-                                             class="form-control @error('supplier_id') is-invalid @enderror"
+                                    <select  name="supplier_id" id="supplier_id" @if(Config::get('app.locale')=='ar' )
+                                        dir="rtl" @endif
+                                             class="form-control search @error('supplier_id') is-invalid @enderror"
                                              autofocus  required>
                                         <option value=""> {{__('main.select')}}</option>
                                         @foreach($suppliers as $supplier)
@@ -160,6 +163,70 @@
 
                         </div>
                         <div class="row" style="margin-top: 10px">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>{{ __('main.bonus_value') }}  </label>
+                                    <input type="number" step="any"  name="bonus" id="bonus"
+                                           class="form-control @error('bonus') is-invalid @enderror"
+                                           placeholder="0" autofocus readonly/>
+                                    @error('bonus')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>{{ __('main.total_cash') }}  </label>
+                                    <input type="number" step="any"  name="total" id="total"
+                                           class="form-control @error('total') is-invalid @enderror"
+                                           placeholder="0" autofocus readonly/>
+                                    @error('total')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin-top: 10px">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>{{ __('main.price_buffalo') }}  </label>
+                                    <input type="number" step="any"  name="buffalo_price" id="buffalo_price"
+                                           class="form-control @error('buffalo_price') is-invalid @enderror"
+                                           placeholder="0" autofocus readonly/>
+                                    @error('buffalo_price')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>{{ __('main.price_bovine') }}  </label>
+                                    <input type="number" step="any"  name="bovine_price" id="bovine_price"
+                                           class="form-control @error('bovine_price') is-invalid @enderror"
+                                           placeholder="0" autofocus readonly/>
+                                    @error('bovine_price')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin-top: 10px">
 
                             <div class="col-12">
                                 <div class="form-group">
@@ -178,13 +245,19 @@
                         </div>
 
 
-                        <div class="row" style="margin-top: 40px">
-                            <div class="col-12 text-center">
-                                <button type="button" class="btn btn-primary" onclick="valdiateRequest()">{{ __('main.save_btn') }}</button>
+
+                            <div class="row" style="margin-top: 40px" id="action_row">
+                                <div class="col-12 text-center">
+                                    <button type="button" class="btn btn-primary" onclick="valdiateRequest()">{{ __('main.save_btn') }}</button>
+
+                                </div>
 
                             </div>
 
-                        </div>
+
+
+
+
 
 
 

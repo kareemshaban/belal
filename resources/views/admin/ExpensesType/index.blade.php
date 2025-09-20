@@ -29,9 +29,11 @@
                         <h4 class="fw-bold py-3 mb-4">
                             <span class="text-muted fw-light">{{__('main.basicData')}} /</span> {{__('main.recipit_type')}}
                         </h4>
+                        @can('page-access', [3, 'edit'])
                         <button type="button" class="btn btn-primary"  id="createButton" style="height: 45px">
                             {{__('main.add_new')}}  <span class="tf-icons bx bx-plus"></span>&nbsp;
                         </button>
+                        @endcan
 
                     </div>
 
@@ -59,13 +61,14 @@
                                         <td class="text-center">{{$type -> name}}</td>
 
                                         <td class="text-center">
-
+                                            @can('page-access', [3, 'edit'])
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
                                                     <i class='bx bxs-edit-alt text-success editBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
                                                        id="{{$type -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                     <i class='bx bxs-trash text-danger deleteBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
                                                        id="{{$type -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                 </div>
+                                            @endcan
 
                                         </td>
                                     </tr>

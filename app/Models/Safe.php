@@ -13,6 +13,7 @@ class Safe extends Model
       'name',
       'code',
       'details',
+        'isDefault' ,
       'user_ins',
       'user_upd'
     ];

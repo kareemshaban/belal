@@ -9,7 +9,7 @@
     <div class="layout-container">
         <!-- Menu -->
 
-        @include('layouts.sidebar' , ['slag' => 11 , 'subSlag' => 113])
+        @include('layouts.sidebar' , ['slag' => 15 , 'subSlag' => 153])
         <!-- / Menu -->
 
         <!-- Layout container -->
@@ -53,11 +53,9 @@
                                             <option value=""> {{__('main.choose')}} </option>
                                             @foreach($roles as $role)
                                                 <option value="{{$role -> id}}">
-                                                    @if(Config::get('app.locale')=='ar' )
-                                                        {{$role -> name_ar}}
-                                                    @else
-                                                        {{$role -> name_en}}
-                                                    @endif
+
+                                                        {{$role -> name}}
+
                                                 </option>
                                             @endforeach
 
@@ -73,10 +71,11 @@
                         </div>
                         @include('flash-message')
                         <div class="table-responsive  text-nowrap">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover view_table" id="authTable">
                                 <thead>
                                 <tr class="text-nowrap">
                                     <th class="text-center">#</th>
+                                    <th class="text-center" hidden="hidden"></th>
                                     <th class="text-center">{{__('main.role')}}</th>
                                     <th class="text-center">{{__('main.form')}}</th>
                                     <th class="text-center">{{__('main.access_level')}}</th>
@@ -110,8 +109,7 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 
-@include('cpanel.Roles.create')
-@include('cpanel.Roles.deleteModal')
+
 @include('layouts.footer')
 <script type="text/javascript">
     $(document).ready(function() {
@@ -144,9 +142,9 @@
                           <input id="role_id[]" name="role_id[]" value="${response[i].role_id}" />
                           <input id="form_id[]" name="form_id[]" value="${response[i].form_id}" />
                           </td>`;
-                        html += `<td class="text-center"> ${lang == 'ar' ? response[i].role_ar : response[i].role_en} </td>`;
+                        html += `<td class="text-center"> ${response[i].role } </td>`;
 
-                        html += `<td class="text-center"> ${lang == 'ar' ? response[i].form_ar : response[i].form_en } </td>`;
+                        html += `<td class="text-center"> ${ response[i].form  } </td>`;
 
                         let access_level0 = "{{ __('main.access_level0') }}";
                         let access_level1 = "{{ __('main.access_level1') }}";
@@ -175,6 +173,22 @@
                 } else {
 
                 }
+
+                if ($.fn.DataTable.isDataTable('#authTable')) {
+                    $('#authTable').DataTable().destroy();
+                }
+                $('#authTable').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy' , 'excel',  'print'
+                    ],
+                    responsive: true,
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json'
+
+                    }
+                });
+
             }
         });
 

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Items;
+use App\Models\StoreQuantity;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class ItemsController extends Controller
@@ -21,6 +24,10 @@ class ItemsController extends Controller
      */
     public function index()
     {
+        if (!Gate::allows('page-access', [4, 'view'])) {
+            abort(403);
+        }
+
         $items = Items::all();
         return view('admin.Items.index', compact('items'));
     }
@@ -60,6 +67,7 @@ class ItemsController extends Controller
                 'name' => $request -> name,
                 'details' => $request -> details ?? "",
                 'default_selling_price' => $request -> default_selling_price ?? "0",
+                'type' => $request -> type ?? 0,
                 'user_ins' => Auth::user()->id,
                 'user_upd' => 0
             ]);
@@ -127,6 +135,7 @@ class ItemsController extends Controller
                 'name' => $request -> name,
                 'details' => $request -> details ?? "",
                 'default_selling_price' => $request -> default_selling_price ?? "0",
+                'type' => $request -> type ?? 0,
                 'user_upd' => Auth::user()->id
             ]);
             return redirect()->route('items') -> with('success', __('main.updated'));
@@ -143,8 +152,69 @@ class ItemsController extends Controller
     {
         $item = Items::find($id);
         if($item){
-            $item -> delete();
-            return redirect()->route('items') -> with('success', __('main.deleted'));
+            $storeQuantity = StoreQuantity::where('item_id', $id) -> get();
+            if(count($storeQuantity ) == 0){
+                $item -> delete();
+                return redirect()->route('items') -> with('success', __('main.deleted'));
+            } else {
+                return redirect()->route('items') -> with('warning', __('main.can_not_delete'));
+            }
+
         }
     }
+
+    public function itemSelect($id , $store)
+    {
+        $item = Items::find($id);
+        if($item){
+            $storeQuantity = StoreQuantity::where('store_id' , '=' , $store)
+                -> where('item_id' , '=' , $id)
+                -> get() -> first();
+
+
+            if($storeQuantity){
+                $item -> available_quantity = $storeQuantity -> balance  + $storeQuantity -> opening_quantity;
+                $item -> item_store_id = $storeQuantity -> store_id ;
+            } else {
+                $item -> available_quantity = 0;
+                $item -> item_store_id = $store;
+            }
+
+            echo json_encode($item);
+            exit();
+        }
+    }
+
+    public function itemPairSelect($fItem , $tItem , $store)
+    {
+        $item = Items::find($fItem);
+        $to_Item = Items::find($tItem);
+        if($item){
+            $storeQuantity = StoreQuantity::where('store_id' , '=' , $store)
+                -> where('item_id' , '=' , $fItem)
+                -> get() -> first();
+
+
+            if($storeQuantity){
+                $item -> available_quantity = $storeQuantity -> balance ;
+                $item -> item_store_id = $storeQuantity -> store_id ;
+            } else {
+                $item -> available_quantity = 0;
+                $item -> item_store_id = $store;
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'from_item_object' => $item,
+                'to_item_object' => $to_Item
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'error' => 'Item not found.'
+            ], 404);
+        }
+    }
+
+
 }

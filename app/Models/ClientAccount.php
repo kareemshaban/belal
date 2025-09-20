@@ -12,8 +12,8 @@ class ClientAccount extends Model
     protected $fillable = [
       'id',
       'client_id',
-      'debit',
-      'credit',
+      'debit', // عليه فلوس
+      'credit' , // له فلوس
       'opening_balance_debit',
       'opening_balance_credit',
         'balance',

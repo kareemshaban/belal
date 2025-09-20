@@ -64,6 +64,25 @@
 
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>{{ __('main.item_type') }}  </label>
+                                    <select id="type" name="type" class="form-control" >
+                                        <option value="0"> {{__('main.item_type0')}} </option>
+                                        <option value="1"> {{__('main.item_type1')}} </option>
+                                        <option value="2"> {{__('main.item_type2')}} </option>
+                                        <option value="3"> {{__('main.item_type3')}} </option>
+                                    </select>
+                                    @error('type')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+
+
+                                </div>
+                            </div>
+
                         </div>
                         <div class="row" style="margin-top: 10px">
                             <div class="col-12">
