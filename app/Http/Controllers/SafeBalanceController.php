@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Safe;
 use App\Models\SafeBalance;
+use App\Models\SafeBalanceExchange;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,8 @@ class SafeBalanceController extends Controller
      */
     public function index()
     {
-        //
+
+
     }
 
     /**
@@ -38,13 +40,13 @@ class SafeBalanceController extends Controller
      */
     public function store(Request $request)
     {
-        $balance = SafeBalance::where('safe_id' , '=' , $request -> safe_id) -> first();
-        if($balance){
-            $balance -> update([
-               'opening_balance' => $request ->  opening_balance
+        $balance = SafeBalance::where('safe_id', '=', $request->safe_id)->first();
+        if ($balance) {
+            $balance->update([
+                'opening_balance' => $request->opening_balance
             ]);
         }
-        return redirect() -> route('safes') -> with('success' , __('main.updated'));
+        return redirect()->route('safes')->with('success', __('main.updated'));
     }
 
     /**
@@ -57,12 +59,12 @@ class SafeBalanceController extends Controller
     {
         $safe = DB::table('safes')
             ->join('safe_balances', 'safes.id', '=', 'safe_balances.safe_id')
-            ->select( 'safes.*','safe_balances.opening_balance' )
-            ->where('safes.id',$safe_id)
-            ->get() -> first();
+            ->select('safes.*', 'safe_balances.opening_balance')
+            ->where('safes.id', $safe_id)
+            ->get()->first();
 
-     echo   json_encode($safe);
-     exit();
+        echo json_encode($safe);
+        exit();
 
     }
 

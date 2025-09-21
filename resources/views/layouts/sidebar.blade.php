@@ -356,15 +356,15 @@
 
             </ul>
         </li>
-        <li class="menu-item  @if($slag == 13)  active @endif" hidden="hidden">
+        <li class="menu-item  @if($slag == 13)  active @endif" >
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div data-i18n="Form Layouts">{{__('main.loans')}}</div>
+                <div data-i18n="Form Layouts">{{__('main.balance_transactions')}}</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item @if($subSlag == 131)  active @endif">
-                    <a href="{{route('loans')}}" class="menu-link">
-                        <div data-i18n="Vertical Form">{{__('main.loans_list')}}</div>
+                    <a href="{{route('balance_transactions')}}" class="menu-link">
+                        <div data-i18n="Vertical Form">{{__('main.balance_transactions')}}</div>
                     </a>
                 </li>
 

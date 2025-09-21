@@ -533,33 +533,53 @@ class ReportController extends Controller
                  END as type")
             );
 
-
-        $loans = DB::table('loans')
-            ->join('clients', 'loans.supplier_id', '=', 'clients.id')
-            ->join('safes', 'loans.safe_id', '=', 'safes.id')
+            $exchangeOut = DB::table('safe_balance_exchanges')
+            ->join('safes', 'safe_balance_exchanges.from_safe_id','=', 'safes.id')
             ->select(
-                'loans.id as docId',
-                'loans.bill_number as docNumber',
-                'loans.date as docDate',
-                'loans.amount as amount',
-                'clients.name as client',
+                'safe_balance_exchanges.id as docId',
+                'safe_balance_exchanges.bill_number as docNumber',
+                'safe_balance_exchanges.date as docDate',
+                'safe_balance_exchanges.balance as amount',
+                 DB::raw("'empty' as client"),
                 'safes.name as safe',
-                DB::raw('3 as type'));
+                 DB::raw('7 as type')
+                );
+
+         //   return $exchangeOut -> get();
+
+            $exchangeIn = DB::table('safe_balance_exchanges')
+            ->join('safes', 'safe_balance_exchanges.to_safe_id','=', 'safes.id')
+            ->select(
+                'safe_balance_exchanges.id as docId',
+                'safe_balance_exchanges.bill_number as docNumber',
+                'safe_balance_exchanges.date as docDate',
+                'safe_balance_exchanges.balance as amount',
+                 DB::raw("'empty' as client"),
+                'safes.name as safe',
+                 DB::raw('8 as type')
+                );
+
+
+
+
+
+
+
         $isSearchByDate = 0 ;
         if($request -> safe_id != ""){
             $recipits = $recipits  -> where('recipits.safe_id' , '=' , $request -> safe_id);
             $boxes = $boxes -> where('box_recipits.safe_id' , '=' , $request -> safe_id);
             $catchs = $catchs -> where('catch_recipits.safe_id' , '=' , $request -> safe_id);
-            $loans = $loans -> where('loans.safe_id' , '=' , $request -> safe_id);
-
+            $exchangeOut = $exchangeOut -> where('safe_balance_exchanges.from_safe_id' , '=' , $request -> safe_id);
+            $exchangeIn = $exchangeIn -> where('safe_balance_exchanges.to_safe_id' , '=' , $request -> safe_id);
         }
         if ($request->has('isFromDate') && $request->filled('fromDate')) {
             $isSearchByDate = 1 ;
             $recipits = $recipits->whereDate('recipits.date', '>=', Carbon::parse($request->fromDate) );
             $boxes = $boxes->whereDate('box_recipits.date', '>=', Carbon::parse($request->fromDate) );
             $catchs = $catchs->whereDate('catch_recipits.date', '>=', Carbon::parse($request->fromDate) );
-            $loans = $loans->whereDate('loans.date', '>=', Carbon::parse($request->fromDate) );
-
+            $exchangeOut = $exchangeOut-> whereDate('safe_balance_exchanges.date', '>=', Carbon::parse($request->fromDate) );
+            $exchangeIn = $exchangeIn-> whereDate('safe_balance_exchanges.date', '>=', Carbon::parse($request->fromDate) );
 
         }
 
@@ -568,9 +588,10 @@ class ReportController extends Controller
             $recipits = $recipits->whereDate('recipits.date', '<=', Carbon::parse($request->toDate) );
             $boxes = $boxes->whereDate('box_recipits.date', '<=', Carbon::parse($request->toDate) );
             $catchs = $catchs->whereDate('catch_recipits.date', '<=', Carbon::parse($request->toDate) );
-            $loans = $loans->whereDate('loans.date', '<=', Carbon::parse($request->toDate) );
+            $exchangeOut = $exchangeOut-> whereDate('safe_balance_exchanges.date', '<=', Carbon::parse($request->toDate) );
+            $exchangeIn = $exchangeIn-> whereDate('safe_balance_exchanges.date', '<=', Carbon::parse($request->toDate) );
         }
-        $data = $recipits -> unionAll($boxes) -> unionAll($catchs) -> unionAll($loans) ;
+        $data = $recipits -> unionAll($boxes) -> unionAll(query: $catchs) -> unionAll($exchangeOut) -> unionAll($exchangeIn) ;
         $data = $data->orderBy('docDate', 'ASC')->get();
 
         $fromDate = $request -> fromDate ;
@@ -598,9 +619,9 @@ class ReportController extends Controller
                 }
 
                 // Determine category
-                if (in_array($type, [0, 3, 4])) {
+                if (in_array($type, [0, 3, 4 , 7])) {
                     $result[$safe]['outMoney'] += $amount;
-                } elseif (in_array($type, [1, 2])) {
+                } elseif (in_array($type, [1, 2 , 8])) {
                     $result[$safe]['inMoney'] += $amount;
                 }
             }

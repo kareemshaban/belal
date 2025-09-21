@@ -152,7 +152,7 @@
         if (event.target.matches('input[type="number"]')) {
             const input = event.target;
 
-            if (input.value === '0') {
+            if (input.value === '0' || input.value === '0.0' || input.value === '0.00') {
                 input.dataset.wasZero = 'true';
                 input.value = '';
             } else {

@@ -272,7 +272,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <!-- Order Statistics -->
+
                         <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
                             <div class="card h-100">
                                 <div class="card-header d-flex align-items-center justify-content-between pb-0">
@@ -308,46 +308,8 @@
                                 </div>
                             </div>
                         </div>
-                        <!--/ Order Statistics -->
 
-                        <!-- Expense Overview -->
                         <div class="col-md-6 col-lg-4 order-1 mb-4">
-                            <div class="card h-100">
-
-                                <div class="card-body px-0">
-                                    <div class="tab-content p-0">
-                                        <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
-                                            <div class="d-flex p-4 pt-3">
-                                                <div class="avatar flex-shrink-0 me-3">
-                                                    <img src="{{asset('assets/img/icons/unicons/wallet.png')}}" alt="User" />
-                                                </div>
-                                                <div>
-                                                    <small class="text-muted d-block">{{__('main.sales_stats')}}</small>
-                                                    <div class="d-flex align-items-center">
-                                                        <h6 class="mb-0 me-1" id="salesTotalSpan"></h6>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div id="incomeChart"></div>
-                                            <div class="d-flex justify-content-center pt-4 gap-2" style="align-items: center">
-                                                <div class="flex-shrink-0">
-                                                    <div id="expensesOfWeek"></div>
-                                                </div>
-                                                <div>
-                                                    <p class="mb-n1 mt-1">{{__('main.expenses_weak')}}</p>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--/ Expense Overview -->
-
-                        <!-- Transactions -->
-                        <div class="col-md-6 col-lg-4 order-2 mb-4">
                             <div class="card h-100">
                                 <div class="card-header d-flex align-items-center justify-content-between">
                                     <h5 class="card-title m-0 me-2">{{__('main.safes_balance')}}</h5>
@@ -392,7 +354,73 @@
                                 </div>
                             </div>
                         </div>
-                        <!--/ Transactions -->
+
+                        <div class="col-md-6 col-lg-4 order-1 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h5 class="card-title m-0 me-2">{{__('main.total_quantities')}}</h5>
+
+                                </div>
+                                <div class="card-body">
+                                    <ul class="p-0 m-0" id="safesList">
+                                        @foreach($quantities as $quantity)
+                                        <li class="d-flex mb-4 pb-1">
+                                            <div class="avatar flex-shrink-0 me-3">
+                                                <img src="{{asset('assets/img/icons/cheese.png')}}" alt="User" class="rounded" />
+                                            </div>
+                                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                <div class="me-2">
+                                                    <h6 class="mb-0">{{$quantity -> name}}</h6>
+
+
+                                                </div>
+                                                <div class="user-progress d-flex align-items-center gap-1">
+                                                    <h6 class="mb-0">{{$quantity -> total_quantity }}</h6>
+
+                                                </div>
+                                            </div>
+                                        </li>
+                                        @endforeach
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12  order-3 mb-4">
+                            <div class="card h-100">
+
+                                <div class="card-body px-0">
+                                    <div class="tab-content p-0">
+                                        <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
+                                            <div class="d-flex p-4 pt-3">
+                                                <div class="avatar flex-shrink-0 me-3">
+                                                    <img src="{{asset('assets/img/icons/unicons/wallet.png')}}" alt="User" />
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted d-block">{{__('main.sales_stats')}}</small>
+                                                    <div class="d-flex align-items-center">
+                                                        <h6 class="mb-0 me-1" id="salesTotalSpan"></h6>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="incomeChart"></div>
+                                            <div class="d-flex justify-content-center pt-4 gap-2" style="align-items: center">
+                                                <div class="flex-shrink-0">
+                                                    <div id="expensesOfWeek"></div>
+                                                </div>
+                                                <div>
+                                                    <p class="mb-n1 mt-1">{{__('main.expenses_weak')}}</p>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <!-- / Content -->

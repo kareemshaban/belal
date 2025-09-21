@@ -48,7 +48,7 @@ class SalesController extends Controller
      */
     public function create()
     {
-        $clients = Client::where('type' , '<>' , 1) -> get();
+        $clients = Client::all();
         $stores = Store::all();
         $items = Items::all();
 
@@ -219,7 +219,7 @@ class SalesController extends Controller
             }
         }
 
-        $clients = Client::where('type' , '<>' , 1) -> get();
+        $clients = Client::all();
         $stores = Store::all();
 
         $items = Items::all();

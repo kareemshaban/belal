@@ -62,7 +62,7 @@
                                         <td class="text-center"> {{ $loop -> index + 1}} </td>
                                         <td class="text-center"> {{ $doc -> safe}} </td>
                                         <td class="text-center">
-                                                <span @if ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4) class="badge bg-danger"
+                                                <span @if ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4 || $doc -> type == 7) class="badge bg-danger"
                                                       @else class="badge bg-success" @endif>
                                                     @if($doc -> type == 0)
                                                         {{__('main.doc0')}}
@@ -74,16 +74,20 @@
                                                         {{__('main.doc3')}}
                                                     @elseif($doc -> type == 4)
                                                         {{__('main.doc6')}}
+                                                         @elseif($doc -> type == 8)
+                                                        {{__('main.doc8')}}
+                                                        @elseif($doc -> type == 7)
+                                                        {{__('main.doc7')}}
                                                     @endif
                                                 </span>
                                         </td>
                                         <td class="text-center"> {{ $doc -> client	 }} </td>
                                         <td class="text-center"> {{ \Carbon\Carbon::parse($doc -> docDate) ->format('Y-m-d')  }} </td>
                                         <td class="text-center"> {{ $doc -> docNumber	 }} </td>
-                                        <td class="text-center text-danger" style="font-size: 18px ; font-weight: bold ;"> {{  ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4 )  ? number_format($doc -> amount , 2) : number_format(0 , 2) }} </td>
-                                        <td class="text-center text-success" style="font-size: 18px ; font-weight: bold ;"> {{  ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4)  ?  number_format(0 , 2) : number_format($doc -> amount , 2) }} </td>
+                                        <td class="text-center text-danger" style="font-size: 18px ; font-weight: bold ;"> {{  ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4 || $doc -> type == 7)  ? number_format($doc -> amount , 2) : number_format(0 , 2) }} </td>
+                                        <td class="text-center text-success" style="font-size: 18px ; font-weight: bold ;"> {{  ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4 || $doc -> type == 7)  ?  number_format(0 , 2) : number_format($doc -> amount , 2) }} </td>
 
-                                        <td  style="font-size: 18px ; font-weight: bold ;" class="text-center @if($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4)  text-danger @else text-success @endif"> {{  ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4)  ?  number_format(-1 * $doc->amount, 2) :  number_format($doc -> amount , 2)}} </td>
+                                        <td  style="font-size: 18px ; font-weight: bold ;" class="text-center @if($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4 || $doc -> type == 7)  text-danger @else text-success @endif"> {{  ($doc -> type == 0 || $doc -> type == 3 || $doc -> type == 4 || $doc -> type == 7)  ?  number_format(-1 * $doc->amount, 2) :  number_format($doc -> amount , 2)}} </td>
                                     </tr>
 
 

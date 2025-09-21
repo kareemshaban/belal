@@ -68,6 +68,16 @@ class HomeController extends Controller
     DB::raw('SUM(debit + opening_balance_debit - credit - opening_balance_credit) as total')
 )->value('total');
 
+$quantities = DB::table('store_quantities')
+    ->join('items', 'store_quantities.item_id', '=', 'items.id')
+    ->select(
+        'items.id',
+        'items.name',
+        DB::raw('SUM(store_quantities.opening_quantity + store_quantities.balance) as total_quantity')
+    )
+    ->groupBy('items.id', 'items.name')
+    ->get();
+
 
 
 // Total minutes in the range
@@ -96,7 +106,7 @@ class HomeController extends Controller
 
            $stores = Store::all();
         return view('home' , compact('totalSales' , 'totalRecipits' , 'catches' , 'expenses' ,
-        'progress' , 'totalMilk' , 'safes' , 'stores' , 'debits'));
+        'progress' , 'totalMilk' , 'safes' , 'stores' , 'debits' , 'quantities'));
     }
     public function totalRefresh($which)
     {

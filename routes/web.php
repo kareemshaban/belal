@@ -38,12 +38,19 @@ Route::group(
 
 
         Route::get('/safes', [App\Http\Controllers\SafeController::class, 'index'])->name('safes');
-        Route::get('/safes-show/{id}', [App\Http\Controllers\SafeController::class, 'show'])->name('safes-show');
+        Route::get('/safes-show/{id}', action: [App\Http\Controllers\SafeController::class, 'show'])->name('safes-show');
         Route::post('/safes-store', [App\Http\Controllers\SafeController::class, 'store'])->name('safes-store');
         Route::get('/safes-delete/{id}', [App\Http\Controllers\SafeController::class, 'destroy'])->name('safes-delete');
 
         Route::post('/balance-update', [App\Http\Controllers\SafeBalanceController::class, 'store'])->name('balance-update');
         Route::get('/balance-show/{safe_id}', [App\Http\Controllers\SafeBalanceController::class, 'show'])->name('balance-show');
+
+
+
+        Route::get('/balance_transactions', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'index'])->name(name: 'balance_transactions');
+        Route::post('/balance_transactions_store', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'store'])->name(name: 'balance_transactions_store');
+        Route::get('/balance_transactions_show/{id}', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'show'])->name('balance_transactions_show');
+        Route::get('/get_transaction_code', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'getcode'])->name('get_transaction_code');
 
 
 

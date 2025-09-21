@@ -549,6 +549,10 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
     'item_transform_doc_view' => 'View Item Transform Doc',
     'items_quantity' => 'Items Quantity',
     'items_qnt' => 'Items Quantity',
-    'total_debits' => 'Total Client Debits'
+    'total_debits' => 'Total Client Debits',
+    'balance_transactions' => 'Balance Transactions',
+     'from_balance' => 'From Safe' ,
+     'to_balance' => 'To Safe',
+     'total_quantities' => 'Total Quantites'
 
 ];
