@@ -553,6 +553,10 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
     'balance_transactions' => 'Balance Transactions',
      'from_balance' => 'From Safe' ,
      'to_balance' => 'To Safe',
-     'total_quantities' => 'Total Quantites'
+     'total_quantities' => 'Total Quantites',
+     'supplier_insurance_balance' => 'Supplier Insurance Balance',
+     'insurance_state0' => 'Valid Insurance',
+     'insurance_state1' => 'Invalid Insurance',
+    'insurance_balance' => 'Insurance Value'
 
 ];

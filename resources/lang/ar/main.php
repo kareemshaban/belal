@@ -584,7 +584,11 @@ return [
      'from_balance' => 'من خزنة' ,
      'to_balance' => 'إلي خزنة',
      'total_quantities' => 'إجمالي كميات المنتجات',
-     
+     'supplier_insurance_balance' => 'أرضية الموردين',
+     'insurance_state0' => 'أرضية فعالة',
+     'insurance_state1' => 'أرضية غير فعالة',
+     'insurance_balance' => 'نقدية الأرضية'
+
 
 
 
