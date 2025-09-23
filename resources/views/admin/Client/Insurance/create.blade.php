@@ -246,7 +246,7 @@
             if(id > 0){
 
                 if(items.filter(c=> c.item_id == id).length >  0){
-                    showalert( "هذا المنتج تم إضافته من قبل إلي الفاتورة يمكنك زيادة كميته إذا أردت" , 1);
+                    toastr.warning( "هذا المنتج تم إضافته من قبل إلي الفاتورة يمكنك زيادة كميته إذا أردت" );
                     $(".modal-body #id").val(0);
 
                     return ;
@@ -321,88 +321,40 @@
 
     function valdiateRequest(){
         var msg = '' ;
-        if($('#code').val() == "")
-            msg =  'حقل الكود مطلوب' + "\n" ;
-        if($('#store_id').val() == "")
-            msg =  'حقل المخزن مطلوب ' + "\n" ;
-        if($('#client_id').val() == "")
-            msg =  'حقل العميل مطلوب' + "\n" ;
-        if( items.length ==  0)
-            msg =  'يجب إضافة أصناف إلي تفاصيل الصنف' + "\n" ;
-
-        const allQuantitiesValid = items.every(item => item.quantity && parseFloat(item.quantity) > 0);
-
-        if( !allQuantitiesValid)
-            msg =  'يجب تحديد الكمية المباعة من كل الأصناف ويجب ان تكون اكبر من 0' + "\n" ;
-
-        if(msg == ''){
-          $('#MealForm').submit();
-
-        } else {
-            showalert(msg);
-            return ;
+        if($('#supplier_id').val() == ""){
+             msg =  'حقل المورد مطلوب' + "\n" ;
+             toastr.warning(msg);
+             return ;
         }
-    }
-    function showalert(msg){
 
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
-        $.ajax({
-            url: href,
-            beforeSend: function() {
-                $('#loader').show();
-            },
-            // return the result
-            success: function(result) {
+        if($('#balance').val() == ""){
+            msg =  'حقل نقدية الأرضية مطلوب' + "\n" ;
+            toastr.warning(msg);
+             return ;
 
-                $('#confirmModal').modal("show");
-                $(" #msg").html( msg.replace(/\n/g, "<br>") );
-                $(".modal-body #post").hide();
-                $(".modal-body #agree_btn").show();
-            },
-            complete: function() {
-                $('#loader').hide();
-            },
-            error: function(jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000
-        })
+        }
+        $('#MealForm').submit();
 
     }
-    $(document).on('click', '.submit-btn', function(event) {
-        $('#confirmtModal').modal("hide");
-    });
-
 
 
 
     $(document).on('click','.deleteBtn',function () {
-         deleted_index = $(this).data('id')
-        console.log(deleted_index);
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
-        $.ajax({
-            url: href,
-            beforeSend: function() {
-                $('#loader').show();
-            },
-            // return the result
-            success: function(result) {
-                $('#deleteItemModal').modal("show");
-            },
-            complete: function() {
-                $('#loader').hide();
-            },
-            error: function(jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000
-        })
+         let item_id = $(this).data('id');
+             Swal.fire({
+            title: 'حذف الصنف',
+            text: 'هل انت متأكد من حذف الصنف من تفاصيل المستند ؟',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'نعم , متأكد',
+            cancelButtonText: 'لا , تراجع'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with deletion or any other logic
+                confirmDelete(item_id);
+            }
+        });
+
 
     });
     $(document).on('click', '.btnConfirmDelete', function(event) {
@@ -412,10 +364,8 @@
         $('#deleteItemModal').modal("hide");
         deleted_index = 0 ;
     });
-    function confirmDelete(){
-        console.log('clicked' , deleted_index);
-        items.splice(deleted_index , 1);
-        $('#deleteItemModal').modal("hide");
+    function confirmDelete(item_id){
+        items.splice(item_id , 1);
         setItems();
     }
 

@@ -18,6 +18,7 @@ class CreateSupplierInsuranceItemsTable extends Migration
             $table -> integer('insurance_id');
             $table -> integer('item_id');
             $table -> double('quantity', 20, 2) -> default(0);
+            $table -> double('weight', 20, 2) -> default(0);
             $table -> integer('user_ins') -> default(0);
             $table -> integer('user_upd') -> default(0);
             $table->timestamps();

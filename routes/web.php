@@ -72,6 +72,7 @@ Route::group(
         Route::get('/insuranceBalances-create', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'create'])->name('insuranceBalances-create');
         Route::get('/insuranceBalances-show/{id}', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'show'])->name('insuranceBalances-show');
         Route::post('/insuranceBalances-store', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'store'])->name('insuranceBalances-store');
+        Route::get('/insuranceBalances-edit', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'edit'])->name('insuranceBalances-edit');
 
 
         Route::get('/items', [App\Http\Controllers\ItemsController::class, 'index'])->name('items');

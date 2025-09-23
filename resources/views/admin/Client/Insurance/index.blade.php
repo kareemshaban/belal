@@ -76,16 +76,15 @@
                                         </td>
 
                                         <td class="text-center">
-                                            @can('page-access', [7, 'edit'])
+
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
-                                                    <i class='bx bxs-edit-alt text-success editBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
-                                                       id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
-                                                    <i class='bx bxs-trash text-danger deleteBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
-                                                       id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
-                                                    <i class='bx bx-money text-primary moneyBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
-                                                       data-id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+                                                    
+                                                    <i class='bx bxs-edit-alt text-success' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
+                                                       id="{{$balance -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+
+
                                                 </div>
-                                            @endcan
+
 
                                         </td>
                                     </tr>

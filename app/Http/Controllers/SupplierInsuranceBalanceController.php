@@ -83,15 +83,17 @@ class SupplierInsuranceBalanceController extends Controller
             $detail -> delete();
         }
 
-        for ($i = 0 ; $i < count($request -> item_id ) ; $i++){
-            SupplierInsuranceItems::create([
-                'insurance_id' => $$request -> id,
-                'item_id' => $request -> item_id[$i],
-                'quantity' => $request -> quantity[$i],
-                'weight' => $request -> weight[$i] ,
-                'user_ins' => Auth::user() -> id,
-                'user_upd' => 0
-            ]);
+      if ($request->has('item_id') && is_array($request->item_id) && count($request->item_id) > 0) {
+            for ($i = 0; $i < count($request->item_id); $i++) {
+                SupplierInsuranceItems::create([
+                    'insurance_id' => $request->id,
+                    'item_id'      => $request->item_id[$i],
+                    'quantity'     => $request->quantity[$i] ?? 0,
+                    'weight'       => $request->weight[$i] ?? 0,
+                    'user_ins'     => Auth::id(),
+                    'user_upd'     => 0,
+                ]);
+            }
         }
     }
 
@@ -112,9 +114,16 @@ class SupplierInsuranceBalanceController extends Controller
      * @param  \App\Models\SupplierInsuranceBalance  $supplierInsuranceBalance
      * @return \Illuminate\Http\Response
      */
-    public function edit(SupplierInsuranceBalance $supplierInsuranceBalance)
+    public function edit($id)
     {
-        //
+         $doc = SupplierInsuranceBalance::find($id);
+         $details = SupplierInsuranceItems::where('insurance_id' , '=' , $id) -> get();
+         $suppliers = Client::where('type', '<>' , 0)->get();
+         $items = Items::all();
+
+        return view('admin.Client.Insurance.edit',
+        compact('doc' , 'details' ,'suppliers' , 'items'));
+
     }
 
     /**
