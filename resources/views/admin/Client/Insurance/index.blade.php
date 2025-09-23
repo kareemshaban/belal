@@ -78,9 +78,12 @@
                                         <td class="text-center">
 
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
-                                                    
-                                                    <i class='bx bxs-edit-alt text-success' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
+                                                    <a href="{{ route('insuranceBalances-edit' , $balance -> id) }}">
+                                                        <i class='bx bxs-edit-alt text-success' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
                                                        id="{{$balance -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+
+                                                    </a>
+
 
 
                                                 </div>

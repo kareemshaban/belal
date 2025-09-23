@@ -105,7 +105,7 @@ class SalesController extends Controller
      */
     public function store(Request $request)
     {
-      // return $request ;
+       //return $request ;
         $request->validate([
                 'bill_number' => 'required|unique:sales,bill_number',
                 'client_id' => 'required',
@@ -135,7 +135,17 @@ class SalesController extends Controller
 
         //store invoice details
         $this -> storeDetails($request , $id) ;
-        return redirect() -> route('sales') -> with('success', __('main.saved'));
+
+        if ($request->has('isPost')) {
+            return $this -> post($id);
+
+
+        } else {
+                 return redirect() -> route('sales') -> with('success', __('main.saved'));
+
+        }
+
+
     }
 
     public function storeDetails(Request $request , $id)

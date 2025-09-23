@@ -60,7 +60,7 @@ class SupplierInsuranceBalanceController extends Controller
                     'name.required' => __('main.amount_required'),
                 ]
             );
-            SupplierInsuranceBalance::create([
+           $id = SupplierInsuranceBalance::create([
                 'supplier_id' => $request -> supplier_id,
                 'date' => Carbon::parse($request -> date) ,
                 'balance' => $request -> balance ,
@@ -68,17 +68,17 @@ class SupplierInsuranceBalanceController extends Controller
                 'state' => 0 ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
-            ]);
-            $this -> storeItems($request);
+            ]) -> id;
+            $this -> storeItems($request  , $id);
             return redirect()->route('insuranceBalances' ,$request -> type) -> with('success', __('main.saved'));
         } else{
             return  $this -> update($request);
         }
     }
 
-    public function storeItems(Request $request)
+    public function storeItems(Request $request , $id)
     {
-    $details = SupplierInsuranceItems::where('insurance_id' , $request -> id) -> get();
+    $details = SupplierInsuranceItems::where('insurance_id' , operator: $request -> id) -> get();
         foreach($details as $detail){
             $detail -> delete();
         }
@@ -86,7 +86,7 @@ class SupplierInsuranceBalanceController extends Controller
       if ($request->has('item_id') && is_array($request->item_id) && count($request->item_id) > 0) {
             for ($i = 0; $i < count($request->item_id); $i++) {
                 SupplierInsuranceItems::create([
-                    'insurance_id' => $request->id,
+                    'insurance_id' => $id,
                     'item_id'      => $request->item_id[$i],
                     'quantity'     => $request->quantity[$i] ?? 0,
                     'weight'       => $request->weight[$i] ?? 0,
@@ -117,12 +117,14 @@ class SupplierInsuranceBalanceController extends Controller
     public function edit($id)
     {
          $doc = SupplierInsuranceBalance::find($id);
-         $details = SupplierInsuranceItems::where('insurance_id' , '=' , $id) -> get();
+        // $details = SupplierInsuranceItems::where('insurance_id' , '=' , $id) -> get();
+         $details = DB::table('supplier_insurance_items') -> join('items' , 'supplier_insurance_items.item_id' , '=' , 'items.id')
+         -> select('supplier_insurance_items.*' , 'items.code as code' , 'items.name as name')
+         -> where('supplier_insurance_items.insurance_id' , '=' , $id) -> get();
          $suppliers = Client::where('type', '<>' , 0)->get();
          $items = Items::all();
 
-        return view('admin.Client.Insurance.edit',
-        compact('doc' , 'details' ,'suppliers' , 'items'));
+        return view('admin.Client.Insurance.edit',   compact('doc' , 'details' ,'suppliers' , 'items'));
 
     }
 
@@ -144,7 +146,7 @@ class SupplierInsuranceBalanceController extends Controller
                 'notes' => $request -> notes ?? "",
                 'user_upd' => Auth::user() -> id
             ]);
-            $this -> storeItems($request);
+            $this -> storeItems($request , id: $doc -> id);
             return redirect()->route('insuranceBalances' ,$request -> type) -> with('success', __('main.updated'));
 
 
