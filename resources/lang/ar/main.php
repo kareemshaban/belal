@@ -587,7 +587,8 @@ return [
      'supplier_insurance_balance' => 'أرضية الموردين',
      'insurance_state0' => 'أرضية فعالة',
      'insurance_state1' => 'أرضية غير فعالة',
-     'insurance_balance' => 'نقدية الأرضية'
+     'insurance_balance' => 'نقدية الأرضية',
+     'supplier_insurance_balance_create' => 'إنشاء أرضية مورد',
 
 
 

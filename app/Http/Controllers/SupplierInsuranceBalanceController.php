@@ -25,9 +25,8 @@ class SupplierInsuranceBalanceController extends Controller
             ->join('clients', 'supplier_insurance_balances.supplier_id', '=', 'clients.id')
             ->select('supplier_insurance_balances.*', 'clients.name as supplier_name')
             ->get();
-         $suppliers = Client::where('type', '<>' , 0)->get();
-         $items = Items::all();
-         return view('admin.Client.Insurance.index' , compact('balances' , 'suppliers' , 'items'));
+
+         return view('admin.Client.Insurance.index' , compact('balances'));
     }
 
     /**
@@ -37,7 +36,10 @@ class SupplierInsuranceBalanceController extends Controller
      */
     public function create()
     {
-        //
+         $suppliers = Client::where('type', '<>' , 0)->get();
+         $items = Items::all();
+
+        return view('admin.Client.Insurance.create', compact('suppliers' , 'items'));
     }
 
     /**

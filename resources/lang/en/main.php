@@ -557,6 +557,7 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
      'supplier_insurance_balance' => 'Supplier Insurance Balance',
      'insurance_state0' => 'Valid Insurance',
      'insurance_state1' => 'Invalid Insurance',
-    'insurance_balance' => 'Insurance Value'
+    'insurance_balance' => 'Insurance Value',
+    'supplier_insurance_balance_create' => 'Create Supplier Insurance Balance',
 
 ];

@@ -31,9 +31,12 @@
                              {{ __('main.supplier_insurance_balance') }}
                         </h4>
                         @can('page-access', [7, 'edit'])
-                        <button type="button" class="btn btn-primary"  id="createButton" style="height: 45px">
+                        <a href="{{route('insuranceBalances-create')}}">
+
+                        <button type="button" class="btn btn-primary"  style="height: 45px">
                             {{__('main.add_new')}}  <span class="tf-icons bx bx-plus"></span>&nbsp;
                         </button>
+                        </a>
                         @endcan
 
                     </div>
