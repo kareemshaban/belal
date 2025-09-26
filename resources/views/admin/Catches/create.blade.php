@@ -149,9 +149,19 @@
                         </div>
 
 
-                        <div class="row" style="margin-top: 40px">
+                      <div class="row" style="margin-top: 40px">
                             <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-primary">{{ __('main.save_btn') }}</button>
+                                <div style="display: flex ; gap: 10px; align-items: end; justify-content: center; ">
+                                    <div class="form-group" style="display: flex ; flex-direction: column; justify-content: center; align-items: center;">
+                                        <label>{{ __('main.isPost') }}</label>
+                                        <input type="checkbox" id="isPost" name="isPost" class="form-check" style="width: 25px ; height: 25px;"/>
+
+                                    </div>
+
+                                   <button type="submit" class="btn btn-primary">{{ __('main.save_btn') }}</button>
+
+                                </div>
+
 
                             </div>
 

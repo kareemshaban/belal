@@ -18,7 +18,7 @@
                           enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class="col-12">
+                            <div class="@if($type == 0) col-12 @else col-6 @endif ">
                                 <div class="form-group">
                                     <label>{{ __('main.name') }} <span style="font-size: 14px ; color: red">*</span></label>
                                     <input type="text" name="name" id="name"
@@ -33,6 +33,22 @@
                                 </div>
                                 <input type="hidden" id="id" name="id">
                             </div>
+                            @if($type == 1)
+                                <div class="col-6" >
+                                    <div class="form-group">
+                                        <label>{{ __('main.order') }} <span style="font-size: 14px ; color: red">*</span></label>
+                                        <input type="number" class="form-control @error('sort') is-invalid @enderror" id="sort"
+                                               name="sort" required placeholder="0" >
+
+                                        @error('sort')
+                                            <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+
+                                    </div>
+                                </div>
+                            @endif
                             <div class="col-6" hidden="hidden">
                                 <div class="form-group">
                                     <label>{{ __('main.client_type') }} <span style="font-size: 14px ; color: red">*</span></label>
@@ -115,7 +131,7 @@
 
                         </div>
                         <div class="row" style="margin-top: 10px">
-                            <div class="col-6">
+                            <div class="@if($type == 0) col-12 @else col-6 @endif">
                                 <div class="form-group">
                                     <label>{{ __('main.phone') }} </label>
                                     <input type="text" name="phone" id="phone"

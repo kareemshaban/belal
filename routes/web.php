@@ -67,6 +67,12 @@ Route::group(
         Route::get('/suppliers-delete/{id}', [App\Http\Controllers\ClientController::class, 'destroy'])->name('suppliers-delete');
         Route::get('/supplier-account-show/{id}', [App\Http\Controllers\ClientController::class, 'showBalance'])->name('supplier-account-show');
         Route::post('/supplier-balance-update', [App\Http\Controllers\ClientController::class, 'updateBalance'])->name('supplier-balance-update');
+        Route::get('/supplier-order', [App\Http\Controllers\ClientController::class, 'getOrder'])->name('supplier-order');
+
+
+        Route::get('/carMembers/{supplier_id}', [App\Http\Controllers\CarMemberController::class, 'index'])->name('carMembers');
+
+
 
         Route::get('/insuranceBalances', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'index'])->name('insuranceBalances');
         Route::get('/insuranceBalances-create', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'create'])->name('insuranceBalances-create');

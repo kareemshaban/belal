@@ -58,7 +58,7 @@
                                 <tbody>
                                 @foreach($suppliers as $supplier)
                                     <tr>
-                                        <th scope="row" class="text-center">{{$loop -> index +1}}</th>
+                                        <th scope="row" class="text-center">{{$supplier -> sort}}</th>
                                         <td class="text-center">{{$supplier -> name}}</td>
                                         <td class="text-center">
                                             @if($supplier -> type == 0)
@@ -80,6 +80,10 @@
                                                        id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                     <i class='bx bx-money text-primary moneyBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
                                                        data-id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+                                                    @if($supplier -> car_id > 0)
+                                                        <i class='bx bxs-user-plus  text-info' data-toggle="tooltip" data-placement="top" title="{{__('main.members_action')}}"
+                                                           style="font-size: 25px ; cursor: pointer"></i>
+                                                    @endif
                                                 </div>
                                             @endcan
 
@@ -117,44 +121,53 @@
 <script type="text/javascript">
     var id = 0 ;
     $(document).on('click', '#createButton', function (event) {
-        console.log('clicked');
-        id = 0;
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
         $.ajax({
-            url: href,
-            beforeSend: function () {
-                $('#loader').show();
-            },
-            // return the result
-            success: function (result) {
-                $('#createModal').modal("show");
-                $(".modal-body #id").val(0);
-                $(".modal-body #type").val(@json($type));
-                $(".modal-body #name").val("");
-                $(".modal-body #phone").val("");
-                $(".modal-body #buffalo_min_limit").val("0");
-                $(".modal-body #buffalo_max_limit").val("0");
-                $(".modal-body #bovine_min_limit").val("0");
-                $(".modal-body #bovine_max_limit").val("0");
-                $(".modal-body #car_id").val("0");
-                $(".modal-body #address").val("");
+            type:'get',
+            url:'/supplier-order',
+            dataType: 'json',
 
-                var translatedText = "{{ __('main.newData') }}";
-                $(".modelTitle").html(translatedText);
+            success:function(order){
+                event.preventDefault();
+                let href = $(this).attr('data-attr');
+                $.ajax({
+                    url: href,
+                    beforeSend: function () {
+                        $('#loader').show();
+                    },
+                    // return the result
+                    success: function (result) {
+                        $('#createModal').modal("show");
+                        $(".modal-body #id").val(0);
+                        $(".modal-body #sort").val(order);
+                        $(".modal-body #type").val(@json($type));
+                        $(".modal-body #name").val("");
+                        $(".modal-body #phone").val("");
+                        $(".modal-body #buffalo_min_limit").val("0");
+                        $(".modal-body #buffalo_max_limit").val("0");
+                        $(".modal-body #bovine_min_limit").val("0");
+                        $(".modal-body #bovine_max_limit").val("0");
+                        $(".modal-body #car_id").val("0");
+                        $(".modal-body #address").val("");
+
+                        var translatedText = "{{ __('main.newData') }}";
+                        $(".modelTitle").html(translatedText);
 
 
-            },
-            complete: function () {
-                $('#loader').hide();
-            },
-            error: function (jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000
-        })
+                    },
+                    complete: function () {
+                        $('#loader').hide();
+                    },
+                    error: function (jqXHR, testStatus, error) {
+                        console.log(error);
+                        alert("Page " + href + " cannot open. Error:" + error);
+                        $('#loader').hide();
+                    },
+                    timeout: 8000
+                });
+
+            }
+        });
+
     });
     $(document).on('click', '.moneyBtn', function(event) {
         let id = $(this).data('id');
@@ -227,6 +240,7 @@
                         success: function(result) {
                             $('#createModal').modal("show");
                             $(".modal-body #type").val( response.type );
+                            $(".modal-body #sort").val( response.sort );
                             $(".modal-body #name").val( response.name );
                             $(".modal-body #phone").val( response.phone );
                             $(".modal-body #buffalo_min_limit").val( response.buffalo_min_limit );

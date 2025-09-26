@@ -76,7 +76,7 @@ class RecipitController extends Controller
                     'payment_method.required' => __('main.payment_method_required'),
                 ]
             );
-            Recipit::create([
+           $id = Recipit::create([
                 'date' => Carbon::parse($request -> date),
                 'bill_number' => $request -> bill_number,
                 'supplier_id' => $request -> supplier_id,
@@ -88,13 +88,20 @@ class RecipitController extends Controller
                 'state' => 0 ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
-            ]);
+            ]) -> id;
 
          //   $this -> updateClientAccount($request -> amount , 0 , $request -> supplier_id );
           //  $this -> updateSafeBalance(0 , $request -> amount , $request -> safe_id);
 
 
-            return redirect()->route('recipits') -> with('success', __('main.saved'));
+            if ($request->has('isPost')) {
+                return $this -> post($id);
+
+
+            } else {
+            return redirect() -> route('recipits') -> with('success', __('main.saved'));
+
+            }
         } else{
             return  $this -> update($request);
         }

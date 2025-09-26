@@ -35,11 +35,11 @@
                         </h4>
 
                         <div style="display: flex ; gap: 10px; align-items: end; ">
-                        <div class="form-group" style="display: flex ; flex-direction: column; justify-content: center; align-items: center;">
-                            <label>{{ __('main.isPost') }}</label>
-                            <input type="checkbox" id="isPost" name="isPost" class="form-check" style="width: 35px ; height: 35px;"/>
+                            <div class="form-group" style="display: flex ; flex-direction: column; justify-content: center; align-items: center;">
+                                <label>{{ __('main.isPost') }}</label>
+                                <input type="checkbox" id="isPost" name="isPost" class="form-check" style="width: 35px ; height: 35px;"/>
 
-                        </div>
+                            </div>
 
                         <button type="button" class="btn btn-primary" id="createButton" style="height: 45px"
                                 onclick="valdiateRequest()">
@@ -98,9 +98,9 @@
                                             <select  name="store_id" id="store_id" @if(Config::get('app.locale')=='ar' )
                                                 dir="rtl" @endif
                                                      class="form-control search @error('store_id') is-invalid @enderror"  required>
-                                                <option value=""> {{__('main.select')}} </option>
+                                                <option value="" > {{__('main.select')}} </option>
                                                 @foreach($stores as $store)
-                                                    <option value="{{$store -> id}}"> {{$store -> name  }} </option>
+                                                    <option value="{{$store -> id}}" @if($store -> isDefault == 1) selected @endif> {{$store -> name  }} </option>
 
                                                 @endforeach
 
@@ -343,11 +343,6 @@
                 })
 
 
-
-
-
-
-
             }
             else {
                 var translatedText = "{{ __('main.select_store_first') }}";
@@ -483,27 +478,39 @@
 
     function valdiateRequest(){
         var msg = '' ;
-        if($('#code').val() == "")
-            msg =  'حقل الكود مطلوب' + "\n" ;
-        if($('#store_id').val() == "")
-            msg =  'حقل المخزن مطلوب ' + "\n" ;
-        if($('#client_id').val() == "")
-            msg =  'حقل العميل مطلوب' + "\n" ;
-        if( items.length ==  0)
-            msg =  'يجب إضافة أصناف إلي تفاصيل الصنف' + "\n" ;
+        if($('#bill_number').val() == ""){
+            msg =  'حقل رقم الفاتورة مطلوب' ;
+            toastr.warning(msg);
+            return;
+        }
+
+        if($('#store_id').val() == "") {
+            msg = 'حقل المخزن مطلوب ';
+            toastr.warning(msg);
+            return;
+        }
+        if($('#client_id').val() == "") {
+            msg = 'حقل العميل مطلوب' ;
+            toastr.warning(msg);
+            return;
+        }
+        if( items.length ==  0){
+            msg =  'يجب إضافة أصناف إلي تفاصيل الصنف'  ;
+            toastr.warning(msg);
+            return;
+        }
+
 
         const allQuantitiesValid = items.every(item => item.quantity && parseFloat(item.quantity) > 0);
 
-        if( !allQuantitiesValid)
-            msg =  'يجب تحديد الكمية المباعة من كل الأصناف ويجب ان تكون اكبر من 0' + "\n" ;
+        if( !allQuantitiesValid){
+            msg =  'يجب تحديد الكمية المباعة من كل الأصناف ويجب ان تكون اكبر من 0';
+            toastr.warning(msg);
+            return;
+        }
 
-        if(msg == ''){
           $('#MealForm').submit();
 
-        } else {
-            showalert(msg);
-            return ;
-        }
     }
     function showalert(msg){
 

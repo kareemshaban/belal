@@ -21,6 +21,9 @@
             <!-- / Navbar -->
 
             <!-- Content wrapper -->
+            <form class="center" method="POST" action="{{ route('item_transform_docs_store') }}"
+                                  enctype="multipart/form-data" id="MealForm">
+                                @csrf
             <div class="content-wrapper">
                 <!-- Content -->
 
@@ -30,10 +33,19 @@
                             <span class="text-muted fw-light">{{__('main.cheese_department')}} /</span> {{__('main.item_transform_doc_create')}}
                         </h4>
 
+                        <div style="display: flex ; gap: 10px; align-items: end; ">
+                            <div class="form-group" style="display: flex ; flex-direction: column; justify-content: center; align-items: center;">
+                                <label>{{ __('main.isPost') }}</label>
+                                <input type="checkbox" id="isPost" name="isPost" class="form-check" style="width: 35px ; height: 35px;"/>
+
+                            </div>
+
                         <button type="button" class="btn btn-primary" id="createButton" style="height: 45px"
                                 onclick="valdiateRequest()">
                             {{__('main.save_btn')}}  <span class="tf-icons bx bx-save"></span>&nbsp;
                         </button>
+
+                        </div>
 
                     </div>
 
@@ -44,9 +56,7 @@
                         <h5 class="card-header">{{__('main.item_transform_doc_create')}}</h5>
                         @include('flash-message')
                         <div class="card-content" style="padding-right: 20px ; padding-left: 20px ; padding-bottom: 20px">
-                            <form class="center" method="POST" action="{{ route('item_transform_docs_store') }}"
-                                  enctype="multipart/form-data" id="MealForm">
-                                @csrf
+
 
                                 <div class="row">
                                     <div class="col-md-6 col-lg-6 col-sm-12" style="margin-top: 10px">
@@ -177,7 +187,7 @@
 
 
 
-                            </form>
+
 
                         </div>
 
@@ -193,6 +203,7 @@
                 <div class="content-backdrop fade"></div>
             </div>
             <!-- Content wrapper -->
+            </form>
         </div>
         <!-- / Layout page -->
     </div>

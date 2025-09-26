@@ -425,7 +425,9 @@ class WeaklyMilkMealController extends Controller
         $end_dayName_ar = $endOfWeek->translatedFormat('l');
 
 
-        $suppliers = Client::where('type' , '<>' , 0) -> get();
+        $suppliers = Client::where('type', '<>', 0)
+            ->orderBy('sort', 'asc')
+            ->get();
 
         $setting = Settings::all() -> first();
 

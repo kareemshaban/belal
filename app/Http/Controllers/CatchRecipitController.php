@@ -74,7 +74,7 @@ class CatchRecipitController extends Controller
                     'payment_method.required' => __('main.payment_method_required'),
                 ]
             );
-            CatchRecipit::create([
+           $id = CatchRecipit::create([
                 'date' => Carbon::parse($request -> date),
                 'bill_number' => $request -> bill_number,
                 'client_id' => $request -> client_id,
@@ -85,13 +85,20 @@ class CatchRecipitController extends Controller
                 'state' => 0 ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
-            ]);
+            ]) -> id;
 
           //  $this -> updateClientAccount(0, $request -> amount  , $request -> client_id );
            // $this -> updateSafeBalance($request ->  amount, 0 , $request -> safe_id );
 
+           if ($request->has('isPost')) {
+                return $this -> post($id);
 
-            return redirect()->route('catches') -> with('success', __('main.saved'));
+
+            } else {
+            return redirect() -> route('catches') -> with('success', __('main.saved'));
+
+            }
+
         } else{
             return  $this -> update($request);
         }

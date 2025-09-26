@@ -71,7 +71,8 @@ class BoxRecipitController extends Controller
                     'safe_id.required' => __('main.safe_id_required'),
                 ]
             );
-            BoxRecipit::create([
+
+           $id = BoxRecipit::create([
                 'date' => Carbon::parse($request -> date),
                 'bill_number' => $request -> bill_number,
                 'recipit_type' => $request -> recipit_type,
@@ -81,11 +82,17 @@ class BoxRecipitController extends Controller
                 'state' => 0 ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
-            ]);
+            ]) -> id;
 
-         //   $this -> updateSafeBalance(0 , $request -> amount , $request -> safe_id);
+          if ($request->has('isPost')) {
+            return $this -> post($id);
 
-            return redirect()->route('boxRecipits') -> with('success', __('main.saved'));
+
+        } else {
+        return redirect() -> route('boxRecipits') -> with('success', __('main.saved'));
+
+        }
+
         } else{
             return  $this -> update($request);
         }

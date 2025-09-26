@@ -72,7 +72,15 @@ class ItemTransformDocController extends Controller
         if($id > 0){
             $this -> storeDetails($request , $id);
         }
-        return redirect()->route('item_transform_docs') -> with('success', __('main.saved'));
+           if ($request->has('isPost')) {
+            return $this -> postDoc($id);
+
+
+        } else {
+                 return redirect() -> route( 'item_transform_docs') -> with('success', __('main.saved'));
+
+        }
+
     }
 
     public function storeDetails(Request $request, $id)

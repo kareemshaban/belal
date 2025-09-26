@@ -196,7 +196,7 @@ class ItemsController extends Controller
 
 
             if($storeQuantity){
-                $item -> available_quantity = $storeQuantity -> balance ;
+                $item -> available_quantity = $storeQuantity -> balance +  $storeQuantity -> opening_quantity;
                 $item -> item_store_id = $storeQuantity -> store_id ;
             } else {
                 $item -> available_quantity = 0;

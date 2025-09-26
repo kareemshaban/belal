@@ -29,7 +29,9 @@ class ClientController extends Controller
             abort(403);
         }
 
-        $suppliers = Client::where('type' , $type)->get();
+        $suppliers = Client::where('type', $type)
+            ->orderBy('sort', 'asc')
+            ->get();
         $cars = Cars::all();
         return view('admin.Client.index', compact('suppliers' , 'type' , 'cars'));
     }
@@ -63,6 +65,18 @@ class ClientController extends Controller
                     'name.unique'   => __('main.name_unique'),
                 ]
             );
+            $sort = 0 ;
+            if ($request->type == 1 ) {
+                $sort = $request->sort ?? (Client::where('type', 1)->max('sort') + 1);
+                // shift orders only for type=1
+                Client::where('type', 1)
+                    ->where('sort', '>=', $sort)
+                    ->increment('sort');
+            } else {
+                $sort = 0 ;
+            }
+
+
             Client::create([
                 'type' => $request -> type, // 0 client , 1 supplier , 2 both
                 'name' => $request -> name,
@@ -73,6 +87,7 @@ class ClientController extends Controller
                 'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
                 'car_id' => $request -> car_id ,
+                'sort'   => $sort,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
             ]);
@@ -130,6 +145,32 @@ class ClientController extends Controller
         ]);
         $client = Client::find($request -> id);
         if($client){
+
+
+            if ($client->type == 1) {
+                $oldOrder = $client->sort;
+                $newOrder = $request->sort;
+                if ($newOrder != $oldOrder) {
+                    if ($newOrder > $oldOrder) {
+                        // Moving down: shift up suppliers between old+1 and new
+                        Client::where('type', 1)
+                            ->whereBetween('sort', [$oldOrder + 1, $newOrder])
+                            ->decrement('sort');
+                    } else {
+                        // Moving up: shift down suppliers between new and old-1
+                        Client::where('type', 1)
+                            ->whereBetween('sort', [$newOrder, $oldOrder - 1])
+                            ->increment('sort');
+                    }
+                }
+
+
+            } else {
+                $newOrder = 0 ;
+            }
+
+
+
             $client -> update([
                 'type' => $request -> type, // 0 client , 1 supplier , 2 both
                 'name' => $request -> name,
@@ -140,6 +181,7 @@ class ClientController extends Controller
                 'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
                 'car_id' => $request -> car_id ,
+                'sort'   => $newOrder,
                 'user_upd' => Auth::user() -> id
             ]);
 
@@ -194,6 +236,14 @@ class ClientController extends Controller
 
        $type = Client::find($request -> id) -> type ;
         return redirect()->route('suppliers' , $type) -> with('success', __('main.updated'));
+
+    }
+
+    public function  getOrder()
+    {
+        $sort = $request->sort ?? (Client::where('type', 1)->max('sort') + 1);
+        echo json_encode($sort);
+        exit();
 
     }
 }

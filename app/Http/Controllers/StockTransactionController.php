@@ -75,7 +75,15 @@ class StockTransactionController extends Controller
         if($id > 0){
            $this -> storeDetails($request , $id);
         }
-        return redirect()->route('stock_exchange') -> with('success', __('main.saved'));
+         if ($request->has('isPost')) {
+            return $this -> post($id);
+
+
+        } else {
+                 return redirect() -> route('stock_exchange') -> with('success', __('main.saved'));
+
+        }
+
     }
     public function storeDetails(Request $request , $id){
         $details = StockTransactionDetails::where('transaction_id' , '=' , $id) -> get();
