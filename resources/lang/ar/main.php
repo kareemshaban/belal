@@ -590,7 +590,9 @@ return [
     'insurance_balance' => 'نقدية الأرضية',
     'supplier_insurance_balance_create' => 'إنشاء أرضية مورد',
     'supplier_insurance_balance_edit' => 'تعديل أرضية مورد',
-    'isPost' => 'حفظ و ترحيل '
+    'isPost' => 'حفظ و ترحيل ',
+    'car_members' => 'موردين السيارة',
+
 
 
 

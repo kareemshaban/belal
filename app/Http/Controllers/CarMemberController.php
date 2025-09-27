@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarMember;
+use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 
 class CarMemberController extends Controller
@@ -21,8 +23,12 @@ class CarMemberController extends Controller
             -> where('car_members.supplier_id' , '=' ,$supplier_id )
             -> get();
 
-        echo json_encode($members);
-        exit();
+        $suppliers = Client::where('car_id' , '<>' , 0) -> get();
+        $supplier = Client::find($supplier_id);
+
+        return view('admin.Client.members.index' , compact('members' , 'suppliers' , 'supplier'));
+
+
     }
 
     /**
@@ -52,9 +58,15 @@ class CarMemberController extends Controller
      * @param  \App\Models\CarMember  $carMember
      * @return \Illuminate\Http\Response
      */
-    public function show(CarMember $carMember)
+    public function show($id)
     {
-        //
+        $member = DB::table('car_members')
+            -> join('clients' , 'car_members.supplier_id' , '=' , 'clients.id')
+            -> select('car_members.*' , 'clients.name as supplier_name')
+            -> where('car_members.supplier_id' , '=' ,$id )
+            -> first();
+        echo json_encode($member);
+        exit();
     }
 
     /**
@@ -86,8 +98,13 @@ class CarMemberController extends Controller
      * @param  \App\Models\CarMember  $carMember
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CarMember $carMember)
+    public function destroy($id)
     {
-        //
+        $member = CarMember::find($id);
+        if($member){
+            $member -> delete();
+            return redirect()->route('carMembers' , $member -> supplier_id) -> with('success', __('main.deleted'));
+
+        }
     }
 }

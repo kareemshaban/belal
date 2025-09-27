@@ -70,7 +70,10 @@ Route::group(
         Route::get('/supplier-order', [App\Http\Controllers\ClientController::class, 'getOrder'])->name('supplier-order');
 
 
+
         Route::get('/carMembers/{supplier_id}', [App\Http\Controllers\CarMemberController::class, 'index'])->name('carMembers');
+        Route::get('/carMembers-show/{id}', [App\Http\Controllers\CarMemberController::class, 'show'])->name('carMembers-show');
+        Route::get('/carMembers-delete/{id}', [App\Http\Controllers\CarMemberController::class, 'destroy'])->name('carMembers-delete');
 
 
 

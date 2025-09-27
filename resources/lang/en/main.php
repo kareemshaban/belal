@@ -560,6 +560,7 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
     'insurance_balance' => 'Insurance Value',
     'supplier_insurance_balance_create' => 'Create Supplier Insurance Balance',
     'supplier_insurance_balance_edit' => 'Edit Supplier Insurance Balance',
-    'isPost' => 'Save and Post'
+    'isPost' => 'Save and Post',
+    'car_members' => 'Car Members'
 
 ];

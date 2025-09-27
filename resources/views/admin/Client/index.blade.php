@@ -81,8 +81,11 @@
                                                     <i class='bx bx-money text-primary moneyBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
                                                        data-id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                     @if($supplier -> car_id > 0)
-                                                        <i class='bx bxs-user-plus  text-info' data-toggle="tooltip" data-placement="top" title="{{__('main.members_action')}}"
-                                                           style="font-size: 25px ; cursor: pointer"></i>
+                                                        <a href="{{route('carMembers' , $supplier -> id)}}">
+                                                            <i class='bx bxs-user-plus  text-info membersBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.members_action')}}"
+                                                               style="font-size: 25px ; cursor: pointer" data-id="{{$supplier -> id}}"></i>
+                                                        </a>
+
                                                     @endif
                                                 </div>
                                             @endcan
@@ -304,6 +307,9 @@
         console.log()
         id = 0 ;
     });
+
+
+
 
     function confirmDelete(id){
         let url = "{{ route('suppliers-delete', ':id') }}";
