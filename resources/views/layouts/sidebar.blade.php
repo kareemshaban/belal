@@ -99,11 +99,7 @@
                         <div data-i18n="Perfect Scrollbar">{{__('main.cars_list')}}</div>
                     </a>
                 </li>
-                <li class="menu-item @if($subSlag == 52)  active @endif">
-                    <a href="{{route('car_meals')}}" class="menu-link">
-                        <div data-i18n="Text Divider">{{__('main.cars_meals')}}</div>
-                    </a>
-                </li>
+
             </ul>
         </li>
 

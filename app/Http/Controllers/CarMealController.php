@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarMeal;
+use App\Models\CarMember;
+use App\Models\Cars;
 use App\Models\Client;
 use App\Models\Settings;
 use Carbon\Carbon;
@@ -23,10 +25,75 @@ class CarMealController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($supplier_id , $startDate )
     {
 
-        return view('admin.CarsMeals.index');
+       $supplier = Client::find($supplier_id);
+
+        $dayTranslations = [
+            'Sunday'    => 'الأحد',
+            'Monday'    => 'الإثنين',
+            'Tuesday'   => 'الثلاثاء',
+            'Wednesday' => 'الأربعاء',
+            'Thursday'  => 'الخميس',
+            'Friday'    => 'الجمعة',
+            'Saturday'  => 'السبت',
+        ];
+
+        $meal = DB::table('weakly_milk_meals')
+            -> select(
+                'weakly_milk_meals.id',
+                'weakly_milk_meals.state',
+                DB::raw('DAYNAME(weakly_milk_meals.start_date) as from_day_name_en'),
+                DB::raw('DAYNAME(weakly_milk_meals.end_date) as to_day_name_en'),
+                DB::raw('DATE(weakly_milk_meals.start_date) as start_date'),
+                DB::raw('DATE(weakly_milk_meals.end_date) as end_date'),
+
+            ) -> whereDate('start_date', $startDate)->first();
+
+
+
+
+        if($meal){
+            $meal->from_day_name_ar = $dayTranslations[$meal->from_day_name_en] ?? $meal->from_day_name_en;
+            $meal->to_day_name_ar = $dayTranslations[$meal->to_day_name_en] ?? $meal->to_day_name_en;
+        }
+
+
+        $date1 = Carbon::parse($startDate);
+        $day   = $date1->day;   // 12
+        $month = $date1->month; // 9
+        $year  = $date1->year;  // 2025
+
+        $date = $day . '-' . $month . '-' . $year;
+
+        $carbonDate = Carbon::createFromFormat('d-m-Y', $date);
+
+        $dayName = $carbonDate->format('l'); // e.g., "Friday"
+
+
+
+        $startOfWeek = $carbonDate->copy()->startOfWeek(Carbon::FRIDAY);
+
+        $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+        $end_dayName = $endOfWeek->format('l');
+
+        Carbon::setLocale('ar'); // Arabic
+        $dayName_ar = $carbonDate->translatedFormat('l');
+        $end_dayName_ar = $endOfWeek->translatedFormat('l');
+
+
+        $members = CarMember::where('supplier_id', $supplier_id)
+            ->get();
+
+        $setting = Settings::all() -> first();
+
+
+
+        return view('admin.milkMeals.carDaily', compact('meal' , 'dayName' , 'dayName_ar' ,
+            'startOfWeek' , 'endOfWeek' , 'end_dayName_ar' , 'end_dayName' , 'members' , 'setting' , 'supplier'));
+
     }
 
       public function getWeakMealsForCars($month , $year , $day)

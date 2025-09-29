@@ -84,14 +84,11 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div style="display: flex ; justify-content: space-between ; align-items: center">
                         <h4 class="fw-bold py-3 mb-4">
-                            <span class="text-muted fw-light">{{__('main.milk_department')}} /</span> {{__('main.weakly_meal')}}
+                            <span class="text-muted fw-light">{{__('main.milk_department')}} /</span> {{__('main.car_meal_details')}}
                         </h4>
                       @if($meal)
                         @if( $meal -> state == 0)
-{{--                            <button type="button" class="btn btn-primary"  id="postBtn" style="height: 45px"--}}
-{{--                                    data-id="{{ $meal->id  }}" >--}}
-{{--                                {{__('main.post_close_btn')}}  <span class="tf-icons bx bx-cloud-upload"></span>&nbsp;--}}
-{{--                            </button>--}}
+
                         @else
                             <h4 class="fw-bold py-3 mb-4 text-danger"> {{__('main.posted_meal')}} </h4>
 
@@ -103,7 +100,7 @@
 
                     <!-- Responsive Table -->
                     <div class="card">
-                        <h5 class="card-header">{{__('main.weakly_meal')}}
+                        <h5 class="card-header">{{__('main.car_meal_details')}} (<span style="color: grey">  {{ $supplier -> name  }}</span>)
                         (
                             @if (Config::get('app.locale')=='en' )
                                 {{$dayName}}
@@ -120,12 +117,12 @@
                             @endif
                             <span style="color: grey">  {{\Carbon\Carbon::parse($endOfWeek) -> format('Y-m-d') }}</span>
                             )
+
                         </h5>
                         <input type="hidden" id="start" name="start" value="{{$startOfWeek}}">
                         <input type="hidden" id="end" name="end" value="{{$endOfWeek}}">
                         <input type="hidden" id="wid" name="wid" value="{{$meal ? $meal -> id : 0}}">
 
-                        <input type="hidden" id="startDate" name="startDate" value="{{$startDate}}">
                         @include('flash-message')
                            <h2 style="font-size: 11px ; color: red ; margin-right: 10px ; margin-left: 10px">{{__('main.milk_meal_note')}}</h2>
 
@@ -157,10 +154,10 @@
                                                 </th>
 
                                             @endforeach
-                                            <th class="text-center cell"  rowspan="2">{{__('main.total')}}</th>
-                                            <th class="text-center cell" colspan="1" rowspan="2">{{__('main.price')}}</th>
-                                            <th class="text-center cell" colspan="1" rowspan="3">{{__('main.total_cash')}}</th>
-                                            <th class="text-center cell" rowspan="3">{{ __('main.actions') }}</th>
+                                            <th class="text-center cell"  rowspan="2" hidden="hidden">{{__('main.total')}}</th>
+                                            <th class="text-center cell" colspan="1" rowspan="2" hidden="hidden">{{__('main.price')}}</th>
+                                            <th class="text-center cell" colspan="1" rowspan="3" hidden="hidden">{{__('main.total_cash')}}</th>
+                                            <th class="text-center cell" rowspan="3" hidden="hidden">{{ __('main.actions') }}</th>
                                         </tr>
                                         <tr>
                                             @foreach ($period as $date)
@@ -178,7 +175,7 @@
                                                 @endforeach
                                                     <th class="text-center cell" >{{ __('main.total_bovine_weight') }}</th>
                                                     <th class="text-center cell" hidden="hidden">{{ __('main.total_buffalo_weight') }}</th>
-                                                    <th class="text-center cell" >{{ __('main.bovine_milk_price') }}</th>
+                                                    <th class="text-center cell" hidden="hidden">{{ __('main.bovine_milk_price') }}</th>
                                                     <th class="text-center cell" hidden="hidden">{{ __('main.buffalo_milk_price') }}</th>
 
                                             </tr>
@@ -186,7 +183,7 @@
                                     <tbody>
 
 
-                                        @include('admin.DailyMeals.empty')
+                                        @include('admin.DailyMeals.emptyCar')
 
 
 

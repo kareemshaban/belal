@@ -592,6 +592,7 @@ return [
     'supplier_insurance_balance_edit' => 'تعديل أرضية مورد',
     'isPost' => 'حفظ و ترحيل ',
     'car_members' => 'موردين السيارة',
+    'car_meal_details' => 'تفاصيل وجبة السيارة'
 
 
 

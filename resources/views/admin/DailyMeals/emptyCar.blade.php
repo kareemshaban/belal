@@ -1,12 +1,12 @@
 
-    @foreach($suppliers as $supplier)
+    @foreach($members as $supplier)
         <tr>
             <td class="text-center">{{$loop -> index + 1}}</td>
             <td class="text-center">
                 @if($supplier -> car_id == 0)
                     <span> {{$supplier -> name}}  </span>
                     @else
-                    <a href="{{route('car_meals' , ['supplier_id' =>  $supplier -> id , 'startDate' => $startDate])}}" target="_blank">
+                    <a href="{{route('car_meals' , ['supplier_id' =>  $supplier -> id , 'startDate' => $startDate])}}">
                         <span class="text-info"> {{$supplier -> name}}  </span>
                     </a>
 
@@ -38,7 +38,7 @@
                 </td>
             @endforeach
 
-            <td class="text-center">
+            <td class="text-center" >
                 <input type="text" step="any" name="total_bovine_weight[]"
                        class="form-control" data-date="{{ $date }}" data-supplier="{{ $supplier -> id }}" readonly
                        @if(optional($meal)->state === 1) disabled @endif/>
@@ -49,7 +49,7 @@
                        @if(optional($meal)->state === 1) disabled @endif/>
             </td>
 
-            <td class="text-center">
+            <td class="text-center" hidden="hidden">
                 <input type="number" step="any" name="bovine_price[]" data-field ="2" data-type="3"
                        class="form-control" data-date="{{ $date }}" data-supplier="{{ $supplier -> id }}"
                 value="{{$supplier -> bovine_price}}"
@@ -62,22 +62,12 @@
                        @if(optional($meal)->state === 1) disabled @endif/>
             </td>
 
-            <td class="text-center">
+            <td class="text-center" hidden="hidden">
                 <input type="text" step="any" name="total_money[]"
                        class="form-control" data-date="{{ $date }}" data-supplier="{{ $supplier -> id }}" readonly
                        @if(optional($meal)->state === 1) disabled @endif/>
             </td>
-            <td class="text-center">
 
-
-                <i class='bx bxs-cloud-upload text-primary postBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.post_action')}}"
-                   data-supplier="{{$supplier -> id}}" data-supplier_name="{{$supplier -> name}}" style="font-size: 25px ; cursor: pointer"></i>
-
-                       <i class='bx bx-show text-primary viewBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.view_action')}}"
-                          data-supplier="{{ $supplier -> id }}"   style="font-size: 25px ; cursor: pointer"></i>
-
-
-            </td>
 
 
         </tr>

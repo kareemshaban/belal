@@ -6,6 +6,7 @@ use App\Models\CarMember;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CarMemberController extends Controller
@@ -49,7 +50,32 @@ class CarMemberController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if($request -> id == 0){
+            $request->validate([
+                    'name' => 'required|unique:car_members,name',
+                    'supplier_id' => 'required',
+                ]
+                , [
+                    'supplier_id.required' => __('main.supplier_required'),
+                    'name.required' => __('main.name_required'),
+                    'name.unique'   => __('main.name_unique'),
+                ]
+            );
+
+
+
+            CarMember::create([
+                'supplier_id' => $request -> supplier_id,
+                'name' => $request -> name,
+                'phone' => $request -> phone ?? "",
+                'address' => $request -> address ?? "",
+                'user_ins' => Auth::user() -> id,
+                'user_upd' => 0,
+            ]);
+            return redirect()->route('carMembers' , $request -> supplier_id) -> with('success', __('main.saved'));
+        } else{
+            return  $this -> update($request);
+        }
     }
 
     /**
@@ -87,9 +113,20 @@ class CarMemberController extends Controller
      * @param  \App\Models\CarMember  $carMember
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CarMember $carMember)
+    public function update(Request $request)
     {
-        //
+        $member = CarMember::find($request -> id);
+        if($member){
+            $member -> update([
+                'supplier_id' => $request -> supplier_id,
+                'name' => $request -> name,
+                'phone' => $request -> phone ?? "",
+                'address' => $request -> address ?? "",
+                'user_upd' => Auth::user() -> id
+            ]);
+            return redirect()->route('carMembers' , $request -> supplier_id ) -> with('success', __('main.updated'));
+
+        }
     }
 
     /**

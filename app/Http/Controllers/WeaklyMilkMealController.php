@@ -441,7 +441,7 @@ class WeaklyMilkMealController extends Controller
 
 
         return view('admin.milkMeals.daily', compact('meal' , 'dayName' , 'dayName_ar' ,
-            'startOfWeek' , 'endOfWeek' , 'end_dayName_ar' , 'end_dayName' , 'suppliers' , 'setting'));
+            'startOfWeek' , 'endOfWeek' , 'end_dayName_ar' , 'end_dayName' , 'suppliers' , 'setting' , 'startDate'));
 
     }
 

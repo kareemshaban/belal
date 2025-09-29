@@ -14,7 +14,7 @@
 
                 <div class="container-fluid">
 
-                    <form class="center" method="POST" action="{{ route('suppliers-store') }}"
+                    <form class="center" method="POST" action="{{ route('carMember-store') }}"
                           enctype="multipart/form-data">
                         @csrf
                         <div class="row">
@@ -23,7 +23,7 @@
                                     <label>{{ __('main.supplier') }} <span style="font-size: 14px ; color: red">*</span></label>
                                     <input type="text" name="supplier_name" id="supplier_name"
                                            class="form-control @error('name') is-invalid @enderror"
-                                           placeholder="{{ __('main.name') }}" autofocus required/>
+                                           placeholder="{{ __('main.name') }}" autofocus required readonly/>
                                     @error('name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

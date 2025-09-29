@@ -38,7 +38,7 @@ Route::group(
 
 
         Route::get('/safes', [App\Http\Controllers\SafeController::class, 'index'])->name('safes');
-        Route::get('/safes-show/{id}', action: [App\Http\Controllers\SafeController::class, 'show'])->name('safes-show');
+        Route::get('/safes-show/{id}',  [App\Http\Controllers\SafeController::class, 'show'])->name('safes-show');
         Route::post('/safes-store', [App\Http\Controllers\SafeController::class, 'store'])->name('safes-store');
         Route::get('/safes-delete/{id}', [App\Http\Controllers\SafeController::class, 'destroy'])->name('safes-delete');
 
@@ -47,10 +47,10 @@ Route::group(
 
 
 
-        Route::get('/balance_transactions', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'index'])->name(name: 'balance_transactions');
-        Route::post('/balance_transactions_store', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'store'])->name(name: 'balance_transactions_store');
-        Route::get('/balance_transactions_show/{id}', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'show'])->name('balance_transactions_show');
-        Route::get('/get_transaction_code', action: [App\Http\Controllers\SafeBalanceExchangeController::class, 'getcode'])->name('get_transaction_code');
+        Route::get('/balance_transactions',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'index'])->name( 'balance_transactions');
+        Route::post('/balance_transactions_store', [App\Http\Controllers\SafeBalanceExchangeController::class, 'store'])->name( 'balance_transactions_store');
+        Route::get('/balance_transactions_show/{id}', [App\Http\Controllers\SafeBalanceExchangeController::class, 'show'])->name('balance_transactions_show');
+        Route::get('/get_transaction_code',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'getcode'])->name('get_transaction_code');
 
 
 
@@ -74,6 +74,7 @@ Route::group(
         Route::get('/carMembers/{supplier_id}', [App\Http\Controllers\CarMemberController::class, 'index'])->name('carMembers');
         Route::get('/carMembers-show/{id}', [App\Http\Controllers\CarMemberController::class, 'show'])->name('carMembers-show');
         Route::get('/carMembers-delete/{id}', [App\Http\Controllers\CarMemberController::class, 'destroy'])->name('carMembers-delete');
+        Route::post('/carMember-store', [App\Http\Controllers\CarMemberController::class, 'store'])->name('carMember-store');
 
 
 
@@ -102,9 +103,7 @@ Route::group(
         Route::post('/cars-store', [App\Http\Controllers\CarsController::class, 'store'])->name('cars-store');
         Route::get('/cars-delete/{id}', [App\Http\Controllers\CarsController::class, 'destroy'])->name('cars-delete');
 
-        Route::get('/car_meals', [App\Http\Controllers\CarMealController::class, 'index'])->name('car_meals');
-        Route::get('/getWeakMealsForCars/{month}/{year}/{day}', [App\Http\Controllers\CarMealController::class, 'getWeakMealsForCars'])->name('getWeakMealsForCars');
-        Route::get('/car_meal_create/{wid}', [App\Http\Controllers\CarMealController::class, 'create'])->name('car_meal_create');
+
 
 
 
@@ -119,6 +118,11 @@ Route::group(
         Route::get('/getWeaklyMeals/{month}/{year}/{day}', [App\Http\Controllers\WeaklyMilkMealController::class, 'getWeaklyMeals'])->name('getWeaklyMeals');
         Route::get('/getWeaklyMeal/{id}/{month}/{year}/{day}', [App\Http\Controllers\WeaklyMilkMealController::class, 'getWeaklyMeal'])->name('getWeaklyMeal');
         Route::get('/posted_milk_meals', [App\Http\Controllers\WeaklyMilkMealController::class, 'posted_milk_meals'])->name('posted_milk_meals');
+
+
+        Route::get('/car_meals/{supplier_id}/{startDate}', [App\Http\Controllers\CarMealController::class, 'index'])->name('car_meals');
+        Route::get('/getWeakMealsForCars/{month}/{year}/{day}', [App\Http\Controllers\CarMealController::class, 'getWeakMealsForCars'])->name('getWeakMealsForCars');
+        Route::get('/car_meal_create/{wid}', [App\Http\Controllers\CarMealController::class, 'create'])->name('car_meal_create');
 
 
         Route::post('/postMeal', [App\Http\Controllers\WeaklyMilkMealController::class, 'postMeal'])->name('postMeal');
