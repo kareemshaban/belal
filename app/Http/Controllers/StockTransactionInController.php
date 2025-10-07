@@ -22,18 +22,42 @@ class StockTransactionInController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
-
+        $is_all = $isAll ?? 0 ;
         if (!Gate::allows('page-access', [18, 'view'])) {
             abort(403);
         }
+        if($isAll == 1 ) {
+            $docs = DB::table('stock_transaction_ins')->
+            join('cheese_meals', 'cheese_meals.id', '=', 'stock_transaction_ins.meal_id')
+                ->join('stores', 'stores.id', '=', 'stock_transaction_ins.store_id')
+                ->select('stock_transaction_ins.*', 'cheese_meals.code as cheese_meal', 'stores.name as store_name')->get();
 
-        $docs = DB::table('stock_transaction_ins') ->
-        join('cheese_meals' , 'cheese_meals.id' , '=' , 'stock_transaction_ins.meal_id')
-            ->join('stores' , 'stores.id' , '=' , 'stock_transaction_ins.store_id')
-            -> select('stock_transaction_ins.*' , 'cheese_meals.code as cheese_meal' , 'stores.name as store_name') -> get();
-        return view('admin.StockIn.index', compact('docs'));
+        } else {
+            $today = Carbon::now();
+
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
+
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+            $docs = DB::table('stock_transaction_ins')->
+            join('cheese_meals', 'cheese_meals.id', '=', 'stock_transaction_ins.meal_id')
+                ->join('stores', 'stores.id', '=', 'stock_transaction_ins.store_id')
+                ->select('stock_transaction_ins.*', 'cheese_meals.code as cheese_meal', 'stores.name as store_name')
+                ->whereDate('stock_transaction_ins.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('stock_transaction_ins.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
+        return view('admin.StockIn.index', compact('docs' , 'is_all'));
     }
 
     /**

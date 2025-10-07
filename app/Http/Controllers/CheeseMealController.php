@@ -28,20 +28,47 @@ class CheeseMealController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
+
+        $is_all = $isAll ?? 0 ;
         if (!Gate::allows('page-access', [10, 'edit'])) {
             abort(403);
         }
 
-        $meals = DB::table('cheese_meals')
-        -> join('items', 'cheese_meals.item_id', '=', 'items.id')
-        -> select('cheese_meals.*', 'items.name as item') -> get();
-
         $weaklyMeals = WeaklyMilkMeal::where('state' , '=' , 0) -> get ();
         $suppliers = Client::where('type' , '<>' , 0) -> get();
 
-        return view('admin.CheeseMeals.index', compact('meals' , 'weaklyMeals' , 'suppliers'));
+        if($isAll == 1 ){
+            $meals = DB::table('cheese_meals')
+                -> join('items', 'cheese_meals.item_id', '=', 'items.id')
+                -> select('cheese_meals.*', 'items.name as item') -> get();
+
+        } else {
+
+            $today = Carbon::now();
+
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
+
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+            $meals = DB::table('cheese_meals')
+                ->join('items', 'cheese_meals.item_id', '=', 'items.id')
+                ->select('cheese_meals.*', 'items.name as item')
+                ->whereDate('cheese_meals.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('cheese_meals.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
+
+        return view('admin.CheeseMeals.index', compact('meals' , 'weaklyMeals' , 'suppliers' , 'is_all'));
     }
 
     public function index2()

@@ -27,15 +27,42 @@ class ItemTransformDocController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
-        $docs = DB::table('item_transform_docs')
-            -> join('stores as f_store', 'item_transform_docs.from_store', '=', 'f_store.id')
-            -> join('stores as t_store', 'item_transform_docs.to_store', '=', 't_store.id')
-            ->select('item_transform_docs.*' , 'f_store.name as from_store_name' , 't_store.name as to_store_name')
-            -> get();
+        $is_all = $isAll ?? 0 ;
 
-        return view('admin.ItemTransformDoc.index', compact('docs'));
+        if($isAll == 1 ) {
+            $docs = DB::table('item_transform_docs')
+                ->join('stores as f_store', 'item_transform_docs.from_store', '=', 'f_store.id')
+                ->join('stores as t_store', 'item_transform_docs.to_store', '=', 't_store.id')
+                ->select('item_transform_docs.*', 'f_store.name as from_store_name', 't_store.name as to_store_name')
+                ->get();
+        } else {
+            $today = Carbon::now();
+
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
+
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+            $docs = DB::table('item_transform_docs')
+                ->join('stores as f_store', 'item_transform_docs.from_store', '=', 'f_store.id')
+                ->join('stores as t_store', 'item_transform_docs.to_store', '=', 't_store.id')
+                ->select('item_transform_docs.*', 'f_store.name as from_store_name', 't_store.name as to_store_name')
+                ->whereDate('item_transform_docs.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('item_transform_docs.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
+
+        return view('admin.ItemTransformDoc.index', compact('docs' , 'is_all'));
     }
 
     /**

@@ -48,8 +48,8 @@ Route::group(
 
 
         Route::get('/balance_transactions',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'index'])->name( 'balance_transactions');
-        Route::post('/balance_transactions_store', [App\Http\Controllers\SafeBalanceExchangeController::class, 'store'])->name( 'balance_transactions_store');
-        Route::get('/balance_transactions_show/{id}', [App\Http\Controllers\SafeBalanceExchangeController::class, 'show'])->name('balance_transactions_show');
+        Route::post('/balance_transactions_store',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'store'])->name( 'balance_transactions_store');
+        Route::get('/balance_transactions_show/{id}',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'show'])->name('balance_transactions_show');
         Route::get('/get_transaction_code',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'getcode'])->name('get_transaction_code');
 
 
@@ -67,16 +67,6 @@ Route::group(
         Route::get('/suppliers-delete/{id}', [App\Http\Controllers\ClientController::class, 'destroy'])->name('suppliers-delete');
         Route::get('/supplier-account-show/{id}', [App\Http\Controllers\ClientController::class, 'showBalance'])->name('supplier-account-show');
         Route::post('/supplier-balance-update', [App\Http\Controllers\ClientController::class, 'updateBalance'])->name('supplier-balance-update');
-        Route::get('/supplier-order', [App\Http\Controllers\ClientController::class, 'getOrder'])->name('supplier-order');
-
-
-
-        Route::get('/carMembers/{supplier_id}', [App\Http\Controllers\CarMemberController::class, 'index'])->name('carMembers');
-        Route::get('/carMembers-show/{id}', [App\Http\Controllers\CarMemberController::class, 'show'])->name('carMembers-show');
-        Route::get('/carMembers-delete/{id}', [App\Http\Controllers\CarMemberController::class, 'destroy'])->name('carMembers-delete');
-        Route::post('/carMember-store', [App\Http\Controllers\CarMemberController::class, 'store'])->name('carMember-store');
-
-
 
         Route::get('/insuranceBalances', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'index'])->name('insuranceBalances');
         Route::get('/insuranceBalances-create', [App\Http\Controllers\SupplierInsuranceBalanceController::class, 'create'])->name('insuranceBalances-create');
@@ -103,7 +93,9 @@ Route::group(
         Route::post('/cars-store', [App\Http\Controllers\CarsController::class, 'store'])->name('cars-store');
         Route::get('/cars-delete/{id}', [App\Http\Controllers\CarsController::class, 'destroy'])->name('cars-delete');
 
-
+        Route::get('/car_meals', [App\Http\Controllers\CarMealController::class, 'index'])->name('car_meals');
+        Route::get('/getWeakMealsForCars/{month}/{year}/{day}', [App\Http\Controllers\CarMealController::class, 'getWeakMealsForCars'])->name('getWeakMealsForCars');
+        Route::get('/car_meal_create/{wid}', [App\Http\Controllers\CarMealController::class, 'create'])->name('car_meal_create');
 
 
 
@@ -118,11 +110,6 @@ Route::group(
         Route::get('/getWeaklyMeals/{month}/{year}/{day}', [App\Http\Controllers\WeaklyMilkMealController::class, 'getWeaklyMeals'])->name('getWeaklyMeals');
         Route::get('/getWeaklyMeal/{id}/{month}/{year}/{day}', [App\Http\Controllers\WeaklyMilkMealController::class, 'getWeaklyMeal'])->name('getWeaklyMeal');
         Route::get('/posted_milk_meals', [App\Http\Controllers\WeaklyMilkMealController::class, 'posted_milk_meals'])->name('posted_milk_meals');
-
-
-        Route::get('/car_meals/{supplier_id}/{startDate}', [App\Http\Controllers\CarMealController::class, 'index'])->name('car_meals');
-        Route::get('/getWeakMealsForCars/{month}/{year}/{day}', [App\Http\Controllers\CarMealController::class, 'getWeakMealsForCars'])->name('getWeakMealsForCars');
-        Route::get('/car_meal_create/{wid}', [App\Http\Controllers\CarMealController::class, 'create'])->name('car_meal_create');
 
 
         Route::post('/postMeal', [App\Http\Controllers\WeaklyMilkMealController::class, 'postMeal'])->name('postMeal');
@@ -148,7 +135,7 @@ Route::group(
 
 
 
-        Route::get('/cheese-meals', [App\Http\Controllers\CheeseMealController::class, 'index'])->name('cheese-meals');
+        Route::get('/cheese-meals/{isAll?}', [App\Http\Controllers\CheeseMealController::class, 'index'])->name('cheese-meals');
         Route::get('/cheese-meals-posted', [App\Http\Controllers\CheeseMealController::class, 'index2'])->name('cheese-meals-posted');
 
         Route::get('/cheese_meal_create', [App\Http\Controllers\CheeseMealController::class, 'create'])->name('cheese_meal_create');
@@ -170,12 +157,7 @@ Route::group(
 
 
 
-
-
-
-
-
-        Route::get('/sales', [App\Http\Controllers\SalesController::class, 'index'])->name('sales');
+        Route::get('/sales/{isAll?}', [App\Http\Controllers\SalesController::class, 'index'])->name('sales');
         Route::get('/sales_create', [App\Http\Controllers\SalesController::class, 'create'])->name('sales_create');
         Route::post('/sales_store', [App\Http\Controllers\SalesController::class, 'store'])->name('sales_store');
         Route::get('/sales_code', [App\Http\Controllers\SalesController::class, 'getCode'])->name('sales_code');
@@ -191,7 +173,7 @@ Route::group(
 
 
 
-        Route::get('/stock_exchange', [App\Http\Controllers\StockTransactionController::class, 'index'])->name('stock_exchange');
+        Route::get('/stock_exchange/{isAll?}', [App\Http\Controllers\StockTransactionController::class, 'index'])->name('stock_exchange');
         Route::get('/stock_exchange_create', [App\Http\Controllers\StockTransactionController::class, 'create'])->name('stock_exchange_create');
         Route::post('/stock_exchange_store', [App\Http\Controllers\StockTransactionController::class, 'store'])->name('stock_exchange_store');
         Route::get('/stock_exchange_code', [App\Http\Controllers\StockTransactionController::class, 'getCode'])->name('stock_exchange_code');
@@ -202,13 +184,13 @@ Route::group(
         Route::get('/stock_exchange_view/{id}', [App\Http\Controllers\StockTransactionController::class, 'view'])->name('stock_exchange_view');
 
 
-        Route::get('/stock_in', [App\Http\Controllers\StockTransactionInController::class, 'index'])->name('stock_in');
+        Route::get('/stock_in/{isAll?}', [App\Http\Controllers\StockTransactionInController::class, 'index'])->name('stock_in');
         Route::get('/stock_in_create/{meal_id}', [App\Http\Controllers\StockTransactionInController::class, 'create'])->name('stock_in_create');
         Route::post('/stock_in_store', [App\Http\Controllers\StockTransactionInController::class, 'store'])->name('stock_in_store');
         Route::get('/stock_in_code', [App\Http\Controllers\StockTransactionInController::class, 'getCode'])->name('stock_in_code');
         Route::get('/stock_in_view/{id}', [App\Http\Controllers\StockTransactionInController::class, 'edit'])->name('stock_in_view');
 
-        Route::get('/item_transform_docs', [App\Http\Controllers\ItemTransformDocController::class, 'index'])->name('item_transform_docs');
+        Route::get('/item_transform_docs/{isAll?}', [App\Http\Controllers\ItemTransformDocController::class, 'index'])->name('item_transform_docs');
         Route::get('/item_transform_docs_create', [App\Http\Controllers\ItemTransformDocController::class, 'create'])->name('item_transform_docs_create');
         Route::post('/item_transform_docs_store', [App\Http\Controllers\ItemTransformDocController::class, 'store'])->name('item_transform_docs_store');
         Route::get('/item_transform_docs_code', [App\Http\Controllers\ItemTransformDocController::class, 'getCode'])->name('item_transform_docs_code');
@@ -219,7 +201,7 @@ Route::group(
         Route::get('/item_transform_docs_post/{id}', [App\Http\Controllers\ItemTransformDocController::class, 'postDoc'])->name('item_transform_docs_post');
 
 
-        Route::get('/recipits', [App\Http\Controllers\RecipitController::class, 'index'])->name('recipits');
+        Route::get('/recipits/{isAll?}', [App\Http\Controllers\RecipitController::class, 'index'])->name('recipits');
         Route::post('/store-recipits', [App\Http\Controllers\RecipitController::class, 'store'])->name('store-recipits');
         Route::get('/getRecipit/{id}', [App\Http\Controllers\RecipitController::class, 'show'])->name('getRecipit');
         Route::get('/deleteRecipit/{id}', [App\Http\Controllers\RecipitController::class, 'destroy'])->name('deleteRecipit');

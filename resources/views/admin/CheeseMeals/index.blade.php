@@ -26,9 +26,18 @@
 
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div style="display: flex ; justify-content: space-between ; align-items: center">
-                        <h4 class="fw-bold py-3 mb-4">
-                            <span class="text-muted fw-light">{{__('main.cheese_department')}} /</span> {{__('main.cheese_meals')}}
-                        </h4>
+                        <div style="display: flex; gap: 10px ; align-items: baseline">
+                            <h4 class="fw-bold py-3 mb-4">
+                                <span class="text-muted fw-light">{{__('main.cheese_department')}} /</span> {{__('main.cheese_meals')}}
+                            </h4>
+                            <div class="mb-3" >
+                                <select id="filterRecords" class="form-control" >
+                                    <option value="all" @if($is_all == 1) selected @endif>{{ __('main.show_all_records') }}</option>
+                                    <option value="week" @if($is_all == 0) selected @endif>{{ __('main.show_this_week_records') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
                         @can('page-access', [10, 'edit'])
                         <a href="{{route('cheese_meal_step1')}}">
                             <button type="button" class="btn btn-primary"  style="height: 45px">
@@ -39,6 +48,7 @@
 
 
                     </div>
+
 
 
 
@@ -291,7 +301,18 @@
     }
 
 
-    //
+    $(document).on('change', '#filterRecords', function() {
+        let filter = $(this).val();
+        if (filter === 'week') {
+            let url = "{{ route('cheese-meals', ':isAll') }}";
+            url = url.replace(':isAll', 0);
+            document.location.href=url;
+        } else {
+            let url = "{{ route('cheese-meals', ':isAll') }}";
+            url = url.replace(':isAll', 1);
+            document.location.href=url;
+        }
+    });
 </script>
 </body>
 </html>

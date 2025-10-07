@@ -22,18 +22,45 @@ class StockTransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
+        $is_all = $isAll ?? 0 ;
+
         if (!Gate::allows('page-access', [13, 'view'])) {
             abort(403);
         }
+        if($isAll == 1) {
+            $docs = DB::table('stock_transactions')
+                ->join('stores as fromStore', 'fromStore.id', '=', 'stock_transactions.from_store')
+                ->join('stores as toStore', 'toStore.id', '=', 'stock_transactions.to_store')
+                ->select('stock_transactions.*',
+                    'fromStore.name as store_name_from', 'toStore.name as store_name_to')->get();
+        } else {
+            $today = Carbon::now();
 
-        $docs = DB::table('stock_transactions')
-            ->join('stores as fromStore' , 'fromStore.id' , '=' , 'stock_transactions.from_store')
-            ->join('stores as toStore' , 'toStore.id' , '=' , 'stock_transactions.to_store')
-            -> select('stock_transactions.*' ,
-                'fromStore.name as store_name_from' , 'toStore.name as store_name_to') -> get();
-        return view('admin.StockTransaction.index', compact('docs'));
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
+
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+            $docs = DB::table('stock_transactions')
+                ->join('stores as fromStore', 'fromStore.id', '=', 'stock_transactions.from_store')
+                ->join('stores as toStore', 'toStore.id', '=', 'stock_transactions.to_store')
+                ->select('stock_transactions.*',
+                    'fromStore.name as store_name_from', 'toStore.name as store_name_to')
+                ->whereDate('stock_transactions.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('stock_transactions.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
+        return view('admin.StockTransaction.index', compact('docs' , 'is_all'));
     }
 
     /**

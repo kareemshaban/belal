@@ -24,20 +24,43 @@ class SalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
-
+        $is_all = $isAll ?? 0 ;
         if (!Gate::allows('page-access', [11, 'view'])) {
             abort(403);
         }
+        if($isAll == 1) {
+            $docs = DB::table('sales')
+                ->join('clients', 'clients.id', '=', 'sales.client_id')
+                ->join('stores', 'stores.id', '=', 'sales.store_id')
+                ->select('sales.*', 'clients.name as client_name', 'stores.name as store_name')
+                ->get();
+        } else {
+            $today = Carbon::now();
 
-        $docs = DB::table('sales')
-            -> join('clients' , 'clients.id', '=', 'sales.client_id')
-            -> join('stores' , 'stores.id', '=', 'sales.store_id')
-            -> select('sales.*', 'clients.name as client_name', 'stores.name as store_name')
-            ->get();
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
 
-        return view('admin.Sales.index', compact('docs'));
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+            $docs = DB::table('sales')
+                ->join('clients', 'clients.id', '=', 'sales.client_id')
+                ->join('stores', 'stores.id', '=', 'sales.store_id')
+                ->select('sales.*', 'clients.name as client_name', 'stores.name as store_name')
+                ->whereDate('sales.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('sales.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
+
+        return view('admin.Sales.index', compact('docs' , 'is_all'));
 
     }
 

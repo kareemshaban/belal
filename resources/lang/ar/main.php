@@ -591,9 +591,8 @@ return [
     'supplier_insurance_balance_create' => 'إنشاء أرضية مورد',
     'supplier_insurance_balance_edit' => 'تعديل أرضية مورد',
     'isPost' => 'حفظ و ترحيل ',
-    'car_members' => 'موردين السيارة',
-    'car_meal_details' => 'تفاصيل وجبة السيارة'
-
+    'show_all_records' => 'عرض الكل',
+    'show_this_week_records' => 'الأسبوع الحالي'
 
 
 
