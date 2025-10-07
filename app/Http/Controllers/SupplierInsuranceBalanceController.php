@@ -78,7 +78,7 @@ class SupplierInsuranceBalanceController extends Controller
 
     public function storeItems(Request $request , $id)
     {
-    $details = SupplierInsuranceItems::where('insurance_id' , operator: $request -> id) -> get();
+    $details = SupplierInsuranceItems::where('insurance_id' , $request -> id) -> get();
         foreach($details as $detail){
             $detail -> delete();
         }
@@ -146,7 +146,7 @@ class SupplierInsuranceBalanceController extends Controller
                 'notes' => $request -> notes ?? "",
                 'user_upd' => Auth::user() -> id
             ]);
-            $this -> storeItems($request , id: $doc -> id);
+            $this -> storeItems($request ,  $doc -> id);
             return redirect()->route('insuranceBalances' ,$request -> type) -> with('success', __('main.updated'));
 
 

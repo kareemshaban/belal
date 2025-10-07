@@ -47,7 +47,7 @@ Route::group(
 
 
 
-        Route::get('/balance_transactions',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'index'])->name( 'balance_transactions');
+        Route::get('/balance_transactions/{isAll?}',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'index'])->name( 'balance_transactions');
         Route::post('/balance_transactions_store',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'store'])->name( 'balance_transactions_store');
         Route::get('/balance_transactions_show/{id}',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'show'])->name('balance_transactions_show');
         Route::get('/get_transaction_code',  [App\Http\Controllers\SafeBalanceExchangeController::class, 'getcode'])->name('get_transaction_code');
@@ -217,7 +217,7 @@ Route::group(
 
 
 
-        Route::get('/catches', [App\Http\Controllers\CatchRecipitController::class, 'index'])->name('catches');
+        Route::get('/catches/{isAll?}', [App\Http\Controllers\CatchRecipitController::class, 'index'])->name('catches');
         Route::post('/store-catches', [App\Http\Controllers\CatchRecipitController::class, 'store'])->name('store-catches');
         Route::get('/getCatch/{id}', [App\Http\Controllers\CatchRecipitController::class, 'show'])->name('getCatch');
         Route::get('/deleteCatch/{id}', [App\Http\Controllers\CatchRecipitController::class, 'destroy'])->name('deleteCatch');
@@ -227,7 +227,7 @@ Route::group(
 
 
 
-        Route::get('/boxRecipits', [App\Http\Controllers\BoxRecipitController::class, 'index'])->name('boxRecipits');
+        Route::get('/boxRecipits/{isAll?}', [App\Http\Controllers\BoxRecipitController::class, 'index'])->name('boxRecipits');
         Route::post('/store-boxRecipits', [App\Http\Controllers\BoxRecipitController::class, 'store'])->name('store-boxRecipits');
         Route::get('/getBoxRecipit/{id}', [App\Http\Controllers\BoxRecipitController::class, 'show'])->name('getBoxRecipit');
         Route::get('/deleteBoxRecipit/{id}', [App\Http\Controllers\BoxRecipitController::class, 'destroy'])->name('deleteBoxRecipit');

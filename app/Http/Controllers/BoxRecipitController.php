@@ -22,20 +22,46 @@ class BoxRecipitController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
+        $is_all = $isAll ?? 0 ;
         if (!Gate::allows('page-access', [17, 'view'])) {
             abort(403);
         }
-        $docs = DB::table('box_recipits')
-            ->join('recipit_types', 'box_recipits.recipit_type', '=', 'recipit_types.id')
-            ->join('safes', 'box_recipits.safe_id', '=', 'safes.id')
-            -> select('box_recipits.*', 'recipit_types.name' , 'safes.name as safe')
-            ->get();
+        if($isAll == 1 ) {
+            $docs = DB::table('box_recipits')
+                ->join('recipit_types', 'box_recipits.recipit_type', '=', 'recipit_types.id')
+                ->join('safes', 'box_recipits.safe_id', '=', 'safes.id')
+                ->select('box_recipits.*', 'recipit_types.name', 'safes.name as safe')
+                ->get();
+        } else {
+            $today = Carbon::now();
+
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
+
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+            $docs = DB::table('box_recipits')
+                ->join('recipit_types', 'box_recipits.recipit_type', '=', 'recipit_types.id')
+                ->join('safes', 'box_recipits.safe_id', '=', 'safes.id')
+                ->select('box_recipits.*', 'recipit_types.name', 'safes.name as safe')
+                ->whereDate('box_recipits.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('box_recipits.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
 
         $types = RecipitType::all();
         $safes = Safe::all();
-        return view('admin.BoxRecipits.index', compact('docs' , 'types' , 'safes'));
+        return view('admin.BoxRecipits.index', compact('docs' , 'types' , 'safes' , 'is_all'));
     }
 
     /**

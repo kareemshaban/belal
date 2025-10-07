@@ -21,22 +21,48 @@ class CatchRecipitController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
-
+        $is_all = $isAll ?? 0 ;
         if (!Gate::allows('page-access', [16, 'view'])) {
             abort(403);
         }
 
-        $docs = DB::table('catch_recipits')
-            ->join('clients', 'catch_recipits.client_id', '=', 'clients.id')
-            ->join('safes', 'catch_recipits.safe_id', '=', 'safes.id')
-            -> select('catch_recipits.*', 'clients.name' , 'safes.name as  safe')
-            ->get();
+        if($isAll == 1 ) {
+            $docs = DB::table('catch_recipits')
+                ->join('clients', 'catch_recipits.client_id', '=', 'clients.id')
+                ->join('safes', 'catch_recipits.safe_id', '=', 'safes.id')
+                ->select('catch_recipits.*', 'clients.name', 'safes.name as  safe')
+                ->get();
+        } else {
+
+            $today = Carbon::now();
+
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
+
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+            $docs = DB::table('catch_recipits')
+                ->join('clients', 'catch_recipits.client_id', '=', 'clients.id')
+                ->join('safes', 'catch_recipits.safe_id', '=', 'safes.id')
+                ->select('catch_recipits.*', 'clients.name', 'safes.name as  safe')
+                ->whereDate('catch_recipits.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('catch_recipits.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
 
         $clients = Client::where('type' ,'<>' , 1) -> get();
         $safes = Safe::all();
-        return view('admin.Catches.index', compact('docs' , 'clients' , 'safes'));
+        return view('admin.Catches.index', compact('docs' , 'clients' , 'safes' , 'is_all'));
     }
 
     /**

@@ -591,7 +591,7 @@ class ReportController extends Controller
             $exchangeOut = $exchangeOut-> whereDate('safe_balance_exchanges.date', '<=', Carbon::parse($request->toDate) );
             $exchangeIn = $exchangeIn-> whereDate('safe_balance_exchanges.date', '<=', Carbon::parse($request->toDate) );
         }
-        $data = $recipits -> unionAll($boxes) -> unionAll(query: $catchs) -> unionAll($exchangeOut) -> unionAll($exchangeIn) ;
+        $data = $recipits -> unionAll($boxes) -> unionAll( $catchs) -> unionAll($exchangeOut) -> unionAll($exchangeIn) ;
         $data = $data->orderBy('docDate', 'ASC')->get();
 
         $fromDate = $request -> fromDate ;

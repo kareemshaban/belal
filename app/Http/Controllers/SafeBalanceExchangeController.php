@@ -18,17 +18,43 @@ class SafeBalanceExchangeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($isAll = null)
     {
-        $docs = DB::table('safe_balance_exchanges')
-            ->join('safes as source', 'safe_balance_exchanges.from_safe_id', '=', 'source.id')
-            ->join('safes as destiantion', 'safe_balance_exchanges.to_safe_id', '=', 'destiantion.id')
-            ->select('safe_balance_exchanges.*', 'source.name as source_name', 'destiantion.name as destiantion_name')
-            ->get();
+        $is_all = $isAll ?? 0 ;
+        if ($isAll == 1) {
+            $docs = DB::table('safe_balance_exchanges')
+                ->join('safes as source', 'safe_balance_exchanges.from_safe_id', '=', 'source.id')
+                ->join('safes as destiantion', 'safe_balance_exchanges.to_safe_id', '=', 'destiantion.id')
+                ->select('safe_balance_exchanges.*', 'source.name as source_name', 'destiantion.name as destiantion_name')
+                ->get();
+        } else {
+            $today = Carbon::now();
+
+            if ($today->dayOfWeek < Carbon::FRIDAY) {
+                // If today is before Friday, go back to last week's Friday
+                $startOfWeek = $today->copy()->subDays(7 - (Carbon::FRIDAY - $today->dayOfWeek));
+            } elseif ($today->dayOfWeek > Carbon::FRIDAY) {
+                // If today is after Friday, go back to this week's Friday
+                $startOfWeek = $today->copy()->subDays($today->dayOfWeek - Carbon::FRIDAY);
+            } else {
+                // If today is exactly Friday
+                $startOfWeek = $today->copy();
+            }
+
+            $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+            $docs = DB::table('safe_balance_exchanges')
+                ->join('safes as source', 'safe_balance_exchanges.from_safe_id', '=', 'source.id')
+                ->join('safes as destiantion', 'safe_balance_exchanges.to_safe_id', '=', 'destiantion.id')
+                ->select('safe_balance_exchanges.*', 'source.name as source_name', 'destiantion.name as destiantion_name')
+                ->whereDate('safe_balance_exchanges.date', '>=', $startOfWeek->toDateString())
+                ->whereDate('safe_balance_exchanges.date', '<=', $endOfWeek->toDateString())
+                ->get();
+        }
 
         $safes = Safe::all();
 
-        return view('admin.safe.transactions', compact('docs', 'safes'));
+        return view('admin.safe.transactions', compact('docs', 'safes' , 'is_all'));
     }
 
     /**
@@ -75,7 +101,7 @@ class SafeBalanceExchangeController extends Controller
 
             if (!$balance || ((float)$balance->balance + (float)$balance->opening_balance) < (float)$request->balance)
                 return redirect()->route('balance_transactions')->with('warning', 'عفوا رصيد الخزنة لا يسمح');
-            SafeBalanceExchange::create(attributes: [
+            SafeBalanceExchange::create( [
                 'date' => Carbon::parse($request->date),
                 'bill_number' => $request->bill_number,
                 'from_safe_id' => $request->from_safe_id,
@@ -90,7 +116,7 @@ class SafeBalanceExchangeController extends Controller
             $this->updateSafeBalance($request->from_safe_id, $request->to_safe_id, $request->balance);
 
 
-            return redirect()->route(route: 'balance_transactions')->with('success', __('main.saved'));
+            return redirect()->route('balance_transactions')->with('success', __('main.saved'));
         } else {
             return $this->update($request);
         }
@@ -146,7 +172,7 @@ class SafeBalanceExchangeController extends Controller
             $balance = $request->balance - $oldBalance;
 
             $this->updateSafeBalance($request->from_safe_id, $request->to_safe_id, $balance);
-            return redirect()->route(route: 'balance_transactions')->with('success', __('main.updated'));
+            return redirect()->route( 'balance_transactions')->with('success', __('main.updated'));
 
 
         }
@@ -168,7 +194,7 @@ class SafeBalanceExchangeController extends Controller
     {
         $docs = SafeBalanceExchange::all();
         $dId = 0;
-        if (count(value: $docs) > 0) {
+        if (count( $docs) > 0) {
             $dId = count($docs) + 1;
         } else {
             $dId = 1;
