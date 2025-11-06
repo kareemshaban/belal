@@ -65,9 +65,9 @@
                                         <td class="text-center">
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
                                                     <i class='bx bxs-edit-alt text-success editBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
-                                                       id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+                                                       id="{{$member -> id}}" style="font-size: 25px ; cursor: pointer"></i>
                                                     <i class='bx bxs-trash text-danger deleteBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
-                                                       id="{{$supplier -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+                                                       id="{{$member -> id}}" style="font-size: 25px ; cursor: pointer"></i>
 
                                                 </div>
 
@@ -187,28 +187,20 @@
     });
     $(document).on('click', '.deleteBtn', function(event) {
         id = event.currentTarget.id ;
-        console.log(id);
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
-        $.ajax({
-            url: href,
-            beforeSend: function() {
-                $('#loader').show();
-            },
-            // return the result
-            success: function(result) {
-                $('#deleteModal').modal("show");
-            },
-            complete: function() {
-                $('#loader').hide();
-            },
-            error: function(jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000
-        })
+        Swal.fire({
+            title: 'حذف البيانات',
+            text: 'هل انت متأكد من أنك تريد حذف البيانات ؟',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'نعم , متأكد',
+            cancelButtonText: 'لا , تراجع'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with deletion or any other logic
+                confirmDelete(id);
+            }
+        });
+
     });
     $(document).on('click', '.btnConfirmDelete', function(event) {
 
@@ -224,7 +216,7 @@
 
 
     function confirmDelete(id){
-        let url = "{{ route('suppliers-delete', ':id') }}";
+        let url = "{{ route('carMembers-delete', ':id') }}";
         url = url.replace(':id', id);
         document.location.href=url;
     }

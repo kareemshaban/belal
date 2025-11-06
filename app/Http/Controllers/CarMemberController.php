@@ -89,7 +89,7 @@ class CarMemberController extends Controller
         $member = DB::table('car_members')
             -> join('clients' , 'car_members.supplier_id' , '=' , 'clients.id')
             -> select('car_members.*' , 'clients.name as supplier_name')
-            -> where('car_members.supplier_id' , '=' ,$id )
+            -> where('car_members.id' , '=' ,$id )
             -> first();
         echo json_encode($member);
         exit();
@@ -137,7 +137,9 @@ class CarMemberController extends Controller
      */
     public function destroy($id)
     {
+
         $member = CarMember::find($id);
+        return $member ;
         if($member){
             $member -> delete();
             return redirect()->route('carMembers' , $member -> supplier_id) -> with('success', __('main.deleted'));

@@ -592,7 +592,8 @@ return [
     'supplier_insurance_balance_edit' => 'تعديل أرضية مورد',
     'isPost' => 'حفظ و ترحيل ',
     'show_all_records' => 'عرض الكل',
-    'show_this_week_records' => 'الأسبوع الحالي'
+    'show_this_week_records' => 'الأسبوع الحالي',
+    'store_action' => 'استعراض وتحديث الكميات'
 
 
 

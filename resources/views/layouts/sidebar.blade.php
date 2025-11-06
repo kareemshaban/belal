@@ -128,7 +128,7 @@
                 </li>
             @endcan
 
-            <li class="menu-item @if($subSlag == 13)  active @endif">
+            <li class="menu-item @if($subSlag == 23)  active @endif">
                     <a href="{{route('insuranceBalances')}}"  class="menu-link">
                         <div data-i18n="Account">{{__('main.supplier_insurance_balance')}}</div>
                     </a>

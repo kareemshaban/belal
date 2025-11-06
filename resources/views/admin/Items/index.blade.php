@@ -86,11 +86,11 @@
                                                     <i class='bx bxs-trash text-danger deleteBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}"
                                                        id="{{$item -> id}}" style="font-size: 25px ; cursor: pointer"></i>
 
-                                                     @if($item -> type == 0 || $item -> type == 1)
+{{--                                                     @if($item -> type == 0 || $item -> type == 1)--}}
 
-                                                       <i class='bx bxs-store text-primary storeBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.store_action')}}"
-                                                       date-id="{{$item -> id}}" style="font-size: 25px ; cursor: pointer"></i>
-                                                       @endif
+{{--                                                       <i class='bx bxs-store text-primary storeBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.store_action')}}"--}}
+{{--                                                       date-id="{{$item -> id}}" style="font-size: 25px ; cursor: pointer"></i>--}}
+{{--                                                       @endif--}}
                                                 </div>
                                             @endcan
 
@@ -210,8 +210,8 @@
         });
     });
 
-     $(document).on('click', '.editBtn', function(event) {
-        let id = event.currentTarget.id ;
+     $(document).on('click', '.storeBtn', function(event) {
+         var id = $(this).attr('date-id'); // use attr() for non-standard attributes
         console.log(id);
         event.preventDefault();
         let href = $(this).attr('data-attr');
@@ -222,7 +222,7 @@
 
             success:function(response){
                console.log(response);
-                
+
             }
         });
     });
@@ -230,28 +230,19 @@
 
     $(document).on('click', '.deleteBtn', function(event) {
         id = event.currentTarget.id ;
-        console.log(id);
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
-        $.ajax({
-            url: href,
-            beforeSend: function() {
-                $('#loader').show();
-            },
-            // return the result
-            success: function(result) {
-                $('#deleteModal').modal("show");
-            },
-            complete: function() {
-                $('#loader').hide();
-            },
-            error: function(jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000
-        })
+        Swal.fire({
+            title: 'حذف البيانات',
+            text: 'هل انت متأكد من أنك تريد حذف البيانات ؟',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'نعم , متأكد',
+            cancelButtonText: 'لا , تراجع'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with deletion or any other logic
+                confirmDelete(id);
+            }
+        });
     });
     $(document).on('click', '.btnConfirmDelete', function(event) {
 
