@@ -96,7 +96,7 @@ Route::group(
         Route::post('/cars-store', [App\Http\Controllers\CarsController::class, 'store'])->name('cars-store');
         Route::get('/cars-delete/{id}', [App\Http\Controllers\CarsController::class, 'destroy'])->name('cars-delete');
 
-        Route::get('/car_meals', [App\Http\Controllers\CarMealController::class, 'index'])->name('car_meals');
+        Route::get('/car_meals/{supplier_id}/{startDate}', [App\Http\Controllers\CarMealController::class, 'index'])->name('car_meals');
         Route::get('/getWeakMealsForCars/{month}/{year}/{day}', [App\Http\Controllers\CarMealController::class, 'getWeakMealsForCars'])->name('getWeakMealsForCars');
         Route::get('/car_meal_create/{wid}', [App\Http\Controllers\CarMealController::class, 'create'])->name('car_meal_create');
 

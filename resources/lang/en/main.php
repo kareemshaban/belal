@@ -562,6 +562,7 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
     'supplier_insurance_balance_edit' => 'Edit Supplier Insurance Balance',
     'isPost' => 'Save and Post',
     'car_members' => 'Car Members',
-    'store_action' => 'View and Edit Quantities'
+    'store_action' => 'View and Edit Quantities',
+    'car_meal_details' => 'Car Meal Details'
 
 ];

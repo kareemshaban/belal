@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cars;
 use App\Models\Client;
 use App\Models\ClientAccount;
+use App\Models\SupplierInsuranceBalance;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -199,8 +200,16 @@ class ClientController extends Controller
     {
         $supplier = Client::find($id);
         if($supplier){
-            $supplier -> delete();
-            return redirect()->route('suppliers' , $supplier -> type) -> with('success', __('main.deleted'));
+            $supplierAccount = ClientAccount::where('client_id', $id)  -> get();
+            $supplierInsurance = SupplierInsuranceBalance::where('supplier_id' , $id)  -> get();
+            if(count($supplierAccount) > 0 || count($supplierInsurance) > 0){
+
+                return redirect()->route('suppliers' , $supplier -> type) -> with('warning', __('main.can_not_delete'));
+            } else {
+                $supplier -> delete();
+                return redirect()->route('suppliers' , $supplier -> type) -> with('success', __('main.deleted'));
+            }
+
         }
     }
 

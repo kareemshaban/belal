@@ -12,10 +12,11 @@ class CarDailyMeal extends Model
     protected $fillable = [
         'id',
         'code',
-        'car_meal_id',
-        'type',
-        'supplier_id',
         'date',
+        'type', // 0 morning 1 evening
+        'weakly_meal_id',
+        'supplier_id', // the main supplier (car owner)
+        'member_id',
         'weight',
         'price',
         'total',

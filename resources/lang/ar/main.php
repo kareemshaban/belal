@@ -593,7 +593,8 @@ return [
     'isPost' => 'حفظ و ترحيل ',
     'show_all_records' => 'عرض الكل',
     'show_this_week_records' => 'الأسبوع الحالي',
-    'store_action' => 'استعراض وتحديث الكميات'
+    'store_action' => 'استعراض وتحديث الكميات',
+    'car_meal_details' => 'تفاصيل وجبة سيارة'
 
 
 

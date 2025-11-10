@@ -105,9 +105,9 @@ class CarDailyMealController extends Controller
                     'user_upd' => 0
                 ]) ;
                // $this -> updateWeaklyMilkMealWeight($request -> buffalo_weight  , $request -> bovine_weight , $request -> weakly_meal_id);
-                return redirect() -> route('car_meals') -> with('success', __('main.saved'));
+               // return redirect() -> route('car_meals') -> with('success', __('main.saved'));
             }  else {
-                return redirect() -> route('car_meals') -> with('warning', __('main.can_not_add_to_posted_meal'));
+               // return redirect() -> route('car_meals') -> with('warning', __('main.can_not_add_to_posted_meal'));
             }
 
         } else {
@@ -115,7 +115,7 @@ class CarDailyMealController extends Controller
             if($wMeal -> state == 0){
                 return $this -> update($request);
             } else {
-                return redirect() -> route('car_meals') -> with('warning', __('main.can_not_edit_posted_meal'));
+             //   return redirect() -> route('car_meals') -> with('warning', __('main.can_not_edit_posted_meal'));
             }
 
         }
@@ -206,9 +206,9 @@ class CarDailyMealController extends Controller
                     'notes' => $request -> notes ?? "",
                     'user_upd' => Auth::user() -> id
                 ]);
-                return redirect() -> route('car_meals') -> with('success', __('main.updated'));
+              //  return redirect() -> route('car_meals') -> with('success', __('main.updated'));
             } else {
-                return redirect() -> route('car_meals') -> with('warning', __('main.can_not_edit_posted_meal'));
+             //   return redirect() -> route('car_meals') -> with('warning', __('main.can_not_edit_posted_meal'));
             }
 
 
@@ -235,9 +235,9 @@ class CarDailyMealController extends Controller
         if($meal){
             if($meal -> state == 0){
                 $meal -> delete();
-                return redirect() -> route('car_meals') -> with('success' , __('main.deleted'));
+               // return redirect() -> route('car_meals') -> with('success' , __('main.deleted'));
             } else {
-                return redirect() -> route('car_meals') -> with('warning' , __('main.can_not_delete'));
+              //  return redirect() -> route('car_meals') -> with('warning' , __('main.can_not_delete'));
             }
         }
 

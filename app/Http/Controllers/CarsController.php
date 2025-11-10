@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CarDailyMeal;
 use App\Models\Cars;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -146,8 +147,9 @@ class CarsController extends Controller
     {
         $car = Cars::find($id);
         if($car){
-            $meals = CarDailyMeal::where('car_id', $id)->get();
-            if(count($meals) == 0){
+            $suppliers = Client::where('car_id' , '=' , $id) -> get();
+
+            if(count($suppliers) == 0){
                 $car -> delete();
                 return  redirect() ->route('cars') -> with('success', __('main.delete'));
             } else {

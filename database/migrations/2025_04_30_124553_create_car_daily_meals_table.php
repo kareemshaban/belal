@@ -16,10 +16,11 @@ class CreateCarDailyMealsTable extends Migration
         Schema::create('car_daily_meals', function (Blueprint $table) {
             $table->id();
             $table->string('code');
+            $table->timestamp('date');
             $table->integer('car_meal_id');
             $table->integer('type');
             $table->integer('supplier_id');
-            $table->timestamp('date');
+
             $table->decimal('weight');
             $table->decimal('price');
             $table->decimal('total');
