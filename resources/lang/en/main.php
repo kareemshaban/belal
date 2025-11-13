@@ -441,6 +441,12 @@ return [
     'doc4' => 'Milk Meal Voucher',
     'doc5' => 'Sales Invoice Voucher',
     'doc6' => 'Box Receipt Voucher',
+    'doc7' => 'Money Transform - Voucher',
+    'doc8' => 'Money Transfer + Voucher',
+    'doc9' => 'Salary Voucher ',
+    'doc10' => 'Advance Voucher ',
+    'doc11' => 'Payback Voucher ',
+
     'quantity_in' => 'Quantity In',
     'quantity_out' => 'Quantity Out',
     'editBalance' => 'Edit Opening Balance',
@@ -581,5 +587,10 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
     'paid_back0' => 'Unpaid Advance',
     'paid_back1' => 'Paid Advance',
     'employee_required' => 'Employee Required',
+    'salary_btn' => 'Pay Salaries',
+    'shift_count' => 'Shifts Count',
+    'day_count' => 'Days Count',
+    'salary' => 'Salary',
+    'confirm_salary' => 'Confirm Salary'
 
 ];

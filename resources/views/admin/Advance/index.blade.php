@@ -81,7 +81,7 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-
+                                            @if($doc -> paid_back == 0)
                                             <div style="display: flex ; gap: 10px ; justify-content: center ">
                                                 <i class='bx bxs-edit text-success editBtn' data-toggle="tooltip" data-placement="top" title="{{__('main.edit_action')}}"
                                                    style="font-size: 25px ; cursor: pointer" data-id="{{$doc -> id}}">
@@ -95,6 +95,7 @@
 
 
                                             </div>
+                                            @endif
 
 
                                         </td>

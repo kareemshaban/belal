@@ -333,10 +333,14 @@ Route::group(
         Route::post('/store-attendance', [App\Http\Controllers\AttendanceController::class, 'store'])->name('store-attendance');
         Route::get('/getAttendance/{start_date}/{end_date}', [App\Http\Controllers\AttendanceController::class, 'show'])->name('getAttendance');
         Route::get('/deleteAttendance/{id}', [App\Http\Controllers\AttendanceController::class, 'destroy'])->name('deleteAttendance');
+        Route::post('/post-attendance', [App\Http\Controllers\AttendanceController::class, 'postData'])->name('post-attendance');
+
 
         Route::get('/salaries', [App\Http\Controllers\SalaryController::class, 'index'])->name('salaries');
         Route::post('/store-salary', [App\Http\Controllers\SalaryController::class, 'store'])->name('store-salary');
-        Route::get('/getSalary/{id}', [App\Http\Controllers\SalaryController::class, 'show'])->name('getSalary');
+        Route::post('/getSalaries', [App\Http\Controllers\SalaryController::class, 'show'])->name('getSalaries');
+        Route::get('/showSalaries/{start}/{end}', [App\Http\Controllers\SalaryController::class, 'show2'])->name('showSalaries');
+
         Route::get('/deleteSalary/{id}', [App\Http\Controllers\SalaryController::class, 'destroy'])->name('deleteSalary');
 
         Route::get('/advances/{isAll?}', [App\Http\Controllers\AdvanceController::class, 'index'])->name('advances');

@@ -50,20 +50,32 @@ class AttendanceController extends Controller
         $type = $request->type;
         $present = $request->present;
 
-        $attendance = Attendance::firstOrCreate([
-            'employee_id' => $employeeId,
-            'date' => $date,
-        ]);
+        // Try to get or create a new attendance record
+        $attendance = Attendance::firstOrCreate(
+            [
+                'employee_id' => $employeeId,
+                'date' => $date,
+            ],
+            [
+                'state' => 0 // <-- default state when inserting
+            ]
+        );
 
-        if ($type == 0) {
-            $attendance->morning_present = $present;
-        } else {
-            $attendance->evening_present = $present;
+        // Only update if state == 0
+        if ($attendance->state == 0) {
+            if ($type == 0) {
+                $attendance->morning_present = $present;
+            } else {
+                $attendance->evening_present = $present;
+            }
+
+            $attendance->save();
+
+            return response()->json(['success' => true, 'message' => 'Updated successfully']);
         }
 
-        $attendance->save();
-
-        return response()->json(['success' => true]);
+        // Block update if state != 0
+        return response()->json(['success' => false, 'message' => 'Update not allowed. State must be 0']);
     }
 
     /**
@@ -114,6 +126,7 @@ class AttendanceController extends Controller
                     'date' => $dateString,
                     'morning_present' => $attendance ? $attendance->morning_present : 0,
                     'evening_present' => $attendance ? $attendance->evening_present : 0,
+                    'state' => $attendance ? $attendance->state : 0,
                 ]);
 
                 $current->addDay();
@@ -126,8 +139,10 @@ class AttendanceController extends Controller
             ]);
         }
 
-      //  return $result ;
-        return view('admin.Attend.create' , compact('result' , 'startOfWeek' , 'endOfWeek'));
+        $weekState = $docs->contains(function($att) {
+            return $att->state == 1;
+        }) ? 1 : 0;
+        return view('admin.Attend.create' , compact('result' , 'startOfWeek' , 'endOfWeek' , 'weekState'));
     }
 
     /**
@@ -162,5 +177,19 @@ class AttendanceController extends Controller
     public function destroy(Attendance $attendance)
     {
         //
+    }
+
+    public function postData(Request $request){
+
+        $startOfWeek = Carbon::parse($request->start_date)->startOfDay();
+        $endOfWeek = Carbon::parse($request->end_date)->endOfDay();
+
+        DB::table('attendances')
+            ->whereBetween('date', [$startOfWeek, $endOfWeek])
+            ->update(['state' => 1]);
+
+        return response()->json(['success' => true, 'message' => 'Updated successfully']);
+
+
     }
 }

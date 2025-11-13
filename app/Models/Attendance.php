@@ -15,6 +15,7 @@ class Attendance extends Model
       'date',
       'morning_present', // 1 present 0 absent
       'evening_present',
+      'state', // 0 new , 1 posted
       'user_ins',
       'user_upd',
     ];
