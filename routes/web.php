@@ -324,6 +324,27 @@ Route::group(
 
 
 
+        Route::get('/employees', [App\Http\Controllers\EmployeeController::class, 'index'])->name('employees');
+        Route::post('/store-employee', [App\Http\Controllers\EmployeeController::class, 'store'])->name('store-employee');
+        Route::get('/getEmployee/{id}', [App\Http\Controllers\EmployeeController::class, 'show'])->name('getEmployee');
+        Route::get('/deleteEmployee/{id}', [App\Http\Controllers\EmployeeController::class, 'destroy'])->name('deleteEmployee');
+
+        Route::get('/attendances', [App\Http\Controllers\AttendanceController::class, 'index'])->name('attendances');
+        Route::post('/store-attendance', [App\Http\Controllers\AttendanceController::class, 'store'])->name('store-attendance');
+        Route::get('/getAttendance/{start_date}/{end_date}', [App\Http\Controllers\AttendanceController::class, 'show'])->name('getAttendance');
+        Route::get('/deleteAttendance/{id}', [App\Http\Controllers\AttendanceController::class, 'destroy'])->name('deleteAttendance');
+
+        Route::get('/salaries', [App\Http\Controllers\SalaryController::class, 'index'])->name('salaries');
+        Route::post('/store-salary', [App\Http\Controllers\SalaryController::class, 'store'])->name('store-salary');
+        Route::get('/getSalary/{id}', [App\Http\Controllers\SalaryController::class, 'show'])->name('getSalary');
+        Route::get('/deleteSalary/{id}', [App\Http\Controllers\SalaryController::class, 'destroy'])->name('deleteSalary');
+
+        Route::get('/advances/{isAll?}', [App\Http\Controllers\AdvanceController::class, 'index'])->name('advances');
+        Route::post('/store-advance', [App\Http\Controllers\AdvanceController::class, 'store'])->name('store-advance');
+        Route::get('/getAdvance/{id}', [App\Http\Controllers\AdvanceController::class, 'show'])->name('getAdvance');
+        Route::get('/deleteAdvance/{id}', [App\Http\Controllers\AdvanceController::class, 'destroy'])->name('deleteAdvance');
+
+
         Auth::routes();
     }
 );

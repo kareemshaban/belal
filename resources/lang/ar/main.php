@@ -594,7 +594,26 @@ return [
     'show_all_records' => 'عرض الكل',
     'show_this_week_records' => 'الأسبوع الحالي',
     'store_action' => 'استعراض وتحديث الكميات',
-    'car_meal_details' => 'تفاصيل وجبة سيارة'
+    'car_meal_details' => 'تفاصيل وجبة سيارة',
+    'employee_department' => 'إدارة الموظفين',
+    'employees' => 'الموظفين',
+    'attendances' => 'إدارة الدوام',
+    'salaries' => 'إدارة الرواتب',
+    'daily_salary_required' => 'حقل الراتب اليومي مطلوب',
+    'daily_salary' => 'الراتب اليومي',
+    'present_state' => 'الحضور',
+    'present_state0' => 'غياب',
+    'present_state1' => 'حضور',
+    'employee' => 'الموظف',
+    'morning_shift' => 'الشفت الصباحي',
+    'evening_shift' => 'الشفت المسائي',
+    'advances' => 'السلف',
+    'paid_back' => 'حالة السلفة',
+    'paid_back0' => 'سلفة غير مسددة',
+    'paid_back1' => 'سلفة مسددة',
+    'employee_required' => '   حقل الموظف مطلوب'
+
+
 
 
 

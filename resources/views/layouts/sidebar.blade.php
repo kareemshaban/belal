@@ -375,6 +375,40 @@
         </li>
 
 
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">{{__('main.employee_department')}}</span></li>
+        <li class="menu-item @if($slag == 18)  active @endif">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-detail"></i>
+                <div data-i18n="Form Elements">{{__('main.employee_department')}}</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item  @if($subSlag == 181)  active @endif">
+                    <a href="{{route('employees')}}" class="menu-link">
+                        <div data-i18n="Basic Inputs">{{__('main.employees')}}</div>
+                    </a>
+                </li>
+                <li class="menu-item  @if($subSlag == 182)  active @endif">
+                    <a href="{{route('attendances')}}" class="menu-link">
+                        <div data-i18n="Basic Inputs">{{__('main.attendances')}}</div>
+                    </a>
+                </li>
+                <li class="menu-item  @if($subSlag == 183)  active @endif">
+                    <a href="{{route('advances')}}" class="menu-link">
+                        <div data-i18n="Basic Inputs">{{__('main.advances')}}</div>
+                    </a>
+                </li>
+                <li class="menu-item  @if($subSlag == 184)  active @endif">
+                    <a href="{{route('salaries')}}" class="menu-link">
+                        <div data-i18n="Basic Inputs">{{__('main.salaries')}}</div>
+                    </a>
+                </li>
+
+
+
+
+            </ul>
+        </li>
+
 
         <li class="menu-header small text-uppercase"><span class="menu-header-text">{{__('main.reports_department')}}</span></li>
         <!-- Forms -->
