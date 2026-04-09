@@ -95,7 +95,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>{{ __('main.balance') }} </label>
-                                    <input type="balance" step="any" name="balance" id="balance"
+                                    <input type="number" step="any" name="balance" id="balance"
                                            class="form-control @error('amount') is-invalid @enderror"
                                            placeholder="0" autofocus required/>
                                     @error('amount')

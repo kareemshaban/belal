@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 @include('layouts.head')
@@ -24,41 +25,41 @@
             <div class="content-wrapper">
                 <!-- Content -->
 
-                 <form class="center" method="POST" action="{{ route('sales_store') }}"
-                                  enctype="multipart/form-data" id="MealForm">
-                                @csrf
+                <form class="center" method="POST" action="{{ route('sales_store') }}"
+                      enctype="multipart/form-data" id="MealForm">
+                    @csrf
 
-                <div class="container-xxl flex-grow-1 container-p-y">
-                    <div style="display: flex ; justify-content: space-between ; align-items: center">
-                        <h4 class="fw-bold py-3 mb-4">
-                            <span class="text-muted fw-light">{{__('main.accounting_department')}} /</span> {{__('main.add_sales')}}
-                        </h4>
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div style="display: flex ; justify-content: space-between ; align-items: center">
+                            <h4 class="fw-bold py-3 mb-4">
+                                <span class="text-muted fw-light">{{__('main.accounting_department')}} /</span> {{__('main.add_sales')}}
+                            </h4>
 
-                        <div style="display: flex ; gap: 10px; align-items: end; ">
-                            <div class="form-group" style="display: flex ; flex-direction: column; justify-content: center; align-items: center;">
-                                <label>{{ __('main.isPost') }}</label>
-                                <input type="checkbox" id="isPost" name="isPost" class="form-check" style="width: 35px ; height: 35px;"/>
+                            <div style="display: flex ; gap: 10px; align-items: end; ">
+                                <div class="form-group" style="display: flex ; flex-direction: column; justify-content: center; align-items: center;">
+                                    <label>{{ __('main.isPost') }}</label>
+                                    <input type="checkbox" id="isPost" name="isPost" class="form-check" style="width: 35px ; height: 35px;"/>
+
+                                </div>
+
+                                <button type="button" class="btn btn-primary" id="createButton" style="height: 45px"
+                                        onclick="valdiateRequest()">
+                                    {{__('main.save_btn')}}  <span class="tf-icons bx bx-save"></span>&nbsp;
+                                </button>
 
                             </div>
 
-                        <button type="button" class="btn btn-primary" id="createButton" style="height: 45px"
-                                onclick="valdiateRequest()">
-                            {{__('main.save_btn')}}  <span class="tf-icons bx bx-save"></span>&nbsp;
-                        </button>
+
 
                         </div>
 
 
 
-                    </div>
-
-
-
-                    <!-- Responsive Table -->
-                    <div class="card">
-                        <h5 class="card-header">{{__('main.add_sales')}}</h5>
-                        @include('flash-message')
-                        <div class="card-content" style="padding-right: 20px ; padding-left: 20px ; padding-bottom: 20px">
+                        <!-- Responsive Table -->
+                        <div class="card">
+                            <h5 class="card-header">{{__('main.add_sales')}}</h5>
+                            @include('flash-message')
+                            <div class="card-content" style="padding-right: 20px ; padding-left: 20px ; padding-bottom: 20px">
 
 
                                 <div class="row">
@@ -241,15 +242,15 @@
 
 
 
+                            </div>
+
                         </div>
-
+                        <!--/ Responsive Table -->
                     </div>
-                    <!--/ Responsive Table -->
-                </div>
 
-                 </form>
+                </form>
                 <!-- / Content -->
-                 @include('admin.Sales.items')
+                @include('admin.Sales.items')
                 <!-- Footer -->
                 @include('layouts.footer_design')
                 <!-- / Footer -->
@@ -303,15 +304,18 @@
                                 response.forEach(function(item, index) {
                                     let row = `
     <tr>
-        <td class="text-center" hidden>${index + 1}</td>
+       <td class="text-center" hidden="hidden">${item.cheese_meal_code  || ''} -- ${item.symbol}</td>
         <td class="text-center">${item.code || ''}</td>
+
         <td class="text-center">${item.name || ''}</td>
         <td class="text-center">${item.balance ?? 0}</td>
         <td class="text-center">
             <button
                 class="btn btn-sm btn-primary selectBtn"
                 data-id="${item.id}"
-                data-store="${store}">
+                data-store="${store}"
+                data-meal="${item.meal_id}"
+>
                 إختيار
             </button>
         </td>
@@ -356,45 +360,47 @@
         $(document).on('click' , '.selectBtn' , function (event){
             const id = $(this).data('id');
             const store = $(this).data('store');
+            const meal = $(this).data('meal');
             $(".modal-body #id").val(id);
             $(".modal-body #selected_store_id").val(store);
+            $(".modal-body #selected_meal_id").val(meal);
 
             $('#itemsModal').modal("hide");
         } );
 
-
-
         $('#itemsModal').on('hidden.bs.modal', function () {
             var id =   $(".modal-body #id").val();
             var store =   $(".modal-body #selected_store_id").val();
+            var meal =   $(".modal-body #selected_meal_id").val();
             if(id > 0){
 
-                if(items.filter(c=> c.item_id == id).length >  0){
+                if(items.filter(c=> c.item_id == id && c.item_store_id == store).length >  0){
                     showalert( "هذا المنتج تم إضافته من قبل إلي الفاتورة يمكنك زيادة كميته إذا أردت" , 1);
                     $(".modal-body #id").val(0);
                     $(".modal-body #selected_store_id").val(0);
-
+                    $(".modal-body #selected_meal_id").val(0);
+                    $(".modal-body #selected_meal_id").val(0);
                     return ;
 
                 }
                 // Ensure all existing items have the same cheese_meal_id as the selected meal
-                var allSameMeal = items.every(c => c.item_store_id == store);
-                if (!allSameMeal) {
-                    showalert(  " جميع الأصناف يجب أن تكون من نفس المخزن",1 );
-                    $(".modal-body #id").val(0);
-                    $(".modal-body #selected_store_id").val(0);
-                    return;
-                }
+                // var allSameMeal = items.every(c => c.item_store_id == store);
+                // if (!allSameMeal) {
+                //     showalert(  " جميع الأصناف يجب أن تكون من نفس المخزن",1 );
+                //     $(".modal-body #id").val(0);
+                //     $(".modal-body #selected_store_id").val(0);
+                //     return;
+                // }
 
-                addItemToTable(id);
+                addItemToTable(id , meal , store);
 
 
             } else {
                 console.log('no item selected');
             }
-
             $(".modal-body #id").val(0);
             $(".modal-body #selected_store_id").val(0);
+            $(".modal-body #selected_meal_id").val(0);
 
         });
 
@@ -412,11 +418,10 @@
 
     });
 
-    function addItemToTable(id){
-        //console.log('item-select' + '/' + id + '/' + $('#store_id').val() + '/' + $('#meal_id').val());
+    function addItemToTable(id , meal , store) {
         $.ajax({
             type:'get',
-            url:'item-select' + '/' + id + '/' + $('#store_id').val(),
+            url:'item-select-W-M' + '/' + id + '/' + store ,
             dataType: 'json',
             success:function(response){
                 console.log(response);
@@ -430,7 +435,9 @@
                     'weight': 0 ,
                     'price': response['default_selling_price'] ,
                     'total': 0,
-                    'item_store_id':response['item_store_id']
+                    'item_store_id':response['item_store_id'],
+                    'meal_id':response['item_meal_id'],
+                    'store_name':response['store_name'],
                 }
                 items.push(item);
 
@@ -449,31 +456,72 @@
         var translatedText = "{{ __('main.delete_action') }}";
         let index = 0 ;
         let total = 0 ;
+
         for (let i = 0; i < items.length; i++) {
+
             index = i + 1;
+
             html += '<tr data-item-index="' + i + '">\
-                <td class="text-center" hidden="hidden"> <input type="hidden" class="form-control" name="details_id[]" value="' + items[i]['details_id'] + '" /> </td>\
-                <td class="text-center" hidden="hidden"> <input type="hidden" class="form-control" name="item_id[]" value="' + items[i]['item_id'] + '" /> \
-                 <input type="hidden" class="form-control" name="item_store_id[]" value="' + items[i]['item_store_id'] + '" />  \
-                </td>\
-                <td class="text-center">' + items[i]['code'] + '--' + items[i]['name'] + '</td>\
-                <td class="text-center" hidden="hidden"> <input type="number" step="any" readonly class="form-control" name="available_quantity[]" value="' + items[i]['available_quantity'] + '" /> </td>\
-                <td class="text-center"> <input type="number" step="any" class="form-control quantity" name="quantity[]" id="quantity_' + i + '" min="1" max="' + items[i]['available_quantity'] + '" value="' + items[i]['quantity'] + '" /> </td>\
-                <td class="text-center"> <input type="number" step="any" class="form-control weight" name="weight[]" id="weight_' + i + '" value="' + items[i]['weight'] + '" /> </td>\
-                <td class="text-center"> <input type="number" step="any" class="form-control price" name="price[]" id="price_' + i + '" value="' + items[i]['price'] + '" /> </td>\
-                <td class="text-center"> <input type="number" step="any" class="form-control total" readonly name="total[]" id="total_' + i + '" value="' + items[i]['total'] + '" /> </td>\
-                <td class="text-center"> <i class="bx bxs-trash text-danger deleteBtn" style="font-size: 25px; cursor: pointer" data-toggle="tooltip" data-placement="top" title="' + translatedText + '" data-id="' + i + '"></i> </td>\
-            </tr>';
+            <td class="text-center" hidden="hidden"> \
+                <input type="hidden" class="form-control" name="details_id[]" value="' + items[i]['details_id'] + '" /> \
+            </td>\
+            <td class="text-center" hidden="hidden"> \
+                <input type="hidden" class="form-control" name="item_id[]" value="' + items[i]['item_id'] + '" /> \
+                <input type="hidden" class="form-control" name="item_store_id[]" value="' + items[i]['item_store_id'] + '" /> \
+                <input type="hidden" class="form-control" name="meal_id[]" value="' + items[i]['meal_id'] + '" /> \
+            </td>\
+            <td class="text-center"> \
+                <div class="fw-bold">' + items[i]['code'] + ' -- ' + items[i]['name'] + '</div> \
+                <small class="text-muted">' + items[i]['store_name'] + '</small> \
+            </td>\
+            <td class="text-center" hidden="hidden"> \
+                <input type="number" step="any" readonly class="form-control" name="available_quantity[]" value="' + items[i]['available_quantity'] + '" /> \
+            </td>\
+            <td class="text-center"> \
+                <input type="number" step="any" class="form-control quantity" \
+                    name="quantity[]" \
+                    id="quantity_' + i + '" \
+                    min="1" \
+                    max="' + items[i]['available_quantity'] + '" \
+                    value="' + items[i]['quantity'] + '" /> \
+            </td>\
+            <td class="text-center"> \
+                <input type="number" step="any" class="form-control weight" \
+                    name="weight[]" \
+                    id="weight_' + i + '" \
+                    value="' + items[i]['weight'] + '" /> \
+            </td>\
+            <td class="text-center"> \
+                <input type="number" step="any" class="form-control price" \
+                    name="price[]" \
+                    id="price_' + i + '" \
+                    value="' + items[i]['price'] + '" /> \
+            </td>\
+            <td class="text-center"> \
+                <input type="number" step="any" class="form-control total" \
+                    readonly \
+                    name="total[]" \
+                    id="total_' + i + '" \
+                    value="' + items[i]['total'] + '" /> \
+            </td>\
+            <td class="text-center"> \
+                <i class="bx bxs-trash text-danger deleteBtn" \
+                    style="font-size: 25px; cursor: pointer" \
+                    data-toggle="tooltip" \
+                    data-placement="top" \
+                    title="' + translatedText + '" \
+                    data-id="' + i + '"></i> \
+            </td>\
+        </tr>';
+
             total += Number(items[i]['total']);
         }
-       console.log(total);
 
-        body.innerHTML = html ;
+        body.innerHTML = html;
+
         $('#billTotal').val(total);
         $('#discount').val(0);
         $('#net').val(total);
-
-
     }
 
     function valdiateRequest(){
@@ -509,7 +557,7 @@
             return;
         }
 
-          $('#MealForm').submit();
+        $('#MealForm').submit();
 
     }
     function showalert(msg){
@@ -646,7 +694,7 @@
 
 
     $(document).on('click','.deleteBtn',function () {
-         deleted_index = $(this).data('id')
+        deleted_index = $(this).data('id')
         console.log(deleted_index);
         event.preventDefault();
         let href = $(this).attr('data-attr');

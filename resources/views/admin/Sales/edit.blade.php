@@ -55,13 +55,13 @@
                                             <input type="text" name="bill_number" id="bill_number"
                                                    class="form-control @error('bill_number') is-invalid @enderror"
                                                    placeholder="{{ __('main.docNumber') }}" autofocus required readonly
-                                            value="{{$doc -> bill_number}}"/>
+                                                   value="{{$doc -> bill_number}}"/>
                                             @error('bill_number')
                                             <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                             </span>
                                             @enderror
-                                          <input type="hidden" id="id" name="id" value="{{$doc -> id}}" />
+                                            <input type="hidden" id="id" name="id" value="{{$doc -> id}}" />
                                         </div>
                                     </div>
 
@@ -168,24 +168,31 @@
                                             </thead>
                                             <tbody id="bond-details">
                                             @foreach($details as  $item)
-                                            <tr data-item-index="{{$loop -> index}}">
-                                                <td class="text-center" hidden="hidden"> <input type="hidden" class="form-control" name="details_id[]" value="{{$item -> id}}" /> </td>
-                                                <td class="text-center" hidden="hidden">
-                                                    <input type="hidden" class="form-control" name="item_id[]" value="{{$item -> item_id}}" />
-                                                    <input type="hidden" class="form-control" name="item_store_id[]" value="{{$item -> store_id}}" />
-                                                    <input type="hidden" class="form-control" name="cheese_meal_id[]" value="{{$item -> meal_id}}" />
-                                                </td>
-                                                <td class="text-center">{{$item -> item_code}} -- {{$item -> item_name}}</td>
-                                                <td hidden="hidden">   <input type="number" step="any" readonly class="form-control" name="available_quantity[]" value="{{$item -> available_quantity}}" />  </td>
+                                                <tr data-item-index="{{$loop -> index}}">
+                                                    <td class="text-center" hidden="hidden"> <input type="hidden" class="form-control" name="details_id[]" value="{{$item -> id}}" /> </td>
+                                                    <td class="text-center" hidden="hidden">
+                                                        <input type="hidden" class="form-control" name="item_id[]" value="{{$item -> item_id}}" />
+                                                        <input type="hidden" class="form-control" name="item_store_id[]" value="{{$item -> store_id}}" />
+                                                        <input type="hidden" class="form-control" name="cheese_meal_id[]" value="{{$item -> meal_id}}" />
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="fw-bold">
+                                                            {{ $item->code }} - {{ $item->name }}
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            {{ $item->store_name }}
+                                                        </small>
+                                                    </td>
+                                                    <td hidden="hidden">   <input type="number" step="any" readonly class="form-control" name="available_quantity[]" value="{{$item -> available_quantity}}" />  </td>
 
-                                                <td class="text-center"> <input type="number" step="any" class="form-control quantity" name="quantity[]" id="{{"quantity_" . $loop -> index}}" min="1"  value="{{$item -> quantity}}" /> </td>
-                                                <td class="text-center"> <input type="number" step="any" class="form-control weight" name="weight[]" id="{{"weight_" . $loop -> index}}" value="{{$item -> weight}}" /> </td>
+                                                    <td class="text-center"> <input type="number" step="any" class="form-control quantity" name="quantity[]" id="{{"quantity_" . $loop -> index}}" min="1"  value="{{$item -> quantity}}" /> </td>
+                                                    <td class="text-center"> <input type="number" step="any" class="form-control weight" name="weight[]" id="{{"weight_" . $loop -> index}}" value="{{$item -> weight}}" /> </td>
 
-                                                <td class="text-center"> <input type="number" step="any" class="form-control price" name="price[]" id="{{"price_" . $loop -> index}}" value="{{$item -> price}}" /> </td>
+                                                    <td class="text-center"> <input type="number" step="any" class="form-control price" name="price[]" id="{{"price_" . $loop -> index}}" value="{{$item -> price}}" /> </td>
 
-                                                <td class="text-center"> <input type="number" step="any" class="form-control total" readonly name="total[]" id="{{"total_" . $loop -> index}}" value="{{$item -> total}}" /> </td>
-                                                <td class="text-center"> <i class="bx bxs-trash text-danger deleteBtn" style="font-size: 25px; cursor: pointer" data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}" data-id="' + i + '"></i> </td>
-                                            </tr>
+                                                    <td class="text-center"> <input type="number" step="any" class="form-control total" readonly name="total[]" id="{{"total_" . $loop -> index}}" value="{{$item -> total}}" /> </td>
+                                                    <td class="text-center"> <i class="bx bxs-trash text-danger deleteBtn" style="font-size: 25px; cursor: pointer" data-toggle="tooltip" data-placement="top" title="{{__('main.delete_action')}}" data-id="{{$loop -> index}}"></i> </td>
+                                                </tr>
                                             @endforeach
 
 
@@ -253,7 +260,7 @@
                     <!--/ Responsive Table -->
                 </div>
                 <!-- / Content -->
-                 @include('admin.Sales.items')
+                @include('admin.Sales.items')
                 <!-- Footer -->
                 @include('layouts.footer_design')
                 <!-- / Footer -->
@@ -309,12 +316,11 @@
             if(store != "") {
 
                 $.ajax({
-                    type:'get',
-                    url:'/getStoreMeals' + '/' + store,
+                    url: `/get_store_items/${store}`, // adjust the base path if needed
+                    method: 'GET',
                     dataType: 'json',
+                    success: function(response) {
 
-                    success:function(meals){
-                        console.log(meals);
 
                         event.preventDefault();
                         let href = $(this).attr('data-attr');
@@ -327,17 +333,30 @@
                             success: function (result) {
                                 $('#itemsModal').modal("show");
                                 $('#mstore_id').val(store);
+                                $('#items-body').empty();
+                                response.forEach(function(item, index) {
+                                    let row = `
+    <tr>
+       <td class="text-center" hidden="hidden">${item.cheese_meal_code  || ''} -- ${item.symbol}</td>
+        <td class="text-center">${item.code || ''}</td>
 
-                                const mealSelect = $('#meal_id');
-                                mealSelect.empty();
-                                meals.forEach(meal => {
-                                    const option = $('<option></option>')
-                                        .val(meal.id)
-                                        .text(meal.meal_code);
-                                    mealSelect.append(option);
+        <td class="text-center">${item.name || ''}</td>
+        <td class="text-center">${item.balance ?? 0}</td>
+        <td class="text-center">
+            <button
+                class="btn btn-sm btn-primary selectBtn"
+                data-id="${item.id}"
+                data-store="${store}"
+                data-meal="${item.meal_id}"
+>
+                إختيار
+            </button>
+        </td>
+    </tr>
+`;
+                                    $('#items-body').append(row);
                                 });
 
-                                getMealItems($('#meal_id').val());
 
                             },
                             complete: function () {
@@ -351,20 +370,21 @@
                             timeout: 8000
                         })
 
+
+                    },
+                    error: function(xhr, status, error) {
+                        // ❌ Handle errors
+                        console.error('AJAX error:', error);
+                        toastr.error('فشل في جلب العناصر');
                     }
-                });
-
-
-
-
-
+                })
 
 
             }
             else {
                 var translatedText = "{{ __('main.select_store_first') }}";
                 console.log(translatedText );
-                showalert(translatedText);
+                toastr.warning(translatedText);
             }
         });
 
@@ -378,10 +398,11 @@
 
         $(document).on('click' , '.selectBtn' , function (event){
             const id = $(this).data('id');
+            const store = $(this).data('store');
             const meal = $(this).data('meal');
             $(".modal-body #id").val(id);
-            $(".modal-body #selected_meal_id").val(meal);
-            //  addItemToTable(id);
+            $(".modal-body #selected_store_id").val(store);
+
             $('#itemsModal').modal("hide");
         } );
 
@@ -389,33 +410,38 @@
 
         $('#itemsModal').on('hidden.bs.modal', function () {
             var id =   $(".modal-body #id").val();
+            var store =   $(".modal-body #selected_store_id").val();
             var meal =   $(".modal-body #selected_meal_id").val();
             if(id > 0){
 
-                if(items.filter(c=> c.item_id == id && c.cheese_meal_id == meal).length >  0){
-                    showalert("هذا المنتج تم إضافته من قبل إلي الفاتورة يمكنك زيادة كميته إذا أردت");
+                if(items.filter(c=> c.item_id == id && c.item_store_id == store).length >  0){
+                    showalert( "هذا المنتج تم إضافته من قبل إلي الفاتورة يمكنك زيادة كميته إذا أردت" , 1);
                     $(".modal-body #id").val(0);
+                    $(".modal-body #selected_store_id").val(0);
+                    $(".modal-body #selected_meal_id").val(0);
                     $(".modal-body #selected_meal_id").val(0);
                     return ;
 
                 }
                 // Ensure all existing items have the same cheese_meal_id as the selected meal
-                var allSameMeal = items.every(c => c.cheese_meal_id == meal);
-                if (!allSameMeal) {
-                    showalert(" جميع الأصناف يجب أن تكون من نفس الوجبة و نفس المخزن");
-                    $(".modal-body #id").val(0);
-                    $(".modal-body #selected_meal_id").val(0);
-                    return;
-                }
+                // var allSameMeal = items.every(c => c.item_store_id == store);
+                // if (!allSameMeal) {
+                //     showalert(  " جميع الأصناف يجب أن تكون من نفس المخزن",1 );
+                //     $(".modal-body #id").val(0);
+                //     $(".modal-body #selected_store_id").val(0);
+                //     return;
+                // }
 
-                addItemToTable(id);
+                addItemToTable(id  , store);
+
 
             } else {
                 console.log('no item selected');
             }
-
             $(".modal-body #id").val(0);
+            $(".modal-body #selected_store_id").val(0);
             $(".modal-body #selected_meal_id").val(0);
+
         });
 
 
@@ -454,10 +480,11 @@
 
     }
 
-    function addItemToTable(id){
+    function addItemToTable(id , store){
+        console.log(store);
         $.ajax({
             type:'get',
-            url:'item-select' + '/' + id + '/' + $('#from_store').val(),
+            url:'/item-select-W-M' + '/' + id + '/' + store ,
             dataType: 'json',
             success:function(response){
                 console.log(response);
@@ -470,7 +497,9 @@
                     'quantity': 0 ,
                     'weight': 0 ,
                     'price': response['default_selling_price'] ,
-                    'total': 0
+                    'total': 0,
+                    'store_name':response['store_name'],
+                    'item_store_id':response['item_store_id'],
                 }
                 items.push(item);
 
@@ -489,12 +518,19 @@
         var translatedText = "{{ __('main.delete_action') }}";
         let index = 0 ;
         let total = 0 ;
+        console.log('items' , items);
         for (let i = 0; i < items.length; i++) {
             index = i + 1;
             html += '<tr data-item-index="' + i + '">\
                 <td class="text-center" hidden="hidden"> <input type="hidden" class="form-control" name="details_id[]" value="' + items[i]['details_id'] + '" /> </td>\
-                <td class="text-center" hidden="hidden"> <input type="hidden" class="form-control" name="item_id[]" value="' + items[i]['item_id'] + '" /> </td>\
-                <td class="text-center">' + items[i]['code'] + '--' + items[i]['name'] + '</td>\
+               <td class="text-center" hidden="hidden"> \
+                <input type="hidden" class="form-control" name="item_id[]" value="' + items[i]['item_id'] + '" /> \
+                <input type="hidden" class="form-control" name="item_store_id[]" value="' + items[i]['item_store_id'] + '" /> \
+               </td>\
+                <td class="text-center"> \
+                <div class="fw-bold">' + items[i]['code'] + ' -- ' + items[i]['name'] + '</div> \
+                <small class="text-muted">' + items[i]['store_name'] + '</small> \
+               </td>\
                 <td class="text-center" hidden="hidden"> <input type="number" step="any" readonly class="form-control" name="available_quantity[]" value="' + items[i]['available_quantity'] + '" /> </td>\
                 <td class="text-center"> <input type="number" step="any" class="form-control quantity" name="quantity[]" id="quantity_' + i + '" min="1" max="' + items[i]['available_quantity'] + '" value="' + items[i]['quantity'] + '" /> </td>\
                 <td class="text-center"> <input type="number" step="any" class="form-control weight" name="weight[]" id="weight_' + i + '" value="' + items[i]['weight'] + '" /> </td>\
@@ -671,7 +707,7 @@
 
 
     $(document).on('click','.deleteBtn',function () {
-         deleted_index = $(this).data('id')
+        deleted_index = $(this).data('id')
         console.log(deleted_index);
         event.preventDefault();
         let href = $(this).attr('data-attr');

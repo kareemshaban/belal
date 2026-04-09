@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\DB;
 
 class SafeBalanceExchangeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -54,7 +58,7 @@ class SafeBalanceExchangeController extends Controller
 
         $safes = Safe::all();
 
-        return view('admin.safe.transactions', compact('docs', 'safes' , 'is_all'));
+        return view('admin.Safe.transactions', compact('docs', 'safes' , 'is_all'));
     }
 
     /**

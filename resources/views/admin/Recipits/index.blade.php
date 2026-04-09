@@ -103,6 +103,11 @@
                                                            id="{{$doc -> id}}" style="font-size: 25px ; cursor: pointer"></i>
 
                                                     @endif
+                                                    <a href="{{route('printRecipit' , $doc -> id)}}" target="_blank">
+                                                        <i class='bx bxs-printer text-primary' data-toggle="tooltip" data-placement="top" title="{{__('main.view_action')}}"
+                                                           id="{{$doc -> id}}" style="font-size: 25px ; cursor: pointer"></i>
+                                                    </a>
+
 
 
 

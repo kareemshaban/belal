@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Cars;
 use App\Models\Client;
-use App\Models\employee;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -51,19 +51,19 @@ class EmployeeController extends Controller
         if($request -> id == 0){
             $request->validate([
                     'name' => 'required|unique:employees,name',
-                    'daily_salary' => 'required',
+                    'weekly_salary' => 'required',
                 ]
                 , [
                     'name.required' => __('main.name_required'),
                     'name.unique'   => __('main.name_unique'),
-                    'daily_salary.required' => __('main.daily_salary_required'),
+                    'weekly_salary.required' => __('main.daily_salary_required'),
                 ]
             );
             Employee::create([
                 'name' => $request -> name,
                 'phone' => $request -> phone ?? "",
                 'address' => $request -> address ?? "",
-                'daily_salary' => $request -> daily_salary ,
+                'weekly_salary' => $request -> weekly_salary ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0
             ]);
@@ -112,10 +112,10 @@ class EmployeeController extends Controller
                 'required',
                 Rule::unique('employees', 'name')->ignore($request -> id),
             ],
-            'daily_salary' => 'required',
+            'weekly_salary' => 'required',
         ], [
             'name.required' => __('main.name_required'),
-            'daily_salary.required' => __('main.daily_salary_required'),
+            'weekly_salary.required' => __('main.daily_salary_required'),
             'name.unique'   => __('main.name_unique'),
         ]);
 
@@ -125,7 +125,7 @@ class EmployeeController extends Controller
                 'name' => $request -> name,
                 'phone' => $request -> phone ?? "",
                 'address' => $request -> address ?? "",
-                'daily_salary' => $request -> daily_salary ,
+                'weekly_salary' => $request -> weekly_salary ,
                 'user_upd' => Auth::user() -> id,
             ]);
             return  redirect() ->route('employees') -> with('success', __('main.updated'));

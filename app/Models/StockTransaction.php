@@ -12,6 +12,7 @@ class StockTransaction extends Model
     protected $fillable = [
       'id',
       'bill_number',
+      'message_code',
       'date',
       'from_store',
       'to_store',

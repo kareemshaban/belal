@@ -49,7 +49,7 @@
                                 @csrf
 
                                 <div class="row">
-                                    <div class="col-md-6 col-lg-6 col-sm-12" style="margin-top: 10px">
+                                    <div class="col-md-3 col-lg-3 col-sm-12" style="margin-top: 10px">
                                         <div class="form-group">
                                             <label>{{ __('main.docNumber') }} <span style="font-size: 14px ; color: red">*</span></label>
                                             <input type="text" name="bill_number" id="bill_number"
@@ -64,6 +64,23 @@
                                           <input type="hidden" id="id" name="id" value="{{$doc -> id}}" />
                                         </div>
                                     </div>
+                                    
+                                        <div class="col-md-3 col-lg-3 col-sm-12" style="margin-top: 10px">
+                                        <div class="form-group">
+                                            <label>{{ __('main.message_code') }} <span style="font-size: 14px ; color: red">*</span></label>
+                                            <input type="text" name="message_code" id="message_code"
+                                                   class="form-control @error('message_code') is-invalid @enderror"
+                                                   placeholder="{{ __('main.message_code') }}" autofocus required readonly
+                                            value="{{$doc -> message_code}}"/>
+                                            @error('message_code')
+                                            <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                         
+                                        </div>
+                                    </div>
+                                    
 
                                     <div class="col-md-6 col-lg-6 col-sm-12" style="margin-top: 10px">
                                         <div class="form-group">

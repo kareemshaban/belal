@@ -145,6 +145,16 @@
     @if(Session::has('warning'))
     toastr.warning("{{ Session::get('warning') }}");
     @endif
+
+    @if ($errors->any())
+    @foreach ($errors->all() as $error)
+    toastr.error("{{ $error }}");
+    @endforeach
+
+    @php
+        session()->forget('errors');
+    @endphp
+@endif
 </script>
 
 <script>
@@ -170,6 +180,21 @@
             }
         }
     });
+    
+    document.addEventListener('keydown', function (event) {
+    if (event.target.matches('input[type="number"]')) {
+        if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            event.preventDefault();
+        }
+    }
+});
+
+// منع تغيير القيمة عن طريق بكرة الماوس (اختياري ولكنه مهم جداً)
+document.addEventListener('wheel', function (event) {
+    if (document.activeElement.type === 'number') {
+        document.activeElement.blur();
+    }
+}, { passive: false });
 
 </script>
 

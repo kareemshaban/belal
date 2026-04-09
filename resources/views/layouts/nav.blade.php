@@ -2,7 +2,7 @@
     class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
     id="layout-navbar"
 >
-    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0" id="desktop-menu-toggle">
         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
             <i class="bx bx-menu bx-sm"></i>
         </a>
@@ -125,5 +125,26 @@
         console.log('clicked');
         $('#alertModal').modal("hide");
         document.getElementById('logout-form').submit();
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('desktop-menu-toggle');
+        const htmlTag = document.documentElement;
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // إضافة أو حذف الكلاس من الـ html
+                htmlTag.classList.toggle('layout-menu-collapsed');
+
+                // تغيير شكل الأيقونة (السهم)
+
+                // إرسال تنبيه للمتصفح لإعادة حساب الأبعاد
+                window.dispatchEvent(new Event('resize'));
+            });
+        }
     });
 </script>

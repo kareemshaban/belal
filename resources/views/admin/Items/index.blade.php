@@ -9,7 +9,7 @@
     <div class="layout-container">
         <!-- Menu -->
 
-        @include('layouts.sidebar' , ['slag' => 4 , 'subSlag' => 41])
+        @include('layouts.sidebar' , ['slag' => 4 , 'subSlag' => 44])
         <!-- / Menu -->
 
         <!-- Layout container -->
@@ -56,7 +56,7 @@
                                     <th class="text-center"> {{__('main.code')}}</th>
                                     <th class="text-center">{{__('main.name')}}</th>
                                     <th class="text-center">{{__('main.default_selling_price')}}</th>
-                                    <th class="text-center">{{__('main.item_type')}}</th>
+                                    <th class="text-center" hidden="hidden">{{__('main.item_type')}}</th>
                                     <th class="text-center">{{__('main.actions')}}</th>
                                 </tr>
                                 </thead>
@@ -67,7 +67,7 @@
                                         <td class="text-center">{{$item -> code}}</td>
                                         <td class="text-center">{{$item -> name}}</td>
                                         <td class="text-center">{{$item -> default_selling_price}}</td>
-                                        <td class="text-center">
+                                        <td class="text-center" hidden="hidden">
                                             @if($item -> type == 0)
                                                 <span class="badge bg-secondary">{{__('main.item_type0')}}</span>
                                             @elseif($item -> type == 1)

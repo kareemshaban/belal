@@ -274,7 +274,7 @@
             url:'items-show' + '/' + id ,
             dataType: 'json',
             success:function(response){
-                console.log(response);
+             //   console.log(response);
                 var item = {
                     'details_id': 0 ,
                     'item_id': response['id'],
@@ -283,7 +283,9 @@
                     'quantity': 0 ,
                     'weight': 0 ,
                 }
+                console.log(items);
                 items.push(item);
+                console.log(items);
 
                 if(response){
                     setItems();

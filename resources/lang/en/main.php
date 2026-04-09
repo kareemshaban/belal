@@ -574,7 +574,7 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
     'employees' => 'Employees',
     'attendances' => 'Attendances',
     'salaries' => 'Salaries',
-    'daily_salary_required' => 'Daily Salary Required',
+    'daily_salary_required' => 'Weekly Salary Required',
     'daily_salary' => 'Daily Salary',
     'present_state' => 'Present State',
     'present_state0' => 'Absent',
@@ -591,6 +591,11 @@ Regarding the Meals Table, make sure to click the Save button in the row you edi
     'shift_count' => 'Shifts Count',
     'day_count' => 'Days Count',
     'salary' => 'Salary',
-    'confirm_salary' => 'Confirm Salary'
+    'confirm_salary' => 'Confirm Salary',
+    'weekly_salary' => 'Weekly Salary',
+    'print_btn' => 'Print',
+    'stock_report_by_meal' => 'Stock Report by Meal',
+    'meal' => 'Meal',
+    'message_code' => ' Message Code'
 
 ];

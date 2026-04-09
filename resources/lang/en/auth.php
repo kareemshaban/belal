@@ -88,7 +88,8 @@ return [
     "enter_name" => "الإسم بالكامل",
     "enter_subject" => "الموضوع",
     "enter_msg" => "أكتب رسالتك بالتفصيل",
-    "send_msg" => "أرسل رسالتك"
+    "send_msg" => "أرسل رسالتك",
+    "failed" => 'Error, username or password is incorrect'
 
 
 

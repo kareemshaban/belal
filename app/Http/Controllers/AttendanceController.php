@@ -139,6 +139,8 @@ class AttendanceController extends Controller
             ]);
         }
 
+       // return $attends ;
+
         $weekState = $docs->contains(function($att) {
             return $att->state == 1;
         }) ? 1 : 0;
@@ -179,7 +181,7 @@ class AttendanceController extends Controller
         //
     }
 
-    public function postData(Request $request){
+    public function     postData(Request $request){
 
         $startOfWeek = Carbon::parse($request->start_date)->startOfDay();
         $endOfWeek = Carbon::parse($request->end_date)->endOfDay();

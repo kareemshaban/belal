@@ -19,6 +19,7 @@
                             <thead>
                             <tr class="text-nowrap">
                                 <th class="text-center">#</th>
+                                <th class="text-center" hidden="hidden"> {{__('main.meal')}}</th>
                                 <th class="text-center"> {{__('main.code')}}</th>
                                 <th class="text-center">{{__('main.name')}}</th>
                                 <th class="text-center">{{__('main.actions')}}</th>

@@ -69,7 +69,9 @@
                                         <td class="text-center"> {{\Carbon\Carbon::parse($doc -> date) -> format('Y-m-d') }}</td>
                                         <td class="text-center">
                                             <span class="daily_meal_hl" style="cursor: pointer" data-id="{{$doc -> meal_id}}">
-                                            {{$doc -> cheese_meal}}
+                                            {{$doc -> cheese_meal }} -- {{$doc -> symbol}}
+
+
                                         </span>
                                         </td>
 

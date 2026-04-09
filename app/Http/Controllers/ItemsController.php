@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Items;
+use App\Models\Store;
 use App\Models\StoreQuantity;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -163,21 +164,52 @@ class ItemsController extends Controller
         }
     }
 
-    public function itemSelect($id , $store)
+    public function itemSelect($id , $store , $meal)
     {
         $item = Items::find($id);
         if($item){
             $storeQuantity = StoreQuantity::where('store_id' , '=' , $store)
                 -> where('item_id' , '=' , $id)
+                -> where('cheese_meal_id' , '=' , $meal)
                 -> get() -> first();
 
 
             if($storeQuantity){
                 $item -> available_quantity = $storeQuantity -> balance  + $storeQuantity -> opening_quantity;
                 $item -> item_store_id = $storeQuantity -> store_id ;
+                $item -> item_meal_id = $storeQuantity -> cheese_meal_id ;
             } else {
                 $item -> available_quantity = 0;
                 $item -> item_store_id = $store;
+                $item -> item_meal_id = $meal;
+            }
+
+            echo json_encode($item);
+            exit();
+        }
+    }
+
+    public function itemSelectWithoutMeal($id , $store )
+    {
+        $item = Items::find($id);
+        if($item){
+            $storeQuantity = StoreQuantity::where('store_id' , '=' , $store)
+                -> where('item_id' , '=' , $id)
+                -> get() -> first();
+            
+            $store = Store::find($store);
+
+
+            if($storeQuantity){
+                $item -> available_quantity = $storeQuantity -> balance  + $storeQuantity -> opening_quantity;
+                $item -> item_store_id = $storeQuantity -> store_id ;
+                $item -> item_meal_id = $storeQuantity -> cheese_meal_id ;
+                $item -> store_name = $store -> name ;
+            } else {
+                $item -> available_quantity = 0;
+                $item -> item_store_id = $store;
+                $item -> item_meal_id = '';
+                $item -> store_name = $store -> name ;
             }
 
             echo json_encode($item);

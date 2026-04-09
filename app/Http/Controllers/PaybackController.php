@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Payback;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class PaybackController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *

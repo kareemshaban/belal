@@ -19,7 +19,12 @@ class CarDailyMeal extends Model
         'member_id',
         'weight',
         'price',
+        'weight_b',
+        'price_b',
         'total',
+        'state',
+        'isPaid',
+        'paid',
         'user_ins',
         'user_upd'
     ];

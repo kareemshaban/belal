@@ -74,7 +74,7 @@
                                         <td class="text-center">{{$doc -> bill_number}}</td>
                                         <td class="text-center"> {{\Carbon\Carbon::parse($doc -> date) -> format('Y-m-d') }}</td>
 
-                                        <td class="text-center">{{$doc -> store_name}}</td>
+                                        <td class="text-center">{{$doc -> store_name ?? "مخزن متعدد"}}</td>
                                         <td class="text-center">{{$doc -> client_name}}</td>
                                         <td class="text-center">{{$doc -> net}}</td>
                                         <td class="text-center">

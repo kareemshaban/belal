@@ -131,7 +131,7 @@
                                                    <input type="checkbox" class="form-check" name="morning_present[]"
                                                           style="display: block;margin: auto;width: 40px;"
                                                           @if($attend['morning_present'] == 1) checked @endif
-                                                          @if($attend['state'] == 1) disabled @endif
+                                                          @if($weekState == 1) disabled @endif
                                                           data-employee="{{$item['employee_id']}}"
                                                           data-date="{{$attend['date']}}" data-type="0">
                                                </td>
@@ -139,7 +139,7 @@
                                                    <input type="checkbox" class="form-check" name="evening_present[]"
                                                           style="display: block;margin: auto;width: 40px;"
                                                           @if($attend['evening_present'] == 1) checked @endif
-                                                          @if($attend['state'] == 1) disabled @endif
+                                                          @if( $weekState == 1) disabled @endif
                                                           data-employee="{{$item['employee_id']}}"
                                                           data-date="{{$attend['date']}}" data-type="1">
                                                </td>

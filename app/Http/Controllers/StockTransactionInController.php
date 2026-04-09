@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Gate;
 
 class StockTransactionInController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -32,7 +36,9 @@ class StockTransactionInController extends Controller
             $docs = DB::table('stock_transaction_ins')->
             join('cheese_meals', 'cheese_meals.id', '=', 'stock_transaction_ins.meal_id')
                 ->join('stores', 'stores.id', '=', 'stock_transaction_ins.store_id')
-                ->select('stock_transaction_ins.*', 'cheese_meals.code as cheese_meal', 'stores.name as store_name')->get();
+                ->select('stock_transaction_ins.*', 'cheese_meals.code as cheese_meal',
+                    'cheese_meals.symbol',
+                    'stores.name as store_name')->get();
 
         } else {
             $today = Carbon::now();
@@ -52,7 +58,9 @@ class StockTransactionInController extends Controller
             $docs = DB::table('stock_transaction_ins')->
             join('cheese_meals', 'cheese_meals.id', '=', 'stock_transaction_ins.meal_id')
                 ->join('stores', 'stores.id', '=', 'stock_transaction_ins.store_id')
-                ->select('stock_transaction_ins.*', 'cheese_meals.code as cheese_meal', 'stores.name as store_name')
+                ->select('stock_transaction_ins.*', 'cheese_meals.code as cheese_meal',
+                    'cheese_meals.symbol',
+                    'stores.name as store_name')
                 ->whereDate('stock_transaction_ins.date', '>=', $startOfWeek->toDateString())
                 ->whereDate('stock_transaction_ins.date', '<=', $endOfWeek->toDateString())
                 ->get();

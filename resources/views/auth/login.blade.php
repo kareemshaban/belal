@@ -1,81 +1,134 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-  	<title>Login To Belal-System</title>
+<head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login To Belal-System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-	<link rel="stylesheet" href="{{asset('assets/auth/css/style.css')}}">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
 
-      <style>
-          @font-face {
-              font-family: 'icomoon';
-              src: url("{{asset('assets/fonts/ArbFONTS-The-Sans-Plain.otf')}}");
-              src: url("{{asset('assets/fonts/ArbFONTS-The-Sans-Plain.otf')}}");
-              font-weight: normal;
-              font-style: normal;
-          }
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #4e73df, #224abe);
+            min-height: 100vh;
+        }
 
-          *:not(.fa) {
-              font-family: 'icomoon' !important;
-          }
-      </style>
-	</head>
-	<body class="img js-fullheight" style="background-image: url('{{asset("assets/auth/images/bg.jpg")}}');">
-	<section class="ftco-section">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">أولاد بلال </h2>
-				</div>
-			</div>
-			<div class="row justify-content-center">
-				<div class="col-md-6 col-lg-4">
-					<div class="login-wrap p-0">
-		      	<h3 class="mb-4 text-center"></h3>
-		      	<form  method="POST" action="{{ route('login') }}">
-				  @csrf
-		      		<div class="form-group">
-					  <input type="email" class="form-control" placeholder="Email"
-                                                aria-label="Email" aria-describedby="email-addon" id="email"
-                                                name="email" >
-		      		</div>
-	            <div class="form-group">
-				<input type="password" class="form-control" placeholder="Password"
-                                                aria-label="Password" aria-describedby="password-addon" id="password"
-                                                name="password">
-	              <span toggle="#password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
-	            </div>
-	            <div class="form-group">
-	            	<button type="submit" class="form-control btn btn-primary submit px-3">Sign In</button>
-	            </div>
-	            <div class="form-group d-md-flex">
-	            	<div class="w-50">
-		            	<label class="checkbox-wrap checkbox-primary">Remember Me
-						<input class="form-check-input" type="checkbox" name="remember"
-						id="remember" checked="">
-									  <span class="checkmark"></span>
-									</label>
-								</div>
+        .login-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        }
 
-	            </div>
-	          </form>
+        .login-image {
+            background: url("{{ asset('assets/auth/images/bg.jpg') }}") center / cover no-repeat;
+        }
 
-		      </div>
-				</div>
-			</div>
-		</div>
-	</section>
+        .form-control {
+            height: 48px;
+        }
 
-	<script src="{{asset('assets/auth/js/jquery.min.js')}}"></script>
-  <script  src="{{asset('assets/auth/js/js/popper.js')}}"></script>
-  <script src="{{asset('assets/auth/js/bootstrap.min.js')}}"></script>
-  <script src="{{asset('assets/auth/js/main.js')}}"></script>
+        .btn-login {
+            height: 48px;
+            font-weight: 600;
+        }
 
-	</body>
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-xl-9 col-lg-10 col-md-10">
+            <div class="card login-card shadow-lg border-0">
+                <div class="row g-0">
+
+                    <!-- Left Image -->
+                    <div class="col-lg-6 d-none d-lg-block login-image"></div>
+
+                    <!-- Right Form -->
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                            <div class="text-center mb-4">
+                                <h2 class="fw-bold text-primary">Welcome Back</h2>
+                                <p class="text-muted">Login to continue</p>
+                            </div>
+
+                            <form action="{{ route('login') }}" method="POST">
+                                @csrf
+
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label class="form-label">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+                                        <input type="email" name="email" id="email" required
+                                               class="form-control" placeholder="Enter your email">
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                        <input type="password" name="password" id="password" required
+                                               class="form-control" placeholder="Enter your password">
+                                    </div>
+                                </div>
+
+                                <!-- Remember Me -->
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                                        <label class="form-check-label" for="remember">
+                                            Remember me
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="btn btn-primary w-100 btn-login">
+                                    <i class="fa fa-sign-in-alt me-2"></i> Login
+                                </button>
+
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    @if ($errors->any())
+    @foreach ($errors->all() as $error)
+    toastr.error("{{ $error }}");
+    @endforeach
+    @endif
+</script>
+</body>
 </html>
-

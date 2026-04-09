@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\ClientAccount;
+
 
 class CarMemberController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,14 +24,20 @@ class CarMemberController extends Controller
      */
     public function index($supplier_id)
     {
-        $members = DB::table('car_members')
-            -> join('clients' , 'car_members.supplier_id' , '=' , 'clients.id')
-            -> select('car_members.*' , 'clients.name as supplier_name')
-            -> where('car_members.supplier_id' , '=' ,$supplier_id )
+        $members = DB::table('clients')
+            -> select('clients.*' )
+            -> where('clients.car_supplier_id' , '=' ,$supplier_id )
+            -> where('clients.is_farmer' , '=' , 1)
+            ->orderBy('sort', 'asc')
             -> get();
 
-        $suppliers = Client::where('car_id' , '<>' , 0) -> get();
+        $suppliers = Client::where('car_id' , '<>' , 0) 
+        -> where('is_farmer' , 0)
+        -> get();
         $supplier = Client::find($supplier_id);
+        
+        
+      //  return $members ;
 
         return view('admin.Client.members.index' , compact('members' , 'suppliers' , 'supplier'));
 
@@ -52,7 +64,7 @@ class CarMemberController extends Controller
     {
         if($request -> id == 0){
             $request->validate([
-                    'name' => 'required|unique:car_members,name',
+                    'name' => 'required|unique:clients,name',
                     'supplier_id' => 'required',
                 ]
                 , [
@@ -64,14 +76,35 @@ class CarMemberController extends Controller
 
 
 
-            CarMember::create([
-                'supplier_id' => $request -> supplier_id,
+            $sort = 0 ;
+          
+                $sort = $request->sort ?? (Client::where('type', 1)->max('sort') + 1);
+               
+                Client::where('type', 1)
+                    ->where('sort', '>=', $sort)
+                    ->increment('sort');
+                    
+                
+            
+
+               Client::create([
+                'type' => 1 ,
                 'name' => $request -> name,
                 'phone' => $request -> phone ?? "",
+                'buffalo_min_limit' => $request -> buffalo_min_limit ?? 0,
+                'buffalo_max_limit' => $request -> buffalo_max_limit ?? 0,
+                'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
+                'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
+                'car_id' =>  0,
+                'sort'   => $sort,
+                'car_supplier_id' => $request -> supplier_id ,
+                'is_farmer' => 1,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
             ]);
+            
+            
             return redirect()->route('carMembers' , $request -> supplier_id) -> with('success', __('main.saved'));
         } else{
             return  $this -> update($request);
@@ -86,11 +119,20 @@ class CarMemberController extends Controller
      */
     public function show($id)
     {
-        $member = DB::table('car_members')
-            -> join('clients' , 'car_members.supplier_id' , '=' , 'clients.id')
-            -> select('car_members.*' , 'clients.name as supplier_name')
-            -> where('car_members.id' , '=' ,$id )
+       
+            
+             $member = DB::table('clients')
+            -> select('clients.*' )
+            -> where('clients.id' , '=' ,$id )
+            -> where('clients.is_farmer' , '=' , 1)
             -> first();
+     
+        $supplier = Client::find($id);
+            
+            if($member){
+                $member -> supplier_name = $supplier -> name ;
+            }
+            
         echo json_encode($member);
         exit();
     }
@@ -115,16 +157,26 @@ class CarMemberController extends Controller
      */
     public function update(Request $request)
     {
-        $member = CarMember::find($request -> id);
+        $member = Client::find($request -> id);
         if($member){
+
+            $oldOrder = $member->sort;
+            $newOrder = $request->sort;
+
             $member -> update([
-                'supplier_id' => $request -> supplier_id,
                 'name' => $request -> name,
                 'phone' => $request -> phone ?? "",
+                'buffalo_min_limit' => $request -> buffalo_min_limit ?? 0,
+                'buffalo_max_limit' => $request -> buffalo_max_limit ?? 0,
+                'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
+                'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
+                'car_id' => $request -> car_id ?? 0,
+                'sort'   => $newOrder,
+                'is_farmer' => 1,
                 'user_upd' => Auth::user() -> id
             ]);
-            return redirect()->route('carMembers' , $request -> supplier_id ) -> with('success', __('main.updated'));
+            return redirect()->route('carMembers' , $member -> car_supplier_id ) -> with('success', __('main.updated'));
 
         }
     }
@@ -138,12 +190,27 @@ class CarMemberController extends Controller
     public function destroy($id)
     {
 
-        $member = CarMember::find($id);
-        return $member ;
+        $member = Client::find($id);
         if($member){
-            $member -> delete();
-            return redirect()->route('carMembers' , $member -> supplier_id) -> with('success', __('main.deleted'));
+            $supplierAccount = ClientAccount::where('client_id', $id)  -> get();
+            
+            if(count($supplierAccount) > 0 ){
+             return redirect()->route('carMembers' , $member -> car_supplier_id ) -> with('success', __('main.can_not_delete'));
+            } else {
+                $member -> delete();
+                 return redirect()->route('carMembers' , $member -> car_supplier_id ) -> with('success', __('main.deleted'));
+               
+            }
 
         }
+    }
+
+
+    public function  getOrder($supplier)
+    {
+        $sort = $request->sort ?? (Client::where('type', 1)->max('sort') + 1);
+        echo json_encode($sort);
+        exit();
+
     }
 }

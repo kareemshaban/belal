@@ -15,9 +15,15 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use App\Models\CarDailyMeal;
+
 
 class RecipitController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -141,6 +147,18 @@ class RecipitController extends Controller
         $doc = Recipit::find($id);
        echo json_encode($doc);
         exit();
+    }
+
+    public function print($id)
+    {
+        $doc = DB::table('recipits')
+            ->join('clients', 'recipits.supplier_id', '=', 'clients.id')
+            ->join('safes', 'recipits.safe_id', '=', 'safes.id')
+            ->select('recipits.*', 'clients.name', 'safes.name as safe')
+            -> where('recipits.id', $id)
+            ->first();
+
+        return view('admin.Recipits.print' , compact('doc'));
     }
 
     /**
@@ -310,10 +328,18 @@ class RecipitController extends Controller
 
             //then i need to handle the dailymeals to pay
 
+           if($request -> car == 0){
             $meals = DailyMilkMeal::where('weakly_meal_id', '=', $request->wid)
                 ->where('supplier_id', '=', $request->supplier_id)
                 ->where('isPaid', '=', 0)
+                ->get();    
+           } else {
+               $meals = CarDailyMeal::where('weakly_meal_id', '=', $request->wid)
+                ->where('member_id', '=', $request->supplier_id)
+                ->where('isPaid', '=', 0)
                 ->get();
+           }
+           
 
             $amount = $request->amount;
 

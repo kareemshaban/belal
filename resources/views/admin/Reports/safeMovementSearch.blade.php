@@ -79,9 +79,9 @@
 
                                     <div class="col-md-6 col-lg-6 col-sm-12" style="margin-top: 10px">
                                         <div class="form-group">
-                                            <label>{{ __('main.safe') }} </label>
+                                            <label>{{ __('main.safe') }}  <span style="color:red"> * </span> </label>
                                             <select name="safe_id" id="safe_id"  @if(Config::get('app.locale')=='ar' ) dir="rtl" @endif
-                                                    class="form-control search @error('safe_id') is-invalid @enderror" >
+                                                    class="form-control search @error('safe_id') is-invalid @enderror" required >
                                                 <option value=""> {{__('main.select')}} </option>
                                                 @foreach($safes as $safe)
                                                     <option value="{{$safe->id}}"> {{$safe->name}} </option>

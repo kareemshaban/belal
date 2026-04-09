@@ -18,7 +18,7 @@ class CreateEmployeesTable extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->text('address')->nullable();
-            $table->decimal('daily_salary');
+            $table->decimal('weekly_salary');
             $table -> integer('user_ins') -> default(0);
             $table -> integer('user_upd') -> default(0);
             $table->timestamps();

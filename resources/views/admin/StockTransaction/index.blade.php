@@ -60,6 +60,7 @@
                                 <tr class="text-nowrap">
                                     <th class="text-center">#</th>
                                     <th class="text-center"> {{__('main.docNumber')}}</th>
+                                    <th class="text-center"> {{__('main.message_code')}} </th>
                                     <th class="text-center"> {{__('main.date')}}</th>
                                     <th class="text-center"> {{__('main.from_store')}}</th>
                                     <th class="text-center">{{__('main.to_store')}}</th>
@@ -72,6 +73,7 @@
                                     <tr>
                                         <th scope="row" class="text-center">{{$loop -> index +1}}</th>
                                         <td class="text-center">{{$doc -> bill_number}}</td>
+                                        <td class="text-center"> {{$doc -> message_code}} </td>
                                         <td class="text-center"> {{\Carbon\Carbon::parse($doc -> date) -> format('Y-m-d') }}</td>
 
                                         <td class="text-center">{{$doc -> store_name_from}}</td>

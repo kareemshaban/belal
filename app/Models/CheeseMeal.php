@@ -11,6 +11,7 @@ class CheeseMeal extends Model
     protected $fillable = [
       'id',
       'code',
+      'symbol',
       'date',
       'cheese_price',
       'white_cheese_price',

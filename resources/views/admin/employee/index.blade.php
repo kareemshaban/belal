@@ -51,7 +51,7 @@
                                     <th class="text-center">#</th>
                                     <th class="text-center"> {{__('main.name')}}</th>
                                     <th class="text-center">{{__('main.phone')}}</th>
-                                    <th class="text-center">{{__('main.daily_salary')}}</th>
+                                    <th class="text-center">{{__('main.weekly_salary')}}</th>
                                     <th class="text-center">{{__('main.actions')}}</th>
                                 </tr>
                                 </thead>
@@ -61,7 +61,7 @@
                                         <th scope="row" class="text-center">{{ $loop -> index + 1  }}</th>
                                         <td class="text-center">{{$employee -> name}}</td>
                                         <td class="text-center" style="direction: ltr">{{$employee -> phone}}</td>
-                                        <td class="text-center">{{$employee -> daily_salary}}</td>
+                                        <td class="text-center">{{$employee -> weekly_salary}}</td>
                                         <td class="text-center">
                                             @can('page-access', [7, 'edit'])
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">
@@ -120,7 +120,7 @@
                 $(".modal-body #name").val("");
                 $(".modal-body #phone").val("");
                 $(".modal-body #address").val("");
-                $(".modal-body #daily_salary").val("0");
+                $(".modal-body #weekly_salary").val("0");
 
                 var translatedText = "{{ __('main.newData') }}";
                 $(".modelTitle").html(translatedText);
@@ -163,7 +163,7 @@
                             $('#createModal').modal("show");
                             $(".modal-body #name").val( response.name );
                             $(".modal-body #phone").val( response.phone );
-                            $(".modal-body #daily_salary").val( response.daily_salary );
+                            $(".modal-body #weekly_salary").val( response.weekly_salary );
                             $(".modal-body #address").val( response.address );
                             $(".modal-body #id").val(response.id);
                             var translatedText = "{{ __('main.editData') }}";

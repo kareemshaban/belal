@@ -30,10 +30,13 @@ class ClientController extends Controller
             abort(403);
         }
 
-        $suppliers = Client::where('type', $type)
+        $suppliers = Client::with('balance') -> where('type', $type)
+            -> where('is_farmer' , 0)
             ->orderBy('sort', 'asc')
             ->get();
         $cars = Cars::all();
+
+       // return $suppliers ;
         return view('admin.Client.index', compact('suppliers' , 'type' , 'cars'));
     }
 
@@ -87,8 +90,9 @@ class ClientController extends Controller
                 'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
                 'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
-                'car_id' => $request -> car_id ,
+                'car_id' => $request -> car_id ?? 0,
                 'sort'   => $sort,
+                'is_farmer' => 0 ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
             ]);
@@ -181,8 +185,9 @@ class ClientController extends Controller
                 'bovine_min_limit' => $request -> bovine_min_limit ?? 0,
                 'bovine_max_limit' => $request -> bovine_max_limit ?? 0,
                 'address' => $request -> address ?? "",
-                'car_id' => $request -> car_id ,
+                'car_id' => $request -> car_id  ?? 0,
                 'sort'   => $newOrder,
+                'is_farmer' => 0 ,
                 'user_upd' => Auth::user() -> id
             ]);
 

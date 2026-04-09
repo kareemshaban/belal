@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\StockTransactionInDetails;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class StockTransactionInDetailsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *

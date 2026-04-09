@@ -82,8 +82,10 @@ Route::group(
         Route::get('/items-show/{id}', [App\Http\Controllers\ItemsController::class, 'show'])->name('items-show');
         Route::post('/items-store', [App\Http\Controllers\ItemsController::class, 'store'])->name('items-store');
         Route::get('/items-delete/{id}', [App\Http\Controllers\ItemsController::class, 'destroy'])->name('items-delete');
-        Route::get('/item-select/{id}/{store}', [App\Http\Controllers\ItemsController::class, 'itemSelect'])->name('item-select');
+        Route::get('/item-select/{id}/{store}/{meal}', [App\Http\Controllers\ItemsController::class, 'itemSelect'])->name('item-select');
         Route::get('/item-pair-select/{fItem}/{tItem}/{store}', [App\Http\Controllers\ItemsController::class, 'itemPairSelect'])->name('item-select');
+                Route::get('/item-select-W-M/{id}/{store}', [App\Http\Controllers\ItemsController::class, 'itemSelectWithoutMeal'])->name('item-select');
+
 
         Route::get('/items-quantity', [App\Http\Controllers\StoreQuantityController::class, 'index'])->name('items-quantity');
         Route::get('/items-quantity-show/{id}', [App\Http\Controllers\StoreQuantityController::class, 'show'])->name('items-quantity-show');
@@ -99,6 +101,7 @@ Route::group(
         Route::get('/car_meals/{supplier_id}/{startDate}', [App\Http\Controllers\CarMealController::class, 'index'])->name('car_meals');
         Route::get('/getWeakMealsForCars/{month}/{year}/{day}', [App\Http\Controllers\CarMealController::class, 'getWeakMealsForCars'])->name('getWeakMealsForCars');
         Route::get('/car_meal_create/{wid}', [App\Http\Controllers\CarMealController::class, 'create'])->name('car_meal_create');
+        Route::post('/postCarMeal', [App\Http\Controllers\WeaklyMilkMealController::class, 'postCarMeal'])->name('postCarMeal');
 
 
 
@@ -121,6 +124,11 @@ Route::group(
         Route::get('/supplierMealsCarryOver/{wid}/{supplier_id}', [App\Http\Controllers\WeaklyMilkMealController::class, 'supplierMealsCarryOver'])->name('supplierMealsCarryOver');
         Route::get('/weakMealDetails/{id}/{supplier_id}/{start}', [App\Http\Controllers\WeaklyMilkMealController::class, 'weakMealDetails'])->name('weakMealDetails');
         Route::get('/weakMealDetailsPrint/{id}/{supplier_id}/{start}', [App\Http\Controllers\WeaklyMilkMealController::class, 'weakMealDetailsPrint'])->name('weakMealDetailsPrint');
+        Route::get('/weakCarMeals/{wid}/{supplier_id?}', [App\Http\Controllers\WeaklyMilkMealController::class, 'weakCarMeals'])->name('weakCarMeals');
+        Route::get('/supplierCarMealsCarryOver/{wid}/{supplier_id}', [App\Http\Controllers\WeaklyMilkMealController::class, 'supplierCarMealsCarryOver'])->name('supplierCarMealsCarryOver');
+        Route::get('/weakCarMealDetails/{id}/{supplier_id}/{start}', [App\Http\Controllers\WeaklyMilkMealController::class, 'weakCarMealDetails'])->name('weakCarMealDetails');
+        Route::get('/weakCarMealsView/{wid}/{member_id?}', [App\Http\Controllers\WeaklyMilkMealController::class, 'weakCarMealsView'])->name('weakCarMealsView');
+        Route::get('/weakCarMealDetailsPrint/{id}/{supplier_id}/{start}', [App\Http\Controllers\WeaklyMilkMealController::class, 'weakCarMealDetailsPrint'])->name('weakCarMealDetailsPrint');
 
 
 
@@ -210,6 +218,7 @@ Route::group(
         Route::get('/deleteRecipit/{id}', [App\Http\Controllers\RecipitController::class, 'destroy'])->name('deleteRecipit');
         Route::get('/recipits-getCode', [App\Http\Controllers\RecipitController::class, 'getCode'])->name('recipits-getCode');
         Route::get('/post_recipit_doc/{id}', [App\Http\Controllers\RecipitController::class, 'post'])->name('post_recipit_doc');
+        Route::get('/printRecipit/{id}', [App\Http\Controllers\RecipitController::class, 'print'])->name('printRecipit');
 
 
 
@@ -226,6 +235,7 @@ Route::group(
         Route::get('/deleteCatch/{id}', [App\Http\Controllers\CatchRecipitController::class, 'destroy'])->name('deleteCatch');
         Route::get('/catches-getCode', [App\Http\Controllers\CatchRecipitController::class, 'getCode'])->name('catches-getCode');
         Route::get('/post_catch_doc/{id}', [App\Http\Controllers\CatchRecipitController::class, 'post'])->name('post_catch_doc');
+        Route::get('/printCatch/{id}', [App\Http\Controllers\CatchRecipitController::class, 'print'])->name('printCatch');
 
 
 
@@ -283,12 +293,24 @@ Route::group(
 
         Route::get('/clientAccountSearch', [App\Http\Controllers\ReportController::class, 'clientAccountSearch'])->name('clientAccountSearch');
         Route::post('/clientAccountReport', [App\Http\Controllers\ReportController::class, 'clientAccountReport'])->name('clientAccountReport');
+        Route::post('/clientAccountReportPrint', [App\Http\Controllers\ReportController::class, 'clientAccountReportPrint'])->name('clientAccountReportPrint');
+
 
         Route::get('/stockMovementSearch', [App\Http\Controllers\ReportController::class, 'stockMovementSearch'])->name('stockMovementSearch');
         Route::post('/stockMovementReport', [App\Http\Controllers\ReportController::class, 'stockMovementReport'])->name('stockMovementReport');
+        Route::post('/printStockMovementReport', [App\Http\Controllers\ReportController::class, 'printStockMovementReport'])->name('printStockMovementReport');
+
+
+        Route::get('/stockMealMovementSearch', [App\Http\Controllers\ReportController::class, 'stockMealMovementSearch'])->name('stockMealMovementSearch');
+        Route::post('/stockMealMovementReport', [App\Http\Controllers\ReportController::class, 'stockMealMovementReport'])->name('stockMealMovementReport');
+        Route::post('/printStockMealMovementReport', [App\Http\Controllers\ReportController::class, 'printStockMealMovementReport'])->name('printStockMealMovementReport');
+
+
 
         Route::get('/safeMovementSearch', [App\Http\Controllers\ReportController::class, 'safeMovementSearch'])->name('safeMovementSearch');
         Route::post('/safeMovementReport', [App\Http\Controllers\ReportController::class, 'safeMovementReport'])->name('safeMovementReport');
+        Route::post('/safeMovementReportPrint', [App\Http\Controllers\ReportController::class, 'safeMovementReportPrint'])->name('safeMovementReportPrint');
+
 
         Route::get('/supplierAccountSettlementSearch', [App\Http\Controllers\ReportController::class, 'supplierAccountSettlementSearch'])->name('supplierAccountSettlementSearch');
         Route::post('/supplierAccountSettlementReport', [App\Http\Controllers\ReportController::class, 'supplierAccountSettlementReport'])->name('supplierAccountSettlementReport');
@@ -321,6 +343,7 @@ Route::group(
         Route::get('/carMembers-show/{id}', [App\Http\Controllers\CarMemberController::class, 'show'])->name('carMembers-show');
         Route::get('/carMembers-delete/{id}', [App\Http\Controllers\CarMemberController::class, 'destroy'])->name('carMembers-delete');
         Route::post('/carMember-store', [App\Http\Controllers\CarMemberController::class, 'store'])->name('carMember-store');
+        Route::get('/member-order/{supplier_id}', [App\Http\Controllers\CarMemberController::class, 'getOrder'])->name('member-order');
 
 
 
@@ -347,6 +370,12 @@ Route::group(
         Route::post('/store-advance', [App\Http\Controllers\AdvanceController::class, 'store'])->name('store-advance');
         Route::get('/getAdvance/{id}', [App\Http\Controllers\AdvanceController::class, 'show'])->name('getAdvance');
         Route::get('/deleteAdvance/{id}', [App\Http\Controllers\AdvanceController::class, 'destroy'])->name('deleteAdvance');
+
+
+
+
+        Route::get('/clientsAccountRebase', [App\Http\Controllers\ClientAccountController::class, 'clientsAccountRebase'])->name('clientsAccountRebase');
+
 
 
         Auth::routes();

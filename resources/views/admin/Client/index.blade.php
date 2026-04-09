@@ -52,13 +52,20 @@
                                     <th class="text-center"> {{__('main.name')}}</th>
                                     <th class="text-center">{{__('main.client_type')}}</th>
                                     <th class="text-center">{{__('main.phone')}}</th>
+                                    <th class="text-center">{{__('main.balance')}}</th>
                                     <th class="text-center">{{__('main.actions')}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($suppliers as $supplier)
                                     <tr>
-                                        <th scope="row" class="text-center">{{$supplier -> sort}}</th>
+                                        <th scope="row" class="text-center">
+                                            @if($supplier -> type == 1)
+                                            {{$supplier -> sort}}
+                                            @else
+                                            {{$loop -> index + 1}}
+                                            @endif
+                                        </th>
                                         <td class="text-center">{{$supplier -> name}}</td>
                                         <td class="text-center">
                                             @if($supplier -> type == 0)
@@ -71,6 +78,17 @@
 
                                         </td>
                                         <td class="text-center">{{$supplier -> phone}}</td>
+                                        @php
+                                        if($supplier -> balance)
+                                           $balance = ($supplier -> balance -> debit  + $supplier -> balance -> opening_balance_debit )
+                                           - ($supplier -> balance -> credit + $supplier -> balance ->  opening_balance_credit);
+                                        else
+                                            $balance = 0 ;
+                                        @endphp
+                                        <td class="text-center @if($balance <= 0) text-danger @else text-success @endif">
+
+                                              {{$balance }}
+                                         </td>
                                         <td class="text-center">
                                             @can('page-access', [7, 'edit'])
                                                 <div style="display: flex ; gap: 10px ; justify-content: center ">

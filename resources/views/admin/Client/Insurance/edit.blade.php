@@ -272,13 +272,11 @@
     });
 
     function addItemToTable(id){
-        //console.log('item-select' + '/' + id + '/' + $('#store_id').val() + '/' + $('#meal_id').val());
         $.ajax({
             type:'get',
             url:'/items-show' + '/' + id ,
             dataType: 'json',
             success:function(response){
-                console.log(response);
                 var item = {
                     'details_id': 0 ,
                     'item_id': response['id'],
@@ -287,7 +285,9 @@
                     'quantity': 0 ,
                     'weight': 0 ,
                 }
+                console.log(items);
                 items.push(item);
+                console.log(items);
 
                 if(response){
                     setItems();
@@ -392,6 +392,58 @@
                 }
             }
         });
+    });
+
+
+    $(document).on('keyup change', 'input[name="quantity[]"]', function () {
+        const $quantityInput = $(this);
+        let enteredValue = parseFloat($quantityInput.val()) || 0;
+
+        // Get the corresponding table row
+        const $row = $quantityInput.closest('tr');
+        const maxAvailable = parseFloat($row.find('input[name="available_quantity[]"]').val());
+        const index = $row.data('item-index'); // Ensure <tr data-item-index="...">
+
+
+        // ✅ Update the items array
+        if (typeof items[index] !== 'undefined') {
+            items[index]['quantity'] = enteredValue;
+
+            // Get the unit price
+
+
+            console.log(`Item ${index} quantity updated to:`, enteredValue);
+
+        } else {
+            console.warn('Invalid index for quantity update:', index);
+        }
+
+
+    });
+
+    $(document).on('keyup change', 'input[name="weight[]"]', function () {
+        const $weightInput = $(this);
+        let enteredValue = parseFloat($weightInput.val()) || 0;
+
+        // Get the corresponding table row
+        const $row = $weightInput.closest('tr');
+        const index = $row.data('item-index'); // Ensure <tr data-item-index="...">
+
+
+        // ✅ Update the items array
+        if (typeof items[index] !== 'undefined') {
+            items[index]['weight'] = enteredValue;
+
+            // Get the unit price
+
+
+            console.log(`Item ${index} quantity updated to:`, enteredValue);
+
+        } else {
+            console.warn('Invalid index for quantity update:', index);
+        }
+
+
     });
 </script>
 </body>

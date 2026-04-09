@@ -17,6 +17,7 @@ use Illuminate\Validation\Rule;
 
 class SafeController extends Controller
 {
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -32,7 +33,7 @@ class SafeController extends Controller
             abort(403);
         }
         $safes = DB::table('safes')
-            ->join('safe_balances', 'safes.id', '=', 'safe_balances.safe_id')
+            ->leftJoin('safe_balances', 'safes.id', '=', 'safe_balances.safe_id')
             ->select(
                 'safes.*',
                 DB::raw('(safe_balances.balance + safe_balances.opening_balance) as balance')

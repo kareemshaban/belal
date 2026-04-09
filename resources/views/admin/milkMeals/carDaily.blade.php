@@ -86,11 +86,11 @@
                         <h4 class="fw-bold py-3 mb-4">
                             <span class="text-muted fw-light">{{__('main.milk_department')}} /</span> {{__('main.car_meal_details')}}
                         </h4>
-                      @if($meal)
-                        @if( $meal -> state == 0)
+                        @if($meal)
+                            @if( $meal -> state == 0)
 
-                        @else
-                            <h4 class="fw-bold py-3 mb-4 text-danger"> {{__('main.posted_meal')}} </h4>
+                            @else
+                                <h4 class="fw-bold py-3 mb-4 text-danger"> {{__('main.posted_meal')}} </h4>
 
                             @endif
                         @endif
@@ -101,7 +101,7 @@
                     <!-- Responsive Table -->
                     <div class="card">
                         <h5 class="card-header">{{__('main.car_meal_details')}} (<span style="color: grey">  {{ $supplier -> name  }}</span>)
-                        (
+                            (
                             @if (Config::get('app.locale')=='en' )
                                 {{$dayName}}
                             @else
@@ -122,79 +122,79 @@
                         <input type="hidden" id="start" name="start" value="{{$startOfWeek}}">
                         <input type="hidden" id="end" name="end" value="{{$endOfWeek}}">
                         <input type="hidden" id="wid" name="wid" value="{{$meal ? $meal -> id : 0}}">
-
+                        <input type="hidden" id="supplier_id" name="supplier_id" value="{{ $supplier -> id}}">
                         @include('flash-message')
-                           <h2 style="font-size: 11px ; color: red ; margin-right: 10px ; margin-left: 10px">{{__('main.milk_meal_note')}}</h2>
+                        <h2 style="font-size: 11px ; color: red ; margin-right: 10px ; margin-left: 10px">{{__('main.milk_meal_note')}}</h2>
 
-                            <div class="table-responsive  text-nowrap">
+                        <div class="table-responsive  text-nowrap">
 
-                                <table class="table table-striped table-hover  table-bordered view_table">
-                                        <thead>
-                                        @php
-                                            use Carbon\Carbon;
-                                            use Carbon\CarbonPeriod;
+                            <table class="table table-striped table-hover  table-bordered view_table">
+                                <thead>
+                                @php
+                                    use Carbon\Carbon;
+                                    use Carbon\CarbonPeriod;
 
-                                            $start = Carbon::parse($startOfWeek);
-                                            $end = Carbon::parse($endOfWeek);
-                                            $period = CarbonPeriod::create($start, $end);
-                                            Carbon::setLocale('ar');
-                                        @endphp
-                                        <tr>
-                                            <th class="text-center" rowspan="3">#</th>
-                                            <th class="text-center" rowspan="3">{{__('main.supplier')}}</th>
-                                            @foreach ($period as $date)
-                                                <th colspan="2" class="text-center">
-                                                            @if (Config::get('app.locale')=='ar' )
-                                                                    {{ $date->translatedFormat('l') }}
-                                                            @else
-                                                                    {{ $date->format('l') }}
+                                    $start = Carbon::parse($startOfWeek);
+                                    $end = Carbon::parse($endOfWeek);
+                                    $period = CarbonPeriod::create($start, $end);
+                                    Carbon::setLocale('ar');
+                                @endphp
+                                <tr>
+                                    <th class="text-center" rowspan="3" hidden="hidden">#</th>
+                                    <th class="text-center" rowspan="3" style="width: 120px">{{__('main.supplier')}}</th>
+                                    @foreach ($period as $date)
+                                        <th colspan="2" class="text-center">
+                                            @if (Config::get('app.locale')=='ar' )
+                                                {{ $date->translatedFormat('l') }}
+                                            @else
+                                                {{ $date->format('l') }}
 
-                                                            @endif
+                                            @endif
 
-                                                </th>
+                                        </th>
 
-                                            @endforeach
-                                            <th class="text-center cell"  rowspan="2" hidden="hidden">{{__('main.total')}}</th>
-                                            <th class="text-center cell" colspan="1" rowspan="2" hidden="hidden">{{__('main.price')}}</th>
-                                            <th class="text-center cell" colspan="1" rowspan="3" hidden="hidden">{{__('main.total_cash')}}</th>
-                                            <th class="text-center cell" rowspan="3" hidden="hidden">{{ __('main.actions') }}</th>
-                                        </tr>
-                                        <tr>
-                                            @foreach ($period as $date)
-                                                <th class="text-center text-primary"  >{{ __('main.morning_meal') }}</th>
-                                                <th class="text-center text-success" >{{ __('main.evening_meal') }}</th>
-                                            @endforeach
-                                        </tr>
+                                    @endforeach
+                                    <th class="text-center cell"  rowspan="2" >{{__('main.total')}}</th>
+                                    <th class="text-center cell" colspan="1" rowspan="2" >{{__('main.price')}}</th>
+                                    <th class="text-center cell" colspan="1" rowspan="3" >{{__('main.total_cash')}}</th>
+                                    <th class="text-center cell" rowspan="3" hidden="hidden" >{{ __('main.actions') }}</th>
+                                </tr>
+                                <tr>
+                                    @foreach ($period as $date)
+                                        <th class="text-center text-primary"  >{{ __('main.morning_meal') }}</th>
+                                        <th class="text-center text-success" >{{ __('main.evening_meal') }}</th>
+                                    @endforeach
+                                </tr>
 
-                                            <tr>
-                                                @foreach ($period as $date)
-                                                <th class="text-center cell text-primary">{{__('main.bovine_weight')}}</th>
-                                                <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
-                                                <th class="text-center cell text-success">{{__('main.bovine_weight')}}</th>
-                                                <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
-                                                @endforeach
-                                                    <th class="text-center cell" >{{ __('main.total_bovine_weight') }}</th>
-                                                    <th class="text-center cell" hidden="hidden">{{ __('main.total_buffalo_weight') }}</th>
-                                                    <th class="text-center cell" hidden="hidden">{{ __('main.bovine_milk_price') }}</th>
-                                                    <th class="text-center cell" hidden="hidden">{{ __('main.buffalo_milk_price') }}</th>
+                                <tr>
+                                    @foreach ($period as $date)
+                                        <th class="text-center cell text-primary">وزن اللبن </th>
+                                        <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
+                                        <th class="text-center cell text-success">وزن اللبن</th>
+                                        <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
+                                    @endforeach
+                                    <th class="text-center cell" >إجمالي الوزن</th>
+                                    <th class="text-center cell" hidden="hidden">{{ __('main.total_buffalo_weight') }}</th>
+                                    <th class="text-center cell" >سعر اللبن</th>
+                                    <th class="text-center cell" hidden="hidden">{{ __('main.buffalo_milk_price') }}</th>
 
-                                            </tr>
-                                            </thead>
-                                    <tbody>
-
-
-                                        @include('admin.DailyMeals.emptyCar')
+                                </tr>
+                                </thead>
+                                <tbody>
 
 
-
-                                    <tbody>
+                                @include('admin.DailyMeals.emptyCar')
 
 
 
+                                <tbody>
 
-                                </table>
 
-                            </div>
+
+
+                            </table>
+
+                        </div>
 
 
 

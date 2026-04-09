@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 class SalaryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -52,11 +56,11 @@ class SalaryController extends Controller
             ->select(
                 'employees.id as employee_id',
                 'employees.name as employee_name',
-                'employees.daily_salary as daily_salary',
+                'employees.weekly_salary as weekly_salary',
                 DB::raw('SUM(CASE WHEN morning_present = 1 THEN 1 ELSE 0 END) as total_morning'),
                 DB::raw('SUM(CASE WHEN evening_present = 1 THEN 1 ELSE 0 END) as total_evening')
             )
-            ->groupBy('employees.id', 'employees.name', 'employees.daily_salary')
+            ->groupBy('employees.id', 'employees.name', 'employees.weekly_salary')
             ->get();
 
 
@@ -79,8 +83,8 @@ class SalaryController extends Controller
         foreach ($docs as $doc) {
             $totalShifts = $doc  -> total_morning + $doc -> total_evening;
             $dayCount = $totalShifts / 2;
-            $dailySalary = $doc -> daily_salary;
-            $salary = $dailySalary * $dayCount;
+            $dailySalary = $doc -> weekly_salary;
+            $salary = round(($dailySalary / 7) * $dayCount);
             $advance_val = $doc -> advances;
             $net = $salary - $advance_val;
 
@@ -146,42 +150,61 @@ class SalaryController extends Controller
      */
     public function show(Request $request)
     {
-        $startOfWeek = Carbon::parse($request->start_date)->startOfDay();
-        $endOfWeek = Carbon::parse($request->end_date)->endOfDay();
+      try {
+          $startOfWeek = Carbon::createFromFormat(
+              'Y-m-d',
+              substr($request->start_date, 0, 10)
+          )->startOfDay();
 
-        $docs = DB::table('attendances')
-            ->join('employees', 'employees.id', '=', 'attendances.employee_id')
-            ->where('attendances.state', 1)
-            ->whereBetween('attendances.date', [$startOfWeek, $endOfWeek])
-            ->select(
-                'employees.id as employee_id',
-                'employees.name as employee_name',
-                'employees.daily_salary as daily_salary',
-                DB::raw('SUM(CASE WHEN morning_present = 1 THEN 1 ELSE 0 END) as total_morning'),
-                DB::raw('SUM(CASE WHEN evening_present = 1 THEN 1 ELSE 0 END) as total_evening')
-            )
-            ->groupBy('employees.id', 'employees.name', 'employees.daily_salary')
-            ->get();
+          $endOfWeek = Carbon::createFromFormat(
+              'Y-m-d',
+              substr($request->end_date, 0, 10)
+          )->endOfDay();
+
+          //echo $startOfWeek ;
+
+          $docs = DB::table('attendances')
+              ->join('employees', 'employees.id', '=', 'attendances.employee_id')
+              ->where('attendances.state', 1)
+              ->whereBetween('attendances.date', [$startOfWeek, $endOfWeek])
+              ->select(
+                  'employees.id as employee_id',
+                  'employees.name as employee_name',
+                  'employees.weekly_salary as weekly_salary',
+                  DB::raw('SUM(CASE WHEN morning_present = 1 THEN 1 ELSE 0 END) as total_morning'),
+                  DB::raw('SUM(CASE WHEN evening_present = 1 THEN 1 ELSE 0 END) as total_evening')
+              )
+              ->groupBy('employees.id', 'employees.name', 'employees.weekly_salary')
+              ->get();
 
 
-        //advances
+          //advances
 
-        // Get advances totals per employee
-        $advances = DB::table('advances')
-            ->whereBetween('advances.date', [$startOfWeek, $endOfWeek])
-            ->select('employee_id', DB::raw('SUM(amount) as total_advance'))
-            ->groupBy('employee_id')
-            ->pluck('total_advance', 'employee_id'); // key = employee_id, value = total_advance
+          // Get advances totals per employee
+          $advances = DB::table('advances')
+              ->whereBetween('advances.date', [$startOfWeek, $endOfWeek])
+              ->select('employee_id', DB::raw('SUM(amount) as total_advance'))
+              ->groupBy('employee_id')
+              ->pluck('total_advance', 'employee_id'); // key = employee_id, value = total_advance
 
 // Merge advances into docs
-        $docs->transform(function ($item) use ($advances) {
-            $item->advances = $advances[$item->employee_id] ?? 0; // default 0 if no advance found
-            return $item;
-        });
+          $docs->transform(function ($item) use ($advances) {
+              $item->advances = $advances[$item->employee_id] ?? 0; // default 0 if no advance found
+              return $item;
+          });
 
 
-        return response()->json($docs);
+          return response()->json($docs);
+      }catch (\Throwable $e) {
 
+          // يظهرلك الخطأ في Network tab
+          return response()->json([
+              'error' => true,
+              'message' => $e->getMessage(),
+              'file' => $e->getFile(),
+              'line' => $e->getLine(),
+          ], 500);
+      }
 
 
 

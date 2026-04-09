@@ -15,6 +15,7 @@ class CarMember extends Model
         'name',
         'phone',
         'address',
+        'sort',
         'user_ins',
         'user_upd'
     ];

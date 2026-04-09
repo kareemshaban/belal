@@ -34,8 +34,8 @@
         padding-right: 15px;
     }
     .cell {
-        min-width: 120px !important;
-        max-width: 120px !important;
+        min-width: 90px  !important;
+        max-width: 90px !important;
         white-space: break-spaces;
     }
     input {
@@ -143,8 +143,8 @@
                                             Carbon::setLocale('ar');
                                         @endphp
                                         <tr>
-                                            <th class="text-center" rowspan="3">#</th>
-                                            <th class="text-center" rowspan="3">{{__('main.supplier')}}</th>
+                                            <th class="text-center" rowspan="3" hidden="hidden">#</th>
+                                            <th class="text-center" rowspan="3" style="width:110px">{{__('main.supplier')}}</th>
                                             @foreach ($period as $date)
                                                 <th colspan="2" class="text-center">
                                                             @if (Config::get('app.locale')=='ar' )
@@ -171,14 +171,14 @@
 
                                             <tr>
                                                 @foreach ($period as $date)
-                                                <th class="text-center cell text-primary">{{__('main.bovine_weight')}}</th>
+                                                <th class="text-center cell text-primary">وزن اللبن</th>
                                                 <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
-                                                <th class="text-center cell text-success">{{__('main.bovine_weight')}}</th>
+                                                <th class="text-center cell text-success">وزن اللبن</th>
                                                 <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
                                                 @endforeach
-                                                    <th class="text-center cell" >{{ __('main.total_bovine_weight') }}</th>
+                                                    <th class="text-center cell" >إجمالي الوزن</th>
                                                     <th class="text-center cell" hidden="hidden">{{ __('main.total_buffalo_weight') }}</th>
-                                                    <th class="text-center cell" >{{ __('main.bovine_milk_price') }}</th>
+                                                    <th class="text-center cell" >سعر اللبن</th>
                                                     <th class="text-center cell" hidden="hidden">{{ __('main.buffalo_milk_price') }}</th>
 
                                             </tr>

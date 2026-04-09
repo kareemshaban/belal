@@ -6,6 +6,7 @@ use App\Models\CarMeal;
 use App\Models\CarMember;
 use App\Models\Cars;
 use App\Models\Client;
+use App\Models\DailyMilkMeal;
 use App\Models\Settings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 class CarMealController extends Controller
 {
 
-  public function __construct()
+    public function __construct()
     {
         $this->middleware(['auth']);
     }
@@ -28,7 +29,8 @@ class CarMealController extends Controller
     public function index($supplier_id , $startDate )
     {
 
-       $supplier = Client::find($supplier_id);
+        $supplier = Client::find($supplier_id);
+
 
         $dayTranslations = [
             'Sunday'    => 'الأحد',
@@ -40,6 +42,7 @@ class CarMealController extends Controller
             'Saturday'  => 'السبت',
         ];
 
+        $startDate = Carbon::parse($startDate)->toDateString();
         $meal = DB::table('weakly_milk_meals')
             -> select(
                 'weakly_milk_meals.id',
@@ -50,7 +53,6 @@ class CarMealController extends Controller
                 DB::raw('DATE(weakly_milk_meals.end_date) as end_date'),
 
             ) -> whereDate('start_date', $startDate)->first();
-
 
 
 
@@ -84,22 +86,50 @@ class CarMealController extends Controller
         $end_dayName_ar = $endOfWeek->translatedFormat('l');
 
 
-        $members = CarMember::where('supplier_id', $supplier_id)
+        $members = Client::where('car_supplier_id', $supplier_id)
+            ->orderBy('sort', 'asc')
             ->get();
+            
+            
 
         $setting = Settings::all() -> first();
 
+        foreach ($members as $member){
+            $member ->buffalo_price =  $setting -> buffalo_milk_price ?? 0;
+            $member -> bovine_price = $setting -> bovine_milk_price ?? 0;
+        }
+
+        //  return $members ;
+        $setting = Settings::all() -> first();
+
+        $standars = DailyMilkMeal::where('weakly_meal_id', $meal->id)
+            ->where('supplier_id', $supplier_id)
+            ->select(
+                'supplier_id',
+                'date',
+                DB::raw("
+            SUM(CASE WHEN type = 0 THEN bovine_weight ELSE 0 END)
+            as sum_of_m_bovine_weight
+        "),
+                DB::raw("
+            SUM(CASE WHEN type = 1 THEN bovine_weight ELSE 0 END)
+            as sum_of_e_bovine_weight
+        "),
+                DB::raw('SUM(bovine_price * bovine_weight) as sum_of_total_price')
+            )
+            ->groupBy('supplier_id', 'date')
+            ->get();
 
 
         return view('admin.milkMeals.carDaily', compact('meal' , 'dayName' , 'dayName_ar' ,
-            'startOfWeek' , 'endOfWeek' , 'end_dayName_ar' , 'end_dayName' , 'members' , 'setting' , 'supplier'));
+            'startOfWeek' , 'endOfWeek' , 'end_dayName_ar' , 'end_dayName' , 'members' , 'setting' , 'supplier' , 'standars'));
 
     }
 
-      public function getWeakMealsForCars($month , $year , $day)
+    public function getWeakMealsForCars($month , $year , $day)
     {
 
-       $date = $day . '-' . $month . '-' . $year;
+        $date = $day . '-' . $month . '-' . $year;
         $meals = DB::table('weakly_milk_meals')
             -> select(
                 'weakly_milk_meals.id',
@@ -124,7 +154,7 @@ class CarMealController extends Controller
      */
     public function create($wid)
     {
-       $carMeal = CarMeal::where('weakly_meal_id', $wid)->first();
+        $carMeal = CarMeal::where('weakly_meal_id', $wid)->first();
         return view('admin.CarsMeals.daily' , compact('carMeal', 'wid'));
     }
 

@@ -60,81 +60,82 @@
                         <div class="card-content" style="padding-right: 20px ; padding-left: 20px ; padding-bottom: 20px">
 
 
-                                <div class="row">
-                                    <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
-                                        <div class="form-group">
-                                            <label>{{ __('main.cheese_price') }} <span style="font-size: 14px ; color: red">*</span></label>
-                                            <input type="number" step="any" class="form-control" id="cheese_price" name="cheese_price"
-                                                   value="{{$setting['cheese_price'] ?? 0}}">
+                            <div class="row" style="display: none">
+                                <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
+                                    <div class="form-group">
+                                        <label>{{ __('main.cheese_price') }} <span style="font-size: 14px ; color: red">*</span></label>
+                                        <input type="number" step="any" class="form-control" id="cheese_price" name="cheese_price"
+                                               value="{{$setting['cheese_price'] ?? 0}}">
 
-                                            @error('cheese_price')
-                                            <span class="invalid-feedback" role="alert">
+                                        @error('cheese_price')
+                                        <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                            @enderror
-
-                                        </div>
+                                        @enderror
 
                                     </div>
-                                    <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
-                                        <div class="form-group">
-                                            <label>{{ __('main.white_cheese_price') }} <span style="font-size: 14px ; color: red">*</span></label>
-                                            <input type="number" step="any" class="form-control" id="white_cheese_price" name="white_cheese_price"
-                                                   value="{{$setting['white_cheese_price'] ?? 0}}">
 
-                                            @error('white_cheese_price')
-                                            <span class="invalid-feedback" role="alert">
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
+                                    <div class="form-group">
+                                        <label>{{ __('main.white_cheese_price') }} <span style="font-size: 14px ; color: red">*</span></label>
+                                        <input type="number" step="any" class="form-control" id="white_cheese_price" name="white_cheese_price"
+                                               value="{{$setting['white_cheese_price'] ?? 0}}">
+
+                                        @error('white_cheese_price')
+                                        <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                            @enderror
-
-                                        </div>
+                                        @enderror
 
                                     </div>
-                                    <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
-                                        <div class="form-group">
-                                            <label>{{ __('main.cream_price') }} <span style="font-size: 14px ; color: red">*</span></label>
-                                            <input type="number" step="any" class="form-control" id="cream_price" name="cream_price"
-                                                   value="{{$setting['cream_price'] ?? 0}}">
 
-                                            @error('cream_price')
-                                            <span class="invalid-feedback" role="alert">
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
+                                    <div class="form-group">
+                                        <label>{{ __('main.cream_price') }} <span style="font-size: 14px ; color: red">*</span></label>
+                                        <input type="number" step="any" class="form-control" id="cream_price" name="cream_price"
+                                               value="{{$setting['cream_price'] ?? 0}}">
+
+                                        @error('cream_price')
+                                        <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                            @enderror
-
-                                        </div>
+                                        @enderror
 
                                     </div>
-                                    <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
-                                        <div class="form-group">
-                                            <label>{{ __('main.protein_price') }} <span style="font-size: 14px ; color: red">*</span></label>
-                                             <input type="number" step="any" class="form-control" id="protein_price" name="protein_price"
-                                             value="{{$setting['protein_price'] ?? 0}}">
 
-                                            @error('protein_price')
-                                            <span class="invalid-feedback" role="alert">
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-sm-6" style="margin-top: 10px">
+                                    <div class="form-group">
+                                        <label>{{ __('main.protein_price') }} <span style="font-size: 14px ; color: red">*</span></label>
+                                        <input type="number" step="any" class="form-control" id="protein_price" name="protein_price"
+                                               value="{{$setting['protein_price'] ?? 0}}">
+
+                                        @error('protein_price')
+                                        <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
-                                            @enderror
-
-                                        </div>
+                                        @enderror
 
                                     </div>
 
                                 </div>
 
-                                <h2 style="font-size: 11px ; color: red ; margin-right: 10px ; margin-left: 10px ; margin-top: 15px ">{{__('main.cheese_meal_note')}}</h2>
+                            </div>
+
+                            <h2 style="font-size: 11px ; color: red ; margin-right: 10px ; margin-left: 10px ; margin-top: 15px ">{{__('main.cheese_meal_note')}}</h2>
 
 
-                                <div class="table-responsive  text-nowrap" style="margin-top: 25px">
+                            <div class="table-responsive  text-nowrap" style="margin-top: 25px">
 
 
-                                    <table class="table table-striped table-hover  table-bordered view_table">
+                                <table class="table table-striped table-hover  table-bordered view_table">
 
-                                        <thead>
+                                    <thead>
+                                    <tr>
                                         <th class="text-center">  {{__('main.day')}} </th>
-                                        <th class="text-center" hidden="hidden">  {{__('main.code')}} </th>
+                                        <th class="text-center" >  إسم الوجبة </th>
                                         <th class="text-center">  {{__('main.milk_weight')}} </th>
                                         <th class="text-center">  {{__('main.price')}} </th>
                                         <th class="text-center">  {{__('main.item')}} </th>
@@ -150,86 +151,87 @@
                                         <th class="text-center">  {{__('main.protein_of_kilo_milk')}} </th>
                                         <th class="text-center">  {{__('main.net_value')}} </th>
                                         <th class="text-center">  {{__('main.actions')}} </th>
-                                        </thead>
+                                    </tr>
+                                    </thead>
 
-                                        <tbody>
-                                            @foreach($data as $meal)
-                                                <tr>
+                                    <tbody>
+                                    @foreach($data as $meal)
+                                        <tr>
 
-                                                    <td class="text-center">
-                                                        <input type="hidden" id="date[]" name="date[]" value="{{$meal['date']}}">
-                                                        <input type="hidden" id="cheese_meal_id[]" name="cheese_meal_id[]"
-                                                               value="{{$meal['cheese_meal_id']}}">
-                                                        <input type="hidden" id="type" name="type" value="{{$meal['type']}}">
-                                                        @php
-                                                            $locale = app()->getLocale(); // 'en' or 'ar'
-                                                            $dayName = \Carbon\Carbon::parse($meal['date'])->locale($locale)->isoFormat('dddd');
-                                                        @endphp
-
-
-                                                        {{ $dayName }}
-                                                        @if($meal['type'] == 0)
-                                                            <span class="badge bg-primary">{{__('main.daily_meal_type0')}}</span>
-                                                        @elseif($meal['type'] == 1)
-                                                            <span class="badge bg-info">{{__('main.daily_meal_type1')}}</span>
-                                                        @endif
-                                                        <br>
-                                                        <span class="text-gray"> {{\Carbon\Carbon::parse($meal['date']) -> format('Y-m-d')}}  </span>
-                                                    </td>
-                                                    <td class="text-center" hidden="hidden">
-                                                        <input type="text" name="code[]"   class="form-control"  value="{{$meal['code']}}" @if($meal['state'] == 1) readonly @endif>
-                                                    </td>
-                                                    <td class="text-center"> <input type="text" name="milk_weight[]"  readonly class="form-control" step="any" value="{{$meal['milk_weight']}}" > </td>
-                                                    <td class="text-center"> <input type="text" name="bovine_price[]" readonly  class="form-control" step="any" value="{{ number_format($meal['bovine_price'], 2) }}" > </td>
-                                                    <td class="text-center" style="min-width: 140px !important;">
-                                                      <select name="item_id[]" class="form-control" @if($meal['state'] == 1) disabled @endif>
-                                                          @foreach($items as $item)
-                                                              <option value="{{$item -> id}}"  @if($item -> id == $meal['item_id']) selected @endif > {{$item -> name}} </option>
-                                                          @endforeach
-                                                      </select>
-                                                    </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="number" name="quantity[]" class="form-control quantity" step="any" value="{{$meal['quantity']}}" @if($meal['state'] == 1) readonly @endif > </td>
-                                                    <td class="text-center" style="min-width: 120px !important;">
-
-                                                        <input type="number" name="weight[]" class="form-control weight"
-                                                              @if($meal['item_id'] == 6) readonly  @endif  step="any" value="{{$meal['weight']}}"  @if($meal['state'] == 1) readonly @endif>
-
-                                                    </td>
-                                                    <td class="text-center" > <input type="text" name="disk_weight[]" class="form-control" readonly  value="{{$meal['disk_weight']}}" > </td>
-                                                    <td class="text-center" > <input type="text" name="disk_cost[]" class="form-control" readonly value="{{$meal['disk_cost']}}" > </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="productivity[]" class="form-control" readonly value="{{$meal['productivity']}}" > </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="cost_per_cheese_kilo[]" class="form-control" readonly value="{{$meal['cost_per_cheese_kilo']}}" > </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="number" name="cream_weight[]" class="form-control cream_weight" step="any" value="{{$meal['cream_weight']}}" @if($meal['state'] == 1) readonly @endif > </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="cream_of_kilo_milk[]" class="form-control" readonly value="{{$meal['cream_of_kilo_milk']}}" > </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="number" name="protein_weight[]" class="form-control protein_weight" step="any" value="{{$meal['protein_weight']}}"  @if($meal['state'] == 1) readonly @endif> </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="protein_of_kilo_milk[]" class="form-control" readonly value="{{$meal['protein_of_kilo_milk']}}" > </td>
-                                                    <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="net[]" class="form-control" readonly value="{{$meal['net']}}" > </td>
-                                                    <td class="text-center">
-                                                        @if($meal['state'] == 0)
-
-                                                        <i class='bx bxs-cloud-upload text-primary postBtn' data-toggle="tooltip" data-placement="top"
-                                                           title="{{__('main.post_action')}}"style="font-size: 25px ; cursor: pointer"></i>
-
-                                                        <i class='bx bx-save text-primary saveBtn' data-toggle="tooltip" data-placement="top"
-                                                           title="{{__('main.save_action')}}" style="font-size: 25px ; cursor: pointer"></i>
-
-                                                       @else
-                                                            <span class="badge bg-danger">{{__('main.mealState1')}}</span>
-
-                                                        @endif
-                                                    </td>
-
-                                                </tr>
+                                            <td class="text-center">
+                                                <input type="hidden" id="date[]" name="date[]" value="{{$meal['date']}}">
+                                                <input type="hidden" id="cheese_meal_id[]" name="cheese_meal_id[]"
+                                                       value="{{$meal['cheese_meal_id']}}">
+                                                <input type="hidden" id="type" name="type" value="{{$meal['type']}}">
+                                                @php
+                                                    $locale = app()->getLocale(); // 'en' or 'ar'
+                                                    $dayName = \Carbon\Carbon::parse($meal['date'])->locale($locale)->isoFormat('dddd');
+                                                @endphp
 
 
-                                            @endforeach
-                                        </tbody>
+                                                {{ $dayName }}
+                                                @if($meal['type'] == 0)
+                                                    <span class="badge bg-primary">{{__('main.daily_meal_type0')}}</span>
+                                                @elseif($meal['type'] == 1)
+                                                    <span class="badge bg-info">{{__('main.daily_meal_type1')}}</span>
+                                                @endif
+                                                <br>
+                                                <span class="text-gray"> {{\Carbon\Carbon::parse($meal['date']) -> format('Y-m-d')}}  </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="text" name="symbol[]"   class="form-control"  value="{{$meal['symbol']}}" @if($meal['state'] == 1) readonly @endif>
+                                            </td>
+                                            <td class="text-center"> <input type="text" name="milk_weight[]"  readonly class="form-control" step="any" value="{{$meal['milk_weight']}}" > </td>
+                                            <td class="text-center"> <input type="text" name="bovine_price[]" readonly  class="form-control" step="any" value="{{ number_format($meal['bovine_price'], 2) }}" > </td>
+                                            <td class="text-center" style="min-width: 140px !important;">
+                                                <select name="item_id[]" class="form-control" @if($meal['state'] == 1) disabled @endif>
+                                                    @foreach($items as $item)
+                                                        <option value="{{$item -> id}}"  @if($item -> id == $meal['item_id']) selected @endif > {{$item -> name}} </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="number" name="quantity[]" class="form-control quantity" step="any" value="{{$meal['quantity']}}" @if($meal['state'] == 1) readonly @endif > </td>
+                                            <td class="text-center" style="min-width: 120px !important;">
+
+                                                <input type="number" name="weight[]" class="form-control weight"
+                                                       @if($meal['item_id'] == 6) readonly  @endif  step="any" value="{{$meal['weight']}}"  @if($meal['state'] == 1) readonly @endif>
+
+                                            </td>
+                                            <td class="text-center" > <input type="text" name="disk_weight[]" class="form-control" readonly  value="{{$meal['disk_weight']}}" > </td>
+                                            <td class="text-center" > <input type="text" name="disk_cost[]" class="form-control" readonly value="{{$meal['disk_cost']}}" > </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="productivity[]" class="form-control" readonly value="{{$meal['productivity']}}" > </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="cost_per_cheese_kilo[]" class="form-control" readonly value="{{$meal['cost_per_cheese_kilo']}}" > </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="number" name="cream_weight[]" class="form-control cream_weight" step="any" value="{{$meal['cream_weight']}}" @if($meal['state'] == 1) readonly @endif > </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="cream_of_kilo_milk[]" class="form-control" readonly value="{{$meal['cream_of_kilo_milk']}}" > </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="number" name="protein_weight[]" class="form-control protein_weight" step="any" value="{{$meal['protein_weight']}}"  @if($meal['state'] == 1) readonly @endif> </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="protein_of_kilo_milk[]" class="form-control" readonly value="{{$meal['protein_of_kilo_milk']}}" > </td>
+                                            <td class="text-center" style="min-width: 120px !important;"> <input type="text" name="net[]" class="form-control" readonly value="{{$meal['net']}}" > </td>
+                                            <td class="text-center">
+                                                @if($meal['state'] == 0)
+
+                                                    <i class='bx bxs-cloud-upload text-primary postBtn' data-toggle="tooltip" data-placement="top"
+                                                       title="{{__('main.post_action')}}"style="font-size: 25px ; cursor: pointer"></i>
+
+                                                    <i class='bx bx-save text-primary saveBtn' data-toggle="tooltip" data-placement="top"
+                                                       title="{{__('main.save_action')}}" style="font-size: 25px ; cursor: pointer"></i>
+
+                                                @else
+                                                    <span class="badge bg-danger">{{__('main.mealState1')}}</span>
+
+                                                @endif
+                                            </td>
+
+                                        </tr>
 
 
-                                    </table>
+                                    @endforeach
+                                    </tbody>
 
 
-                                </div>
+                                </table>
+
+
+                            </div>
 
 
                         </div>
@@ -365,20 +367,20 @@
             else
                 cream_weight = 0 ;
 
-                let val = milkWeight !== 0
-                    ? ((cream_weight * cream_price) / milkWeight).toFixed(2)
-                    : 0;
+            let val = milkWeight !== 0
+                ? ((cream_weight * cream_price) / milkWeight).toFixed(2)
+                : 0;
 
-                $creamOfKiloMilk.val(val);
+            $creamOfKiloMilk.val(val);
 
-                let cheese_price = item_id == 1
-                    ? parseFloat($('#cheese_price').val()) || 0
-                    : parseFloat($('#white_cheese_price').val()) || 0;
+            let cheese_price = item_id == 1
+                ? parseFloat($('#cheese_price').val()) || 0
+                : parseFloat($('#white_cheese_price').val()) || 0;
 
-                let protein_price = parseFloat($('#protein_price').val()) || 0;
+            let protein_price = parseFloat($('#protein_price').val()) || 0;
 
-                let net = ((cheese_price * weight) + (cream_price * cream_weight) + (protein_price * protein_weight)) - (price * milkWeight);
-                $net.val(net.toFixed(2));
+            let net = ((cheese_price * weight) + (cream_price * cream_weight) + (protein_price * protein_weight)) - (price * milkWeight);
+            $net.val(net.toFixed(2));
             // } else {
             //     // Input is empty or invalid — reset
             //     $creamOfKiloMilk.val(0);
@@ -940,7 +942,7 @@
         const quantity = row.find('input[name="quantity[]"]');
         const weight = row.find('input[name="weight[]"]');
         const cheese_meal_id = row.find('input[name="cheese_meal_id[]"]');
-        const code = row.find('input[name="code[]"]');
+        const symbol = row.find('input[name="symbol[]"]');
 
         const milk_weight_Val = milk_weight.val().trim();
         const bovine_price_val = bovine_price.val().trim();
@@ -948,7 +950,7 @@
         const quantity_val = quantity.val().trim();
         const weight_val = weight.val().trim();
         const cheese_meal_id_val = cheese_meal_id.val().trim();
-        const code_val = code.val().trim();
+        const symbol_val = symbol.val().trim();
 
 
 

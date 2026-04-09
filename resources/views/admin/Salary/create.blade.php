@@ -67,7 +67,7 @@
                                     <th class="text-center" rowspan="3">{{__('main.employee')}}</th>
                                     <th class="text-center" rowspan="3">{{__('main.shift_count')}}</th>
                                     <th class="text-center" rowspan="3">{{__('main.day_count')}}</th>
-                                    <th class="text-center" rowspan="3">{{__('main.daily_salary')}}</th>
+                                    <th class="text-center" rowspan="3">{{__('main.weekly_salary')}}</th>
                                     <th class="text-center" rowspan="3">{{__('main.salary')}}</th>
                                     <th class="text-center" rowspan="3">{{__('main.advances')}}</th>
                                     <th class="text-center" rowspan="3">{{__('main.net')}}</th>
@@ -135,8 +135,8 @@
                     // Example calculations
                     let totalShifts = parseInt(doc.total_morning) + parseInt(doc.total_evening);
                     let dayCount = totalShifts / 2; // assuming 2 shifts per day
-                    let dailySalary = doc.daily_salary; // replace with your logic
-                    let salary = dailySalary * dayCount; // simple example
+                    let dailySalary = doc.weekly_salary; // replace with your logic
+                    let salary = Math.ceil((dailySalary / 7) * dayCount); // simple example
                     let advances = doc.advances; // replace with your logic
                     let net = salary - advances;
 

@@ -2,92 +2,198 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>فاتورة رقم {{ $doc->bill_number }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <title>فاتورة بيع رقم {{ $doc->bill_number }}</title>
+
     <style>
         body {
-            font-family: 'Tajawal', sans-serif;
-            direction: rtl;
-            text-align: right;
-            margin: 20px;
+            font-family: "Cairo", Tahoma, Arial;
+            background: #fff;
+            color: #000;
+            margin: 0;
+            padding: 0;
             font-size: 14px;
         }
 
-        .invoice-box {
-            max-width: 900px;
+        .a4 {
+            width: 210mm;
+            padding: 10mm;
             margin: auto;
-            padding: 30px;
-            border: 1px solid #eee;
+            box-sizing: border-box;
         }
 
+        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            flex-direction: row-reverse;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
-        .invoice-title {
-            font-size: 24px;
+        .company-info h3 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .company-info p {
+            margin: 3px 0;
+            font-size: 13px;
+        }
+
+        .print-info {
+            text-align: left;
+            font-size: 13px;
+        }
+
+        /* Title */
+        .title {
+            text-align: center;
+            margin: 15px 0 25px;
+            font-size: 22px;
             font-weight: bold;
+            text-decoration: underline;
         }
 
-        table {
+        /* Invoice Info */
+        .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 14px;
         }
 
-        table th, table td {
+        .info-table th,
+        .info-table td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+        }
+
+        .info-table th {
+            background: #f2f2f2;
+            width: 20%;
+            text-align: right;
+        }
+
+        /* Items Table */
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        table.items th,
+        table.items td {
+            border: 1px solid #000;
             padding: 8px;
-            border: 1px solid #ddd;
             text-align: center;
         }
 
-        .totals {
-            margin-top: 20px;
-            float: left;
-            width: 300px;
+        table.items th {
+            background: #f2f2f2;
         }
 
-        .totals table {
-            border: none;
+        /* Totals */
+        .totals {
+            width: 40%;
+            margin-top: 15px;
+            margin-right: auto;
+            border-collapse: collapse;
         }
 
         .totals td {
-            border: none;
-            text-align: left;
-            padding: 5px 0;
+            border: 1px solid #000;
+            padding: 8px;
         }
 
+        .totals tr td:first-child {
+            background: #f2f2f2;
+            font-weight: bold;
+        }
+
+        /* Notes */
         .notes {
+            margin-top: 20px;
+            border: 1px solid #000;
+            padding: 10px;
+            min-height: 60px;
+        }
+
+        /* Footer / Signatures */
+        .signatures {
             margin-top: 40px;
-            clear: both;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sign-box {
+            width: 30%;
+            text-align: center;
+        }
+
+        .sign-box p {
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+
+        .sign-line {
+            border-top: 1px solid #000;
         }
 
         @media print {
+            body {
+                background: #fff;
+            }
             .no-print {
                 display: none;
             }
         }
     </style>
 </head>
-<body>
 
-<div class="invoice-box">
+<body onload="window.print()">
+
+<div class="a4">
+
+    <!-- Header -->
     <div class="header">
-        <div>
-            <div class="invoice-title">فاتورة بيع</div>
-            <div>رقم الفاتورة: {{ $doc->bill_number }}</div>
-            <div>التاريخ: {{ \Carbon\Carbon::parse($doc->date)->format('d-m-Y') }}</div>
+        <div class="company-info">
+            <h3>مصنع أولاد بلال</h3>
+            <p>العنوان : النسايمة - المنزلة - الدقهلية</p>
+            <p>ت / 01281350125 - 0503597046</p>
         </div>
-        <div>
-            <strong>العميل:</strong> {{ $doc->client_name ?? '-' }}<br>
-            <strong>المخزن:</strong> {{ $doc->store_name ?? '-' }}
+
+        <div class="print-info">
+            <p><strong>تاريخ الطباعة:</strong></p>
+            <p>{{ \Carbon\Carbon::now()->format('Y-m-d H:i') }}</p>
         </div>
     </div>
 
-    <table>
+    <!-- Title -->
+    <div class="title">
+        فاتورة بيع
+    </div>
+
+    <!-- Invoice Info -->
+    <table class="info-table">
+        <tr>
+            <th>رقم الفاتورة</th>
+            <td>{{ $doc->bill_number }}</td>
+
+            <th>التاريخ</th>
+            <td>{{ \Carbon\Carbon::parse($doc->date)->format('d-m-Y') }}</td>
+        </tr>
+        <tr>
+            <th>العميل</th>
+            <td>{{ $doc->client_name ?? '-' }}</td>
+
+            <th>المخزن</th>
+            <td>{{ $doc->store_name ?? 'مخزن متعدد' }}</td>
+        </tr>
+    </table>
+
+    <!-- Items -->
+    <table class="items">
         <thead>
         <tr>
             <th>#</th>
@@ -102,7 +208,14 @@
         @foreach($details as $index => $item)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $item->item_code }} - {{ $item->item_name }}</td>
+                <td>
+                    <div class="fw-bold">
+                        {{ $item->item_code }} - {{ $item->item_name }}
+                    </div>
+                    <small class="text-muted">
+                        {{ $item->store_name }}
+                    </small>
+                </td>
                 <td>{{ $item->quantity }}</td>
                 <td>{{ $item->weight }}</td>
                 <td>{{ number_format($item->price, 2) }}</td>
@@ -112,31 +225,46 @@
         </tbody>
     </table>
 
-    <div class="totals">
-        <table>
-            <tr>
-                <td><strong>الإجمالي:</strong></td>
-                <td>{{ number_format($doc->total, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>الخصم:</strong></td>
-                <td>{{ number_format($doc->discount, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>الصافي:</strong></td>
-                <td><strong>{{ number_format($doc->net, 2) }}</strong></td>
-            </tr>
-        </table>
-    </div>
+    <!-- Totals -->
+    <table class="totals">
+        <tr>
+            <td>الإجمالي</td>
+            <td>{{ number_format($doc->total, 2) }}</td>
+        </tr>
+        <tr>
+            <td>الخصم</td>
+            <td>{{ number_format($doc->discount, 2) }}</td>
+        </tr>
+        <tr>
+            <td>الصافي</td>
+            <td><strong>{{ number_format($doc->net, 2) }}</strong></td>
+        </tr>
+    </table>
 
+    <!-- Notes -->
     <div class="notes">
         <strong>ملاحظات:</strong><br>
         {{ $doc->notes ?? '-' }}
     </div>
 
-    <div class="no-print" style="margin-top: 20px; text-align: center;">
-        <button onclick="window.print()">طباعة الفاتورة</button>
+    <!-- Footer Signatures -->
+    <div class="signatures">
+        <div class="sign-box">
+            <p>المحاسب</p>
+            <div class="sign-line"></div>
+        </div>
+
+        <div class="sign-box">
+            <p>المستلم</p>
+            <div class="sign-line"></div>
+        </div>
+
+        <div class="sign-box">
+            <p>المدير</p>
+            <div class="sign-line"></div>
+        </div>
     </div>
+
 </div>
 
 </body>

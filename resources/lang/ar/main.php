@@ -602,7 +602,7 @@ return [
     'employees' => 'الموظفين',
     'attendances' => 'إدارة الدوام',
     'salaries' => 'إدارة الرواتب',
-    'daily_salary_required' => 'حقل الراتب اليومي مطلوب',
+    'daily_salary_required' => 'حقل الراتب الإسبوعي مطلوب',
     'daily_salary' => 'الراتب اليومي',
     'present_state' => 'الحضور',
     'present_state0' => 'غياب',
@@ -619,7 +619,13 @@ return [
     'shift_count' => 'عدد الورديات',
     'day_count' => 'عدد الأيام',
     'salary' => 'الراتب',
-    'confirm_salary' => 'إعتماد الرواتب'
+    'confirm_salary' => 'إعتماد الرواتب',
+    'car_members' => 'أعضاء السيارة (الفلاحين)',
+    'weekly_salary' => 'الراتب الاسبوعي',
+    'print_btn' => 'طباعة',
+    'stock_report_by_meal' => 'تقرير المخزون حسب الوجبة',
+    'meal' => 'الوجبة',
+    'message_code' => 'كود الرسالة'
 
 
 

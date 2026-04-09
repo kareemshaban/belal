@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class SupplierInsuranceBalanceController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -65,7 +71,7 @@ class SupplierInsuranceBalanceController extends Controller
                 'date' => Carbon::parse($request -> date) ,
                 'balance' => $request -> balance ,
                 'notes' => $request -> notes ?? "",
-                'state' => 0 ,
+                'state' => $request -> state ,
                 'user_ins' => Auth::user() -> id,
                 'user_upd' => 0,
             ]) -> id;
@@ -144,6 +150,7 @@ class SupplierInsuranceBalanceController extends Controller
                 'date' => Carbon::parse($request -> date) ,
                 'balance' => $request -> balance ,
                 'notes' => $request -> notes ?? "",
+               'state' => $request -> state ,
                 'user_upd' => Auth::user() -> id
             ]);
             $this -> storeItems($request ,  $doc -> id);

@@ -23,6 +23,10 @@ use Illuminate\Support\Facades\Gate;
 
 class CheeseMealController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -194,6 +198,7 @@ class CheeseMealController extends Controller
         $code = $this -> getCode();
        $id = CheeseMeal::create([
             'code' => $code,
+            'symbol' => $request -> symbol ,
             'daily_milk_meal' => $request -> daily_milk_meal,
             'item_id' => $request -> item_id,
             'milk_weight' => $request -> milk_weight,
@@ -233,7 +238,6 @@ class CheeseMealController extends Controller
     {
        try {
 
-
 //           return response()->json([
 //               'status' => 'debug',
 //               'request' => $request -> all()
@@ -247,6 +251,7 @@ class CheeseMealController extends Controller
 
                $id = CheeseMeal::create([
                    'code' => $request -> code ?? $this -> getCode(),
+                   'symbol' => $request -> symbol ,
                    'type' => $request -> type ,
                    'date' => Carbon::parse($request->date),
                    'white_cheese_price' => $request->white_cheese_price,
@@ -295,7 +300,8 @@ class CheeseMealController extends Controller
                //update
               $cheeseMeal = CheeseMeal::find($request->cheese_meal_id);
               $cheeseMeal -> update([
-                  'code' => $request -> code ?? "",
+                //  'code' => $request -> code ?? "",
+                  'symbol' => $request ->symbol ?? "",
                   'type' => $request -> type,
                   'date' => Carbon::parse($request->date),
                   'white_cheese_price' => $request -> white_cheese_price ,
@@ -684,6 +690,7 @@ class CheeseMealController extends Controller
             if($dmeal -> isManufactured == 0){
                 $obj = [
                   'code' => '' ,
+                  'symbol' => '',
                   'type' => $dmeal -> type,
                   'cheese_meal_id' => 0 ,
                   'date' => $dmeal -> date,
@@ -714,6 +721,7 @@ class CheeseMealController extends Controller
                     $obj = [
                         'type' => $dmeal -> type,
                         'code' => $cheeseMeal -> code,
+                        'symbol' => $cheeseMeal -> symbol,
                         'cheese_meal_id' => $cheeseMeal -> id ,
                         'date' => $dmeal -> date,
                         'milk_weight' => $dmeal -> total_bovine_weight,
@@ -890,6 +898,7 @@ class CheeseMealController extends Controller
         //update store for item
         $storeQuantity = StoreQuantity::where('store_id' , '=' , $store_id)
             -> where('item_id' , '=' , $meal -> item_id)
+            -> where('cheese_meal_id' , '=' , $meal -> id)
             -> first();
         if($storeQuantity != null){
             $storeQuantity -> update([
@@ -917,6 +926,7 @@ class CheeseMealController extends Controller
             if ($cream) {
                 $storeQuantityCream = StoreQuantity::where('store_id', '=', $store_id)
                     ->where('item_id', '=', $cream->id)
+                    -> where('cheese_meal_id' , '=' , $meal -> id)
                     ->first();
                 if ($storeQuantityCream != null) {
                     $storeQuantityCream->update([
@@ -946,6 +956,7 @@ class CheeseMealController extends Controller
            if ($protein) {
                $storeQuantityProtein = StoreQuantity::where('store_id', '=', $store_id)
                    ->where('item_id', '=', $protein->id)
+                   -> where('cheese_meal_id' , '=' , $meal -> id)
                    ->first();
                if ($storeQuantityProtein != null) {
                    $storeQuantityProtein->update([

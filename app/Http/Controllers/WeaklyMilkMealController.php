@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CarDailyMeal;
 use App\Models\Client;
 use App\Models\ClientAccount;
 use App\Models\DailyMilkMeal;
@@ -203,7 +204,7 @@ class WeaklyMilkMealController extends Controller
         }
         $prefix = 'WM';
         $padded = $prefix . str_pad($id, 4, '0', STR_PAD_LEFT); // Result: "0001"    }
-       echo json_encode($padded);
+        echo json_encode($padded);
         exit();
 
     }
@@ -241,14 +242,14 @@ class WeaklyMilkMealController extends Controller
             $this -> updateClientAccount(0 , $meal_total , $d_meal -> supplier_id );
         }
 
-            $meal -> update([
-                'state' => 1 ,
-                'price_buffalo' => $request -> price_buffalo ,
-                'price_bovine' => $request -> price_bovine ,
-                'total_money' => $w_mealTotal,
-                'post_date' => Carbon::now(),
-                'user_upd' => Auth::user() -> id
-            ]);
+        $meal -> update([
+            'state' => 1 ,
+            'price_buffalo' => $request -> price_buffalo ,
+            'price_bovine' => $request -> price_bovine ,
+            'total_money' => $w_mealTotal,
+            'post_date' => Carbon::now(),
+            'user_upd' => Auth::user() -> id
+        ]);
         return redirect() -> route('weakly_meals') -> with('success' , __('main.posted'));
     }
 
@@ -369,8 +370,8 @@ class WeaklyMilkMealController extends Controller
             ->get();
 
         return $meals;
-       echo json_encode($meals);
-       exit();
+        echo json_encode($meals);
+        exit();
     }
 
     public function getWeaklyMeal($id , $month , $year , $day)
@@ -401,8 +402,8 @@ class WeaklyMilkMealController extends Controller
 
 
         if($meal){
-                $meal->from_day_name_ar = $dayTranslations[$meal->from_day_name_en] ?? $meal->from_day_name_en;
-                $meal->to_day_name_ar = $dayTranslations[$meal->to_day_name_en] ?? $meal->to_day_name_en;
+            $meal->from_day_name_ar = $dayTranslations[$meal->from_day_name_en] ?? $meal->from_day_name_en;
+            $meal->to_day_name_ar = $dayTranslations[$meal->to_day_name_en] ?? $meal->to_day_name_en;
         }
 
 
@@ -426,6 +427,7 @@ class WeaklyMilkMealController extends Controller
 
 
         $suppliers = Client::where('type', '<>', 0)
+            -> where('is_farmer' , 0)
             ->orderBy('sort', 'asc')
             ->get();
 
@@ -460,164 +462,162 @@ class WeaklyMilkMealController extends Controller
                 }
             }
 
+            $wId = 0 ;
 
+            $startDate = Carbon::parse($request->input('start')); // Convert to Carbon instance
 
-        $wId = 0 ;
+            // Query WeaklyMilkMeal where start_date matches
+            $wmeal = WeaklyMilkMeal::whereDate('start_date', $startDate)->get() -> first();
 
-      $startDate = Carbon::parse($request->input('start')); // Convert to Carbon instance
+            if(!$wmeal){
+                //check for open meals
 
-    // Query WeaklyMilkMeal where start_date matches
-      $wmeal = WeaklyMilkMeal::whereDate('start_date', $startDate)->get() -> first();
-
-      if(!$wmeal){
-          //check for open meals
-
-          $wmealsOpen = WeaklyMilkMeal::where('state' , '=' , 0) -> get();
-          if(count($wmealsOpen) > 0){
-              return response()->json([
-                  'status' => 'warning',
-                  'message' => 'عذراً، هناك وجبة أسبوعية مفتوحة بالفعل.'
-              ]);
-          }
-
-
-
-          // should create the weakly first
-
-          $meals = WeaklyMilkMeal::all();
-          $id = 0;
-          if (count($meals) > 0) {
-              $id = $meals[count($meals) - 1]->id + 1;
-          } else {
-              $id = 1;
-          }
-          $prefix = 'WM';
-          $padded = $prefix . str_pad($id, 4, '0', STR_PAD_LEFT);
-          $wId =   WeaklyMilkMeal::create([
-              'start_date' => Carbon::parse($request -> start),
-              'end_date' => Carbon::parse($request -> end),
-              'code' => $padded,
-              'state' => 0,
-              'price_buffalo' =>  0,
-              'price_bovine' =>  0,
-              'total_buffalo_weight' =>  0,
-              'total_bovine_weight'  => 0,
-              'total_money' =>  0,
-              'number_of_daily_meals' => 0,
-              'notes' =>  "",
-              'user_ins' => Auth::user() -> id,
-              'user_upd' => 0
-          ]) -> id;
-      } else {
-          $wId = $wmeal -> id ;
-      }
-
-      if((int)  $request -> type < 3) {
-          $daily = DailyMilkMeal::where('weakly_meal_id', '=', $wId)
-              ->where('supplier_id', '=', $request->supplier)
-              ->where('type', '=', $request->type)
-              ->whereDate('date', '=', Carbon::parse($request->date))
-              ->first();
-
-
-          if (!$daily) {
-              $dmeals = DailyMilkMeal::where('weakly_meal_id', '=', $wId)->get();
-
-
-              $dId = 0;
-              if (count($dmeals) > 0) {
-                  $dId = count($dmeals) + 1;
-              } else {
-                  $dId = 1;
-              }
-
-              $padded = str_pad($dId, 4, '0', STR_PAD_LEFT); // Result: "0001"    }
-
-
-              $code2 = $wId . '-' . $padded;
-
-
-              if ($request->type == 0)
-                  $code2 = 'DMM' . $code2;
-              else
-                  $code2 = 'DME' . $code2;
-
-              $total = 0 ;
-
-              if($request->field == 1 )
-                  $total =    $request->value *  ($request -> buffaloPrice ?? 0) ;
-              else
-                  $total =    $request->value *  ($request -> bovinePrice ?? 0) ;
-              DailyMilkMeal::create([
-                  'code' => $code2,
-                  'weakly_meal_id' => $wId,
-                  'type' => $request->type,
-                  'date' => Carbon::parse($request->date),
-                  'supplier_id' => $request->supplier,
-                  'buffalo_weight' => $request->field == 1 ? $request->value : 0,
-                  'bovine_weight' => $request->field == 0 ? $request->value : 0,
-                  'hasBonus' => 0,
-                  'bonus' => 0,
-                  'notes' => "",
-                  'isManufactured' => 0,
-                  'car_meal_id' => 0,
-                  'buffalo_price' => $request -> buffaloPrice ?? 0,
-                  'bovine_price' => $request -> bovinePrice ?? 0,
-                  'isPaid' => 0 ,
-                  'state' => 0 ,
-                  'total' => $total,
-                  'user_ins' => Auth::user()->id
-              ]);
-
-
-              $buffalo_weight = $request->field == 1 ? $request->value : 0;
-              $bovine_weight = $request->field == 0 ? $request->value : 0;
+                $wmealsOpen = WeaklyMilkMeal::where('state' , '=' , 0) -> get();
+                if(count($wmealsOpen) > 0){
+                    return response()->json([
+                        'status' => 'warning',
+                        'message' => 'عذراً، هناك وجبة أسبوعية مفتوحة بالفعل.'
+                    ]);
+                }
 
 
 
-              $this->updateWeaklyMilkMealWeight($buffalo_weight, $bovine_weight, $wId);
+                // should create the weakly first
 
-          } else {
-              $old_buffalo_weight = $daily->buffalo_weight;
-              $old_bovine_weight = $daily->bovine_weight;
+                $meals = WeaklyMilkMeal::all();
+                $id = 0;
+                if (count($meals) > 0) {
+                    $id = $meals[count($meals) - 1]->id + 1;
+                } else {
+                    $id = 1;
+                }
+                $prefix = 'WM';
+                $padded = $prefix . str_pad($id, 4, '0', STR_PAD_LEFT);
+                $wId =   WeaklyMilkMeal::create([
+                    'start_date' => Carbon::parse($request -> start),
+                    'end_date' => Carbon::parse($request -> end),
+                    'code' => $padded,
+                    'state' => 0,
+                    'price_buffalo' =>  0,
+                    'price_bovine' =>  0,
+                    'total_buffalo_weight' =>  0,
+                    'total_bovine_weight'  => 0,
+                    'total_money' =>  0,
+                    'number_of_daily_meals' => 0,
+                    'notes' =>  "",
+                    'user_ins' => Auth::user() -> id,
+                    'user_upd' => 0
+                ]) -> id;
+            } else {
+                $wId = $wmeal -> id ;
+            }
 
-              if($request->field == 1 )
-                  $total =    ($request->value *  ($request -> buffaloPrice ?? 0) ) + ($daily->bovine_weight * ($request -> bovinePrice ?? 0)) ;
-              else
-                  $total =    $request->value *  ($request -> bovinePrice ?? 0) + ($daily->buffalo_weight * ($request -> buffaloPrice ?? 0))  ;
-
-              $daily->update([
-                  'buffalo_weight' => $request->field == 1 ? $request->value : $daily->buffalo_weight,
-                  'bovine_weight' => $request->field == 0 ? $request->value : $daily->bovine_weight,
-                  'total' => $total,
-
-              ]);
-
-              $buffalo_weight = $request->field == 1 ? ($request->value - $old_buffalo_weight) : 0;
-              $bovine_weight = $request->field == 0 ? ($request->value - $old_bovine_weight) : 0;
-              $this->updateWeaklyMilkMealWeight($buffalo_weight, $bovine_weight, $wId);
-          }
-      }
-      else {
-          // update daily price
-          $dailys = DailyMilkMeal::where('weakly_meal_id', '=', $wId)
-              ->where('supplier_id', '=', $request->supplier)
-              ->get();
-
-          foreach ($dailys as $daily){
-
-              $buffalo_price =  $request->field == 3 ? $request->value : $daily -> buffalo_price ;
-              $bovine_price = $request->field == 2 ? $request->value : $daily -> bovine_price  ;
+            if((int)  $request -> type < 3) {
+                $daily = DailyMilkMeal::where('weakly_meal_id', '=', $wId)
+                    ->where('supplier_id', '=', $request->supplier)
+                    ->where('type', '=', $request->type)
+                    ->whereDate('date', '=', Carbon::parse($request->date))
+                    ->first();
 
 
-              $total = ($daily -> buffalo_weight * $buffalo_price) + ($daily -> bovine_weight * $bovine_price) ;
-              $daily->update([
-                  'buffalo_price' => $buffalo_price,
-                  'bovine_price' => $bovine_price,
-                  'total' =>  $total
-              ]);
-          }
-      }
+                if (!$daily) {
+                    $dmeals = DailyMilkMeal::where('weakly_meal_id', '=', $wId)->get();
+
+
+                    $dId = 0;
+                    if (count($dmeals) > 0) {
+                        $dId = count($dmeals) + 1;
+                    } else {
+                        $dId = 1;
+                    }
+
+                    $padded = str_pad($dId, 4, '0', STR_PAD_LEFT); // Result: "0001"    }
+
+
+                    $code2 = $wId . '-' . $padded;
+
+
+                    if ($request->type == 0)
+                        $code2 = 'DMM' . $code2;
+                    else
+                        $code2 = 'DME' . $code2;
+
+                    $total = 0 ;
+
+                    if($request->field == 1 )
+                        $total =    $request->value *  ($request -> buffaloPrice ?? 0) ;
+                    else
+                        $total =    $request->value *  ($request -> bovinePrice ?? 0) ;
+                    DailyMilkMeal::create([
+                        'code' => $code2,
+                        'weakly_meal_id' => $wId,
+                        'type' => $request->type,
+                        'date' => Carbon::parse($request->date),
+                        'supplier_id' => $request->supplier,
+                        'buffalo_weight' => $request->field == 1 ? $request->value : 0,
+                        'bovine_weight' => $request->field == 0 ? $request->value : 0,
+                        'hasBonus' => 0,
+                        'bonus' => 0,
+                        'notes' => "",
+                        'isManufactured' => 0,
+                        'car_meal_id' => 0,
+                        'buffalo_price' => $request -> buffaloPrice ?? 0,
+                        'bovine_price' => $request -> bovinePrice ?? 0,
+                        'isPaid' => 0 ,
+                        'state' => 0 ,
+                        'total' => $total,
+                        'user_ins' => Auth::user()->id
+                    ]);
+
+
+                    $buffalo_weight = $request->field == 1 ? $request->value : 0;
+                    $bovine_weight = $request->field == 0 ? $request->value : 0;
+
+
+
+                    $this->updateWeaklyMilkMealWeight($buffalo_weight, $bovine_weight, $wId);
+
+                } else {
+                    $old_buffalo_weight = $daily->buffalo_weight;
+                    $old_bovine_weight = $daily->bovine_weight;
+
+                    if($request->field == 1 )
+                        $total =    ($request->value *  ($request -> buffaloPrice ?? 0) ) + ($daily->bovine_weight * ($request -> bovinePrice ?? 0)) ;
+                    else
+                        $total =    $request->value *  ($request -> bovinePrice ?? 0) + ($daily->buffalo_weight * ($request -> buffaloPrice ?? 0))  ;
+
+                    $daily->update([
+                        'buffalo_weight' => $request->field == 1 ? $request->value : $daily->buffalo_weight,
+                        'bovine_weight' => $request->field == 0 ? $request->value : $daily->bovine_weight,
+                        'total' => $total,
+
+                    ]);
+
+                    $buffalo_weight = $request->field == 1 ? ($request->value - $old_buffalo_weight) : 0;
+                    $bovine_weight = $request->field == 0 ? ($request->value - $old_bovine_weight) : 0;
+                    $this->updateWeaklyMilkMealWeight($buffalo_weight, $bovine_weight, $wId);
+                }
+            }
+            else {
+                // update daily price
+                $dailys = DailyMilkMeal::where('weakly_meal_id', '=', $wId)
+                    ->where('supplier_id', '=', $request->supplier)
+                    ->get();
+
+                foreach ($dailys as $daily){
+
+                    $buffalo_price =  $request->field == 3 ? $request->value : $daily -> buffalo_price ;
+                    $bovine_price = $request->field == 2 ? $request->value : $daily -> bovine_price  ;
+
+
+                    $total = ($daily -> buffalo_weight * $buffalo_price) + ($daily -> bovine_weight * $bovine_price) ;
+                    $daily->update([
+                        'buffalo_price' => $buffalo_price,
+                        'bovine_price' => $bovine_price,
+                        'total' =>  $total
+                    ]);
+                }
+            }
 
 
             return response()->json([
@@ -638,11 +638,188 @@ class WeaklyMilkMealController extends Controller
 
     }
 
+
+
+    public function postCarMeal(Request $request)
+    {
+
+        try {
+
+            if((int)  $request -> type < 3) {
+
+                $daily = CarDailyMeal::where('weakly_meal_id', '=', $request -> wMeal)
+                    ->where('supplier_id', '=', $request->supplier)
+                    ->where('member_id', '=', $request->member)
+                    ->where('type', '=', $request->type)
+                    ->whereDate('date', '=', Carbon::parse($request->date))
+                    ->first();
+                if (!$daily) {
+                    $dmeals = CarDailyMeal::where('weakly_meal_id', '=', $request -> wMeal)->get();
+                    $dId = 0;
+                    if (count($dmeals) > 0) {
+                        $dId = count($dmeals) + 1;
+                    } else {
+                        $dId = 1;
+                    }
+
+                    $padded = str_pad($dId, 4, '0', STR_PAD_LEFT); // Result: "0001"    }
+
+
+                    $code2 = $request -> wMeal . '-' . $padded;
+
+
+                    if ($request->type == 0)
+                        $code2 = 'CDMM' . $code2;
+                    else
+                        $code2 = 'CDME' . $code2;
+
+                    $total = 0 ;
+
+                    if($request->field == 1 )
+                        $total =    $request->value *  ($request -> buffaloPrice ?? 0) ;
+                    else
+                        $total =    $request->value *  ($request -> bovinePrice ?? 0) ;
+
+                    CarDailyMeal::create([
+                        'code' => $code2,
+                        'date' => Carbon::parse($request -> date),
+                        'type' => $request -> type, // 0 morning 1 evening
+                        'weakly_meal_id' => $request -> wMeal,
+                        'supplier_id' => $request -> supplier, // the main supplier (car owner)
+                        'member_id' => $request -> member,
+                        'weight' => $request->field == 0 ? $request->value : 0,
+                        'price' => $request -> bovinePrice,
+                        'weight_b' => $request->field == 1 ? $request->value : 0,
+                        'price_b' => $request -> buffaloPrice,
+                        'total' => $total,
+                        'user_ins' => Auth::user() -> id,
+                        'user_upd' => 0
+                    ]);
+                }else{
+
+                    $total = ($request -> bovinePrice * $request -> value) ;
+
+                    if($request->field == 1 )
+                        $total =    ($request->value *  ($request -> buffaloPrice ?? 0) ) + ($daily->weight * ($request -> bovinePrice ?? 0)) ;
+                    else
+                        $total =    $request->value *  ($request -> bovinePrice ?? 0) + ($daily->weight_b * ($request -> buffaloPrice ?? 0))  ;
+
+
+                    $daily->update([
+                        'weight_b' => $request->field == 1 ? $request->value : $daily->weight_b,
+                        'weight' => $request->field == 0 ? $request->value : $daily->weight,
+                        'total' => $total,
+
+                    ]);
+
+                }
+
+            } else {
+                // update car daily price
+                $dailys = CarDailyMeal::where('weakly_meal_id', '=', $request -> wMeal)
+                    ->where('supplier_id', '=', $request->supplier)
+                    ->where('member_id', '=', $request->member)
+                    ->get();
+                foreach ($dailys as $daily){
+
+                     $price_b =  $request->field == 3 ? $request->value : $daily -> price_b ;
+                     $price = $request->field == 2 ? $request->value : $daily -> price  ;
+                    $total = ($daily -> weight * $price) + ($daily -> weight_b * $price_b) ;
+
+                    $daily->update([
+                        'price' => $price,
+                        'price_b' => $price_b,
+                        'total' => $total,
+                    ]);
+                }
+            }
+
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'تم حفظ البيانات بنجاح',
+                'wId' => $request -> wMeal
+            ]);
+
+        } catch (QueryException $err){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'حدث خطأ أثناء حفظ البيانات.',
+                'debug' => $err->getMessage() // Only include in development!
+            ]);//
+
+        }
+
+
+    }
+
+
     public function weakMeals($wid , $supplier_id = null){
-        $meals = DailyMilkMeal::where('weakly_meal_id', $wid);
+        //$meals = DailyMilkMeal::where('weakly_meal_id', $wid);
+        $meals = DB::table('daily_milk_meals')
+            -> join('clients' , 'clients.id', '=', 'daily_milk_meals.supplier_id')
+            -> where('weakly_meal_id', $wid)
+            -> select('daily_milk_meals.*', 'clients.car_id');
 
         if (!is_null($supplier_id)) {
             $meals->where('supplier_id', $supplier_id);
+        }
+
+        $meals = $meals->get();
+
+
+
+        $totals = CarDailyMeal::where('weakly_meal_id', $wid)
+            ->selectRaw('supplier_id, ROUND(SUM(total),2) as total_sum')
+            ->groupBy('supplier_id')
+            ->pluck('total_sum', 'supplier_id')
+            ->toArray();
+
+
+    $prices = CarDailyMeal::where('weakly_meal_id', $wid)
+            ->selectRaw('
+                supplier_id,
+                ROUND(COALESCE(SUM(total) / NULLIF(SUM(weight), 0), 0), 2) as result_ratio
+            ')
+            ->groupBy('supplier_id')
+            ->pluck('result_ratio', 'supplier_id')
+            ->toArray();
+
+        $rows = CarDailyMeal::where('weakly_meal_id', $wid)
+            ->pluck('price');
+
+
+        $data = [
+            'meals' => $meals,
+            'prices' => $prices,
+            'totals' => $totals,
+
+        ];
+
+
+        echo json_encode($data);
+        exit();
+    }
+
+    public function weakCarMeals($wid , $supplier_id = null)
+    {
+        $meals = CarDailyMeal::where('weakly_meal_id', $wid);
+
+        if (!is_null($supplier_id)) {
+            $meals->where('supplier_id', $supplier_id);
+        }
+
+        $meals = $meals->get();
+        echo json_encode($meals);
+        exit();
+    }
+
+    public function weakCarMealsView($wid , $supplier_id = null)
+    {
+        $meals = CarDailyMeal::where('weakly_meal_id', $wid);
+
+        if (!is_null($supplier_id)) {
+            $meals->where('member_id', $supplier_id);
         }
 
         $meals = $meals->get();
@@ -750,6 +927,69 @@ class WeaklyMilkMealController extends Controller
         }
     }
 
+    public function supplierCarMealsCarryOver($wMealId , $supplier_id)
+    {
+        try {
+            $meal = WeaklyMilkMeal::find($wMealId);
+            $meals = CarDailyMeal::where('weakly_meal_id', '=', $wMealId)
+                -> where('member_id', '=', $supplier_id)
+                ->get();
+
+
+
+
+            $w_mealTotal = 0;
+            $sId = 0 ;
+            foreach ($meals as $d_meal) {
+                $sId = $d_meal ->  supplier_id ;
+                if($d_meal-> state == 0){
+                    $d_meal -> update([
+                        'state' => 1
+                    ]);
+                    $w_mealTotal += $d_meal->total;
+                }
+            }
+            if($w_mealTotal > 0){
+                $this->updateClientAccount(0, $w_mealTotal, $d_meal->member_id);
+
+            }
+
+            if($sId > 0){
+                $standars = DailyMilkMeal::where('weakly_meal_id', '=', $wMealId)
+                    -> where('supplier_id', '=', $sId) -> get();
+                foreach ($standars as $m) {
+                    if($m-> state == 0){
+                        $m -> update([
+                            'state' => 1
+                        ]);
+                    }
+                }
+            }
+            $remain_meals = DailyMilkMeal::where('weakly_meal_id', '=', $wMealId)
+                -> where('state', '=', 0)
+                ->get();
+            $state = count($remain_meals) == 0 ? 1 : 0 ;
+            $meal->update([
+                'state' => $state,
+                'total_money' => $meal -> total_money +  $w_mealTotal,
+                'post_date' => Carbon::now(),
+                'user_upd' => Auth::user()->id
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'تم الترحيل بنجاح'
+            ]);
+        }catch (QueryException $err){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'حدث خطأ أثناء ترحيل البيانات.',
+                'debug' => $err->getMessage() // Only include in development!
+            ]);//
+
+        }
+    }
+
     public function weakMealDetails($id , $supplier_id , $start)
     {
         $suppliers = Client::where('type' , '<>' , 0)
@@ -789,44 +1029,95 @@ class WeaklyMilkMealController extends Controller
 
 
         $safes = Safe::all();
-        $beforeBalance = $this -> getBeforeBalance($supplier_id , $id) ;
+        $beforeBalance = $this->getBeforeBalance($supplier_id , $id , $startOfWeek , $endOfWeek);
+
+//return $beforeBalance ;
 
         return view('admin.milkMeals.meal' , compact('suppliers' , 'meal' , 'meals' ,
-       'startOfWeek' , 'endOfWeek' , 'dayName' , 'end_dayName' , 'dayName_ar' , 'end_dayName_ar' ,
-        'weekBalance' , 'beforeBalance' , 'safes' , 'weekPaid'));
+            'startOfWeek' , 'endOfWeek' , 'dayName' , 'end_dayName' , 'dayName_ar' , 'end_dayName_ar' ,
+            'weekBalance' , 'beforeBalance' , 'safes' , 'weekPaid'));
     }
 
-    public function getBeforeBalance($supplier_id , $wid): float
+    public function weakCarMealDetails($id , $supplier_id , $start)
     {
+        $suppliers = Client::where('type' , '<>' , 0)
+            -> where('id' , '=' , $supplier_id)
+            -> get();
+
+        $meal = WeaklyMilkMeal::find($id);
+        $meals = CarDailyMeal::where('weakly_meal_id' , '=' , $id)
+            -> where('member_id' , '=' , $supplier_id)
+            -> get();
+
+        $carbonDate = Carbon::parse($start);
+        $startOfWeek = $carbonDate->copy()->startOfWeek(Carbon::FRIDAY);
+
+        $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+        $dayName = $carbonDate->format('l'); // e.g., "Friday"
+        $end_dayName = $endOfWeek->format('l');
+
+        Carbon::setLocale('ar'); // Arabic
+        $dayName_ar = $carbonDate->translatedFormat('l');
+        $end_dayName_ar = $endOfWeek->translatedFormat('l');
+
+        $beforeBalance = 0 ;
+        $weekBalance = 0 ;
+
+        $weekBalance = $meals->sum('total'); //14450
+
+        $weekPaid = $meals->sum('paid'); // 12450
+
+        // i need to get beforBalance
+        // 1- previous weeks milk
+        // 2- previous recipits
+        // 3- previous catches
+        // 4- previous sales
 
 
-        $recipits = DB::table('recipits')
-            -> where('recipits.supplier_id' , '=' , $supplier_id)
-            ->select('recipits.amount as amount',DB::raw('0 as type') ) ->sum('amount');;
 
-        $catchs = DB::table('catch_recipits')
-            ->where('catch_recipits.client_id', '=', $supplier_id)
-            ->select('catch_recipits.amount as amount' , DB::raw('1 as type')) ->sum('amount');;
+        $safes = Safe::all();
+        $beforeBalance = $this->getBeforeBalance($supplier_id , $id , $startOfWeek , $endOfWeek);
 
+      //  return $beforeBalance ;
 
-        $dailyMeals = DB::table('daily_milk_meals')
-            ->where('daily_milk_meals.state', '=', 1)
-            ->where('daily_milk_meals.supplier_id', '=', $supplier_id)
-            -> where('daily_milk_meals.weakly_meal_id', '<>', $wid)
-            ->select('daily_milk_meals.total as amount' , DB::raw('1 as type') ) ->sum('daily_milk_meals.total');;
-
-        $sales = DB::table('sales')
-            -> where('sales.client_id' , '=' , $supplier_id)
-            ->select('sales.net as amount',DB::raw('0 as type')) ->sum('sales.net');
-
-        $beforeBalance = $dailyMeals + $catchs - $recipits - $sales ;
-
-        return $beforeBalance ;
-
+        return view('admin.milkMeals.carMeal' , compact('suppliers' , 'meal' , 'meals' ,
+            'startOfWeek' , 'endOfWeek' , 'dayName' , 'end_dayName' , 'dayName_ar' , 'end_dayName_ar' ,
+            'weekBalance' , 'beforeBalance' , 'safes' , 'weekPaid'));
     }
 
+   public function getBeforeBalance($supplier_id , $wid , $startOfWeek , $endOfWeek): float
+{
 
-    public function weakMealDetailsPrint($id , $supplier_id , $start , $weekPaid)
+    $recipits = DB::table('recipits')
+        ->where('supplier_id', $supplier_id)
+        ->whereDate('date', '<=' ,  $endOfWeek )
+        ->sum('amount');
+
+    $catchs = DB::table('catch_recipits')
+        ->where('client_id', $supplier_id)
+          ->whereDate('date', '<=' ,  $endOfWeek )
+        ->sum('amount');
+
+    $dailyMeals = DB::table('daily_milk_meals')
+        ->where('state', 1)
+        ->where('supplier_id', $supplier_id)
+        ->where('weakly_meal_id', '<>', $wid)
+        ->whereDate('created_at', '<=', $startOfWeek)  // تم التعديل: تاريخ أقل من بداية الأسبوع
+        ->sum('total');
+
+    $sales = DB::table('sales')
+        ->where('client_id', $supplier_id)
+          ->whereDate('date', '<=' ,  $endOfWeek )
+        ->sum('net');
+
+    $beforeBalance =  $dailyMeals + $catchs - $recipits - $sales;
+
+    return $beforeBalance;
+}
+
+
+    public function weakMealDetailsPrint($id , $supplier_id , $start )
     {
         $supplier = Client::where('type' , '<>' , 0)
             -> where('id' , '=' , $supplier_id)
@@ -859,18 +1150,68 @@ class WeaklyMilkMealController extends Controller
 
         $weekPaid = $meals->sum('paid'); // 12450
 
-        $clientAccount = ClientAccount::where('client_id' , '=' , $supplier_id) -> get() -> first(); // 0
+     //   $clientAccount = ClientAccount::where('client_id' , '=' , $supplier_id) -> get() -> first(); // 0
 
 
-        $beforeBalance = $clientAccount->balance - $weekBalance + $weekPaid; // 0 - 14250 +12450 = -2000
+     //   $beforeBalance = $clientAccount->balance ; // 0 - 14250 +12450 = -2000
 
-      //  return $beforeBalance ;
+        //  return $beforeBalance ;
 
+        $beforeBalance = $this->getBeforeBalance($supplier_id , $id , $startOfWeek , $endOfWeek);
 
+        //return $beforeBalance ;
 
         return view('admin.milkMeals.print' , compact('supplier' , 'meal' , 'meals' ,
             'startOfWeek' , 'endOfWeek' , 'dayName' , 'end_dayName' , 'dayName_ar' , 'end_dayName_ar' ,
             'weekBalance' , 'beforeBalance'  , 'weekPaid' , 'totalWeight' , 'totalMoney'));
     }
+
+    public function weakCarMealDetailsPrint($id , $supplier_id , $start )
+    {
+        $supplier = Client::where('type' , '<>' , 0)
+            -> where('id' , '=' , $supplier_id)
+            -> first();
+
+        $meal = WeaklyMilkMeal::find($id);
+        $meals = CarDailyMeal::where('weakly_meal_id' , '=' , $id)
+            -> where('member_id' , '=' , $supplier_id)
+            -> get();
+
+        $totalWeight = $meals -> sum('weight');
+        $totalMoney = $meals -> sum('total');
+
+        $carbonDate = Carbon::parse($start);
+        $startOfWeek = $carbonDate->copy()->startOfWeek(Carbon::FRIDAY);
+
+        $endOfWeek = $startOfWeek->copy()->addDays(6);
+
+        $dayName = $carbonDate->format('l'); // e.g., "Friday"
+        $end_dayName = $endOfWeek->format('l');
+
+        Carbon::setLocale('ar'); // Arabic
+        $dayName_ar = $carbonDate->translatedFormat('l');
+        $end_dayName_ar = $endOfWeek->translatedFormat('l');
+
+        $beforeBalance = 0 ;
+        $weekBalance = 0 ;
+
+        $weekBalance = $meals->sum('total'); //14450
+
+        $weekPaid = $meals->sum('paid'); // 12450
+
+        $clientAccount = ClientAccount::where('client_id' , '=' , $supplier_id) -> get() -> first(); // 0
+
+
+        $beforeBalance = $clientAccount->balance - $weekBalance + $weekPaid; // 0 - 14250 +12450 = -2000
+
+        //  return $beforeBalance ;
+
+
+
+        return view('admin.milkMeals.printCar' , compact('supplier' , 'meal' , 'meals' ,
+            'startOfWeek' , 'endOfWeek' , 'dayName' , 'end_dayName' , 'dayName_ar' , 'end_dayName_ar' ,
+            'weekBalance' , 'beforeBalance'  , 'weekPaid' , 'totalWeight' , 'totalMoney'));
+    }
+
 
 }

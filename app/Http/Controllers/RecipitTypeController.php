@@ -24,7 +24,7 @@ class RecipitTypeController extends Controller
     public function index()
     {
 
-        if (!Gate::allows('page-access', [1, 'view'])) {
+        if (!Gate::allows('page-access', [3, 'view'])) {
             abort(403);
         }
 

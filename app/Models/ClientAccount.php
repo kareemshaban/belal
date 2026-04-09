@@ -20,4 +20,9 @@ class ClientAccount extends Model
       'user_ins',
       'user_upd'
     ];
+
+    public function client()
+    {
+        return $this->hasOne(Client::class, 'client_id');
+    }
 }

@@ -53,7 +53,7 @@
                         </div>
 
                         <div class="row" style="margin-top: 10px">
-                            <div class="col-12">
+                            <div class="col-6">
                                 <div class="form-group">
                                     <label>{{ __('main.phone') }} </label>
                                     <input type="text" name="phone" id="phone"
@@ -63,6 +63,20 @@
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
+                                    @enderror
+
+                                </div>
+                            </div>
+                            <div class="col-6" >
+                                <div class="form-group">
+                                    <label>{{ __('main.order') }} <span style="font-size: 14px ; color: red">*</span></label>
+                                    <input type="number" class="form-control @error('sort') is-invalid @enderror" id="sort"
+                                           name="sort" required placeholder="0" >
+
+                                    @error('sort')
+                                    <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                            </span>
                                     @enderror
 
                                 </div>
@@ -106,4 +120,6 @@
             </div>
         </div>
     </div>
+
+
 </div>

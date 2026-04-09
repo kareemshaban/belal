@@ -58,8 +58,8 @@
                                 <tbody>
                                 @foreach($members as $member)
                                     <tr>
-                                        <th scope="row" class="text-center">{{$loop -> index + 1}}</th>
-                                        <td class="text-center">{{$member -> supplier_name}}</td>
+                                        <th scope="row" class="text-center">{{$member -> sort}}</th>
+                                        <td class="text-center">{{$supplier -> name}}</td>
                                         <td class="text-center">{{$member -> name}}</td>
                                         <td class="text-center">{{$member -> phone}}</td>
                                         <td class="text-center">
@@ -103,38 +103,48 @@
 <script type="text/javascript">
     var id = 0 ;
     $(document).on('click', '#createButton', function (event) {
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
+        let id = @json($supplier -> id) ;
         $.ajax({
-            url: href,
-            beforeSend: function () {
-                $('#loader').show();
-            },
-            // return the result
-            success: function (result) {
-                $('#createModal').modal("show");
-                $(".modal-body #id").val(0);
-                $(".modal-body #supplier_id").val(@json($supplier -> id));
-                $(".modal-body #supplier_name").val(@json($supplier -> name));
-                $(".modal-body #name").val("");
-                $(".modal-body #phone").val("");
-                $(".modal-body #address").val("");
+            type:'get',
+            url:'/member-order' + '/' + id,
+            dataType: 'json',
+            success:function(order){
+                event.preventDefault();
+                let href = $(this).attr('data-attr');
+                $.ajax({
+                    url: href,
+                    beforeSend: function () {
+                        $('#loader').show();
+                    },
+                    // return the result
+                    success: function (result) {
+                        $('#createModal').modal("show");
+                        $(".modal-body #id").val(0);
+                        $(".modal-body #sort").val(order);
+                        $(".modal-body #supplier_id").val(@json($supplier -> id));
+                        $(".modal-body #supplier_name").val(@json($supplier -> name));
+                        $(".modal-body #name").val("");
+                        $(".modal-body #phone").val("");
+                        $(".modal-body #address").val("");
 
-                var translatedText = "{{ __('main.newData') }}";
-                $(".modelTitle").html(translatedText);
+                        var translatedText = "{{ __('main.newData') }}";
+                        $(".modelTitle").html(translatedText);
 
 
-            },
-            complete: function () {
-                $('#loader').hide();
-            },
-            error: function (jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000
+                    },
+                    complete: function () {
+                        $('#loader').hide();
+                    },
+                    error: function (jqXHR, testStatus, error) {
+                        console.log(error);
+                        alert("Page " + href + " cannot open. Error:" + error);
+                        $('#loader').hide();
+                    },
+                    timeout: 8000
+                });
+            }
         });
+
 
     });
     $(document).on('click', '.editBtn', function(event) {
@@ -160,6 +170,7 @@
                         success: function(result) {
                             $('#createModal').modal("show");
                             $(".modal-body #name").val( response.name );
+                            $(".modal-body #sort").val( response.sort );
                             $(".modal-body #phone").val( response.phone );
                             $(".modal-body #address").val( response.address );
                             $(".modal-body #id").val(response.id);

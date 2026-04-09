@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CheeseMeal;
 use App\Models\Items;
 use App\Models\StockTransaction;
 use App\Models\StockTransactionDetails;
@@ -17,6 +18,10 @@ use Illuminate\Support\Facades\Gate;
 
 class StockTransactionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -72,7 +77,8 @@ class StockTransactionController extends Controller
     {
         $stores = Store::all();
         $items = Items::all();
-        return view('admin.StockTransaction.create', compact('stores', 'items'));
+        $meals = CheeseMeal::all();
+        return view('admin.StockTransaction.create', compact('stores', 'items' ,'meals'));
     }
 
     /**
@@ -83,31 +89,48 @@ class StockTransactionController extends Controller
      */
     public function store(Request $request)
     {
-       // return $request ;
-       // save the exchange bond header
+        // return $request ;
+        // save the exchange bond header
         //save the exchange bond details
         // for each item in the bond details do the next : -
-           // 1- remove the quantity from the from_store (increase the outing_qnt and decrease the balance)
-           // add the quantity to the to_store (increase the entering_quantity and increase the balance)
+        // 1- remove the quantity from the from_store (increase the outing_qnt and decrease the balance)
+        // add the quantity to the to_store (increase the entering_quantity and increase the balance)
+
+        $request->validate([
+                'bill_number' => 'required|unique:stock_transactions,bill_number',
+                'message_code' => 'required|unique:stock_transactions,message_code' ,
+                'from_store' => 'required',
+                'to_store' => 'required',
+            ]
+            , [
+                'bill_number.required' => __('main.bill_number_required'),
+                'bill_number.unique'   => __('main.bill_number_unique'),
+                'message_code.required' => 'يجب ادخال كود الرسالة',
+                'message_code.unique'   => 'لا يمكن تكرار كود الرسالة',
+                'from_store.required' => 'يجب تحديد مخزن الصادر',
+                'to_store.required' => 'يجب تحديد مخزن الوارد',
+            ]
+        );
 
         $id =  StockTransaction::create([
-             'bill_number' => $request -> bill_number,
-             'date' => Carbon::parse($request -> date),
-             'from_store' => $request -> from_store,
-             'to_store' => $request -> to_store,
-             'notes' => $request -> notes ?? "",
-             'user_ins' => Auth::user() -> id,
-             'user_upd' => 0
-         ]) -> id;
+            'bill_number' => $request -> bill_number,
+            'message_code' => $request -> message_code ,
+            'date' => Carbon::parse($request -> date),
+            'from_store' => $request -> from_store,
+            'to_store' => $request -> to_store,
+            'notes' => $request -> notes ?? "",
+            'user_ins' => Auth::user() -> id,
+            'user_upd' => 0
+        ]) -> id;
         if($id > 0){
-           $this -> storeDetails($request , $id);
+            $this -> storeDetails($request , $id);
         }
-         if ($request->has('isPost')) {
+        if ($request->has('isPost')) {
             return $this -> post($id);
 
 
         } else {
-                 return redirect() -> route('stock_exchange') -> with('success', __('main.saved'));
+            return redirect() -> route('stock_exchange') -> with('success', __('main.saved'));
 
         }
 
@@ -121,7 +144,7 @@ class StockTransactionController extends Controller
             StockTransactionDetails::create([
                 'transaction_id' => $id,
                 'item_id' => $request -> item_id[$i],
-                'meal_id' => 0,
+                'meal_id' => $request -> meal_id[$i],
                 'store_id' => $request -> item_store_id[$i] ,
                 'quantity' => $request -> quantity[$i],
                 'weight' => $request -> weight[$i],
@@ -129,13 +152,15 @@ class StockTransactionController extends Controller
                 'user_upd' => 0
             ]);
 
-           // $this -> updatStores($request -> quantity[$i] , $request -> from_store , $request -> to_store ,$request -> item_id[$i] );
+            // $this -> updatStores($request -> quantity[$i] , $request -> from_store , $request -> to_store ,$request -> item_id[$i] );
 
         }
     }
     public function updatStores ($qyantity , $fstore , $t_store , $item , $meal_id){
         $from_store = StoreQuantity::where('store_id' , $fstore )
-            -> where('item_id' , '=' , $item) -> get() -> first();
+            -> where('item_id' , '=' , $item)
+           // -> where('cheese_meal_id' , '=' , $meal_id)
+            -> first();
 
         $from_store -> update([
             'quantity_out' => $from_store -> quantity_out + $qyantity ,
@@ -143,7 +168,9 @@ class StockTransactionController extends Controller
         ]);
 
         $to_store =  StoreQuantity::where('store_id' , $t_store )
-            -> where('item_id' , '=' , $item) -> get() -> first();
+            -> where('item_id' , '=' , $item)
+           // -> where('cheese_meal_id' , '=' , $meal_id)
+            ->first();
         if($to_store != null){
             $to_store -> update([
                 'quantity_in' => $to_store -> quantity_in + $qyantity ,
@@ -243,6 +270,7 @@ class StockTransactionController extends Controller
             if($doc -> state == 0){
                 $doc -> update([
                     'bill_number' => $request -> bill_number,
+                    'message_code' => $request -> message_code ,
                     'date' => Carbon::parse($request -> date),
                     'from_store' => $request -> from_store,
                     'to_store' => $request -> to_store ,

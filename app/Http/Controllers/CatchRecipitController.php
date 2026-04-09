@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Gate;
 
 class CatchRecipitController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -141,6 +145,17 @@ class CatchRecipitController extends Controller
         $doc = CatchRecipit::find($id);
         echo json_encode($doc);
         exit();
+    }
+    public function print($id)
+    {
+        $doc = DB::table('catch_recipits')
+            ->join('clients', 'catch_recipits.client_id', '=', 'clients.id')
+            ->join('safes', 'catch_recipits.safe_id', '=', 'safes.id')
+            ->select('catch_recipits.*', 'clients.name', 'safes.name as safe')
+            -> where('catch_recipits.id', $id)
+            ->first();
+
+        return view('admin.Catches.print' , compact('doc'));
     }
 
     /**

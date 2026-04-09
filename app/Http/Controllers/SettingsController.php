@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Gate;
 
 class SettingsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(){
 
         if (!Gate::allows('page-access', [23, 'view'])) {

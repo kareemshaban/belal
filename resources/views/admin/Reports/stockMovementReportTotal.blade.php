@@ -28,12 +28,24 @@
                     <div style="display: flex ; justify-content: space-between ; align-items: center">
                         <h4 class="fw-bold py-3 mb-4">
                             <span class="text-muted fw-light">{{__('main.reports_department')}} /</span> {{__('main.stock_movement_report')}}
+                            @if($type == 0)
+                                <span class="badge bg-warning">{{__('main.report_type0')}}</span>
+                            @elseif($type == 1)
+                                <span class="badge bg-success">{{__('main.report_type1')}}</span>
+                            @endif
                         </h4>
-                        @if($type == 0)
-                            <span class="badge bg-warning">{{__('main.report_type0')}}</span>
-                        @elseif($type == 1)
-                            <span class="badge bg-success">{{__('main.report_type1')}}</span>
-                        @endif
+
+                        <button type="button" class="btn btn-warning" style="width: 100px" onclick="printAction()" >{{ __('main.print_btn') }}</button>
+
+
+                        <form id="detailedPrintForm" action="{{ route('printStockMovementReport') }}" method="POST" target="_blank" style="display: none;">
+                            @csrf
+                            <input type="hidden" name="reportType" value="0"> <!-- تفصيلي -->
+                            <input type="hidden" name="item_id" value="{{ request('item_id', '') }}">
+                            <input type="hidden" name="store_id" value="{{ request('store_id', '') }}">
+                            <!-- أي فلترات أخرى تحتاجها -->
+                        </form>
+
 
 
                     </div>
@@ -105,56 +117,18 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('.view_table').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'copy',
-                'excel',
-                {
-                    extend: 'print',
-                    text: 'طباعة',
-                    exportOptions: {
-                        columns: ':visible',
-                        footer: true // Include footer
-                    },
-                    customize: function (win) {
-                        var body = $(win.document.body);
-                        body.find('h1, .page-title, .header-title').hide();
-                        body.prepend('<h2 style="text-align:center; margin-bottom:20px;">تقرير كشف حركة صنف</h2>');
-                        // Apply RTL direction and Arabic styling
-                        $(win.document.body).css('direction', 'rtl');
+    function printAction() {
+        var item_id = '{{ request("item_id", "") }}';
+        var store_id = '{{ request("store_id", "") }}';
 
-                        var table = $(win.document.body).find('table');
+        // إضافة القيم إلى الفورم
 
-                        // Clone original footer and append to print view
-                        var originalFooter = $('.view_table').find('tfoot').clone();
-                        table.append(originalFooter);
+        $('#detailedPrintForm input[name="item_id"]').val(item_id);
+        $('#detailedPrintForm input[name="store_id"]').val(store_id);
+        // إرسال الفورم
 
-                        // Apply styles
-                        table
-                            .addClass('display')
-                            .css('direction', 'rtl')
-                            .css('text-align', 'right');
-
-                        table.find('thead th, tfoot th')
-                            .css('text-align', 'center')
-                            .css('font-weight', 'bold');
-                    }
-                }
-            ],
-
-            responsive: true,
-            paging: false,
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/ar.json'
-
-            },
-
-
-        });
-
-    });
+        document.getElementById('detailedPrintForm').submit();
+    }
 </script>
 </body>
 </html>

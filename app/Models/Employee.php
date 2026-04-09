@@ -14,7 +14,7 @@ class Employee extends Model
         'name',
         'phone',
         'address',
-        'daily_salary',
+        'weekly_salary',
         'user_ins',
         'user_upd',
     ];

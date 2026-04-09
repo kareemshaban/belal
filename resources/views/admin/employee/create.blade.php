@@ -52,11 +52,11 @@
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label>{{ __('main.daily_salary') }} </label>
-                                    <input type="number" step="any" name="daily_salary" id="daily_salary"
-                                           class="form-control @error('daily_salary') is-invalid @enderror"
+                                    <label>{{ __('main.weekly_salary') }} </label>
+                                    <input type="number" step="any" name="weekly_salary" id="weekly_salary"
+                                           class="form-control @error('weekly_salary') is-invalid @enderror"
                                            placeholder="0" autofocus required/>
-                                    @error('daily_salary')
+                                    @error('weekly_salary')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
