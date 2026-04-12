@@ -168,14 +168,10 @@
                                 <tr>
                                     @foreach ($period as $date)
                                         <th class="text-center cell"> وزن اللبن</th>
-                                        <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
                                         <th class="text-center cell">وزن اللبن</th>
-                                        <th class="text-center cell" hidden="hidden">{{__('main.buffalo_weight')}}</th>
                                     @endforeach
                                     <th class="text-center cell text-primary" >إجمالي الوزن </th>
-                                    <th class="text-center cell" hidden="hidden">{{ __('main.total_buffalo_weight') }}</th>
                                     <th class="text-center cell text-success" >سعر اللبن </th>
-                                    <th class="text-center cell" hidden="hidden">{{ __('main.buffalo_milk_price') }}</th>
 
                                 </tr>
                                 </thead>
@@ -196,21 +192,13 @@
                                                        data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier->id }}"
                                                        @if(optional($meal)->state === 1) disabled @endif value="0" />
                                             </td>
-                                            <td class="text-center" hidden="hidden">
-                                                <input type="number" step="any" name="mbuffalo_weight[]" data-type="0" data-field="1"
-                                                       class="form-control" data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}"
-                                                       @if(optional($meal)->state === 1) disabled @endif value="0"/>
-                                            </td>
+
                                             <td class="text-center" style="padding: 5px">
                                                 <input type="number" step="any" name="ebovine_weight[]" data-type="1" data-field="0"
                                                        class="form-control" data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}"
                                                        @if(optional($meal)->state === 1) disabled @endif value="0"/>
                                             </td>
-                                            <td class="text-center" hidden="hidden">
-                                                <input type="number" step="any" name="ebuffalo_weight[]" data-type="1" data-field="1"
-                                                       class="form-control" data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}"
-                                                       @if(optional($meal)->state === 1) disabled @endif value="0"/>
-                                            </td>
+
                                         @endforeach
 
                                         <td class="text-center" style="padding: 5px">
@@ -218,22 +206,14 @@
                                                    class="form-control" data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}" readonly
                                                    @if(optional($meal)->state === 1) disabled @endif/>
                                         </td>
-                                        <td class="text-center" hidden="hidden">
-                                            <input type="text" step="any" name="total_buffalo_weight[]"
-                                                   class="form-control" data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}" readonly
-                                                   @if(optional($meal)->state === 1) disabled @endif/>
-                                        </td>
+
 
                                         <td class="text-center" style="padding: 5px">
                                             <input type="number" step="any" name="bovine_price[]" data-filed ="2" data-type="3"
                                                    class="form-control" data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}"
                                                    @if(optional($meal)->state === 1) disabled @endif/>
                                         </td>
-                                        <td class="text-center" hidden="hidden">
-                                            <input type="number" step="any" name="buffalo_price[]" data-filed ="3" data-type="3"
-                                                   class="form-control" data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}"
-                                                   @if(optional($meal)->state === 1) disabled @endif/>
-                                        </td>
+
 
                                         <td class="text-center" style="padding: 5px">
                                             <input type="text" step="any" name="total_money[]"
@@ -439,15 +419,14 @@
                     }
 
                     setTimeout(() => {
-                    const buffaloSelector = `input[data-date="${date}"][data-type="${type}"][data-field="1"][data-supplier="${supplierId}"]`;
+
+                         const buffaloSelector = `input[data-date="${date}"][data-type="${type}"][data-field="1"][data-supplier="${supplierId}"]`;
+                            const $buffaloInput = $(buffaloSelector);
 
 
-                    const buffaloInput = document.querySelector(buffaloSelector);
-
-                    if (buffaloInput) {
-                        console.log(record.weight_b);
-                        buffaloInput.value = formatNumberSmart(record.weight_b) ;
-                    }
+                                if ($buffaloInput.length) {
+                                    $buffaloInput.val(record.weight_b).trigger('change');
+                                }
 
                     const bovineTotalSelector = `input[data-date="${date}"][data-type="1"][data-field="1"][data-supplier="${supplierId}"][name="total_bovine_weight[]"]`;
 
@@ -456,7 +435,12 @@
                         bovineTotalInput.value = formatNumberSmart(record.weight);
                     }
 
+                     const priceBSelector = `input[name="buffalo_price[]"]`;
+                    const priceBInput = document.querySelector(priceBSelector);
 
+                    if (priceBInput) {
+                        priceBInput.value = formatNumberSmart(record.price_b);
+                    }
 
 
 
@@ -467,15 +451,17 @@
                         priceInput.value = formatNumberSmart(record.price);
                     }
 
-                       const supplierInputs = document.querySelectorAll(`input[data-supplier="${supplierId}"]`);
+                    const supplierInputs = document.querySelectorAll(`input[data-supplier="${supplierId}"]`);
                     supplierInputs.forEach(input => {
                         input.disabled = (state === 1); // disable if state == 1, otherwise enable
                     });
 
+                    calculateRowTotals();
+
 
                      }, 200);
                 });
-                calculateRowTotals();
+
             })
             .catch(err => {
                 console.error('Error loading milk meal data:', err);
@@ -593,8 +579,20 @@
 
             if(priceBovineInput)  bovinePrice = priceBovineInput.value ;
             if(priceBuffaloInput)  buffaloPrice = priceBuffaloInput.value ;
-            if (moneyTotalInput) moneyTotalInput.value = ((totalBuffalo * buffaloPrice) + (totalBovine * bovinePrice)).toFixed(2) ;
 
+            if(!row.classList.contains('buffalo-row')){
+
+                if (moneyTotalInput){
+                        moneyTotalInput.value = (((totalBuffalo * buffaloPrice) + (totalBovine * bovinePrice))).toFixed(2);
+
+                    }
+                    } else {
+                                const prevRow = row.previousElementSibling;
+                                const prevMoneyInput = prevRow.querySelector('input[name="total_money[]"]');
+                                const prevMoneyValue = prevMoneyInput ? parseFloat(prevMoneyInput.value) || 0 : 0;
+                                const currentBuffaloTotal = totalBuffalo * buffaloPrice;
+                                prevMoneyInput.value = (prevMoneyValue + currentBuffaloTotal).toFixed(2);
+                    }
         });
     }
 

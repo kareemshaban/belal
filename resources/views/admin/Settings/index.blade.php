@@ -50,7 +50,7 @@
                             <div class="container-fluid" style="padding-bottom: 30px;">
                                 <div class="row">
                                     <input type="hidden" id="id" name="id" value="{{$setting->id ?? 0}}">
-                                    <div class="col-lg-6 col-md-6 col-sm-12" style="margin-top: 10px;" hidden="hidden">
+                                    <div class="col-lg-6 col-md-6 col-sm-12" style="margin-top: 10px;" >
                                         <div class="form-group">
                                             <label>{{ __('main.buffalo_milk_price') }} <span style="color: red ; font-size: 14px" > * </span> </label>
                                             <input type="number" step="any" class="form-control @error('buffalo_milk_price') is-invalid @enderror"

@@ -644,6 +644,8 @@ class WeaklyMilkMealController extends Controller
     {
 
         try {
+             $price_b  = 0 ;
+             $price = 0 ;
 
             if((int)  $request -> type < 3) {
 
@@ -697,7 +699,7 @@ class WeaklyMilkMealController extends Controller
                     ]);
                 }else{
 
-                    $total = ($request -> bovinePrice * $request -> value) ;
+
 
                     if($request->field == 1 )
                         $total =    ($request->value *  ($request -> buffaloPrice ?? 0) ) + ($daily->weight * ($request -> bovinePrice ?? 0)) ;
@@ -715,6 +717,7 @@ class WeaklyMilkMealController extends Controller
                 }
 
             } else {
+
                 // update car daily price
                 $dailys = CarDailyMeal::where('weakly_meal_id', '=', $request -> wMeal)
                     ->where('supplier_id', '=', $request->supplier)
@@ -738,7 +741,10 @@ class WeaklyMilkMealController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'تم حفظ البيانات بنجاح',
-                'wId' => $request -> wMeal
+                'wId' => $request -> wMeal,
+                'field' => $request -> field,
+                'price_b' => $price_b,
+                'price' => $price
             ]);
 
         } catch (QueryException $err){
@@ -1202,7 +1208,7 @@ class WeaklyMilkMealController extends Controller
         $clientAccount = ClientAccount::where('client_id' , '=' , $supplier_id) -> get() -> first(); // 0
 
 
-        $beforeBalance = $clientAccount->balance - $weekBalance + $weekPaid; // 0 - 14250 +12450 = -2000
+        $beforeBalance = $this->getBeforeBalance($supplier_id , $id , $startOfWeek , $endOfWeek);
 
         //  return $beforeBalance ;
 

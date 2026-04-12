@@ -170,7 +170,7 @@
     <td class="text-center inp">
         <input type="number" step="any" name="bovine_price[]" data-field="2" data-type="3" class="form-control"
             data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d')  }}" data-supplier="{{ $member -> id }}"
-            value="{{$member -> bovine_price}}" @if(optional($meal)->state === 1) disabled @endif/>
+            value="{{$member -> bovine_price}}"  data-buffalo-price="{{$member -> buffalo_price}}"  @if(optional($meal)->state === 1) disabled @endif/>
     </td>
 
 
@@ -519,13 +519,21 @@ $(document).on('click', '.add-sub-row', function() {
                     let newName = name.replace('bovine', 'buffalo');
                     $(this).attr('name', newName);
                 }
-
-                // تغيير نوع الحقل ليكون 1 (كود الجاموسي لديك)
-                if ($(this).attr('data-field') === "0") {
-                    $(this).attr('data-field', "1");
-                }
-
-                $(this).val(''); // تصفير القيمة المنسوخة
+                if (name && name.includes('price')) {
+            // لو الحقل ده بتاع سعر، نخليه 3
+               $(this).attr('data-field', "3");
+                    } else if ($(this).attr('data-field') === "0") {
+                        // لو حقل وزن (كان 0 في البقري) نخليه 1 في الجاموسي
+                        $(this).attr('data-field', "1");
+                    }
+                  if (name && !name.includes('price')){
+                            $(this).val('');
+                  } else {
+                     const $priceInput = $originalRow.find('input[name="bovine_price[]"]');
+                       const buffaloPrice = $priceInput.data('buffalo-price');
+                        $(this).val(buffaloPrice || '');
+                  }
+               // تصفير القيمة المنسوخة
 
             });
 
@@ -802,6 +810,7 @@ $(document).on('click', '.add-sub-row', function() {
             buffaloPrice: buffaloPrice,
             wMeal: wid
         };
+        console.log('Posting data:', body);
 
         fetch("{{ route('postCarMeal') }}", {
             method: 'POST',
@@ -813,6 +822,7 @@ $(document).on('click', '.add-sub-row', function() {
         })
             .then(response => response.json())
             .then(data => {
+
                 if (data.status === 'warning') {
                     // Display warning toast
                     toastr.warning(data.message);
@@ -823,6 +833,9 @@ $(document).on('click', '.add-sub-row', function() {
                     toastr.success(data.message);
 
                     $('#wid').val(data.wId);
+                    console.log('filed' ,  data.price_b);
+                    console.log('price_b' ,  data.price_b);
+                    console.log('price' ,  data.price);
 
                     calculateRowTotals();
                     calculateTotals();
@@ -900,6 +913,7 @@ $(document).on('click', '.add-sub-row', function() {
 
                     const bovinePriceInp = document.querySelector(bovinePriceSelector);
                     if (bovinePriceInp) {
+                        console.log('record.price' , record.price);
                         bovinePriceInp.value = formatNumberSmart(record.price);
                     }
 
@@ -907,6 +921,7 @@ $(document).on('click', '.add-sub-row', function() {
 
                     const buffloPriceInp = document.querySelector(buffloPriceSelector);
                     if (buffloPriceInp) {
+                        console.log('record.price_b' , record.price_b);
                         buffloPriceInp.value = formatNumberSmart(record.price_b);
                     }
 

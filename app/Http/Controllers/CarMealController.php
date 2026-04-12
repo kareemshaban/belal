@@ -89,8 +89,8 @@ class CarMealController extends Controller
         $members = Client::where('car_supplier_id', $supplier_id)
             ->orderBy('sort', 'asc')
             ->get();
-            
-            
+
+
 
         $setting = Settings::all() -> first();
 

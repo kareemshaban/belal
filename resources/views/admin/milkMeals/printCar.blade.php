@@ -139,15 +139,25 @@
         $end = Carbon::parse($endOfWeek);
         $period = CarbonPeriod::create($start, $end);
         Carbon::setLocale('ar');
+
+         $hasBuffalo = $meals->sum('weight_b') > 0;
     @endphp
 
     <table>
         <thead>
         <tr>
-            <th>{{ __('main.day') }}</th>
-            <th>{{ __('main.morning_meal') }}</th>
-            <th>{{ __('main.evening_meal') }}</th>
+                <th rowspan="{{ $hasBuffalo ? 2 : 1 }}"> {{ __('main.day') }}</th>
+                <th colspan="{{ $hasBuffalo ? 2 : 1 }}">{{ __('main.morning_meal') }}</th>
+                <th colspan="{{ $hasBuffalo ? 2 : 1 }}">{{ __('main.evening_meal') }}</th>
         </tr>
+          @if($hasBuffalo)
+                <tr>
+                    <th>بقري</th>
+                    <th>جاموسي</th>
+                    <th>بقري</th>
+                    <th>جاموسي</th>
+                </tr>
+                @endif
         </thead>
 
         <tbody>
@@ -160,61 +170,93 @@
                         {{ $day->format('l') }}
                     @endif
                 </td>
-
-                <td>
                     @php
                         $meal0 = $meals->first(fn($m) =>
                             Carbon::parse($m->date)->toDateString() === $day->toDateString()
                             && $m->type == 0
                         );
-                    @endphp
-                    {{ $meal0->weight ?? '—' }}
-                </td>
-
-                <td>
-                    @php
-                        $meal1 = $meals->first(fn($m) =>
+                     $meal1 = $meals->first(fn($m) =>
                             Carbon::parse($m->date)->toDateString() === $day->toDateString()
                             && $m->type == 1
                         );
+
                     @endphp
+                <td>
+
+                    {{ $meal0->weight ?? '—' }}
+                </td>
+                 @if($hasBuffalo)
+                    <td>{{ $meal0->weight_b ?? '—' }}</td>
+                    @endif
+
+                <td>
+
                     {{ $meal1->weight ?? '—' }}
                 </td>
+                @if($hasBuffalo)
+                    <td>{{ $meal1->weight_b ?? '—' }}</td>
+                @endif
             </tr>
         @endforeach
         </tbody>
 
-        <tfoot>
-        <tr>
-            <td>{{ __('main.total') }}</td>
-            <td colspan="2">{{ $totalWeight }} كيلو</td>
-        </tr>
-        <tr>
-            <td>{{ __('main.price') }}</td>
-            <td colspan="2">{{ $meals[0]->price ?? 0 }} جنية</td>
-        </tr>
-        <tr>
-            <td>{{ __('main.total_money') }}</td>
-            <td colspan="2">{{ $totalMoney }} جنية</td>
-        </tr>
-        <tr>
-            <td>{{ __('main.before_balance') }}</td>
-            <td colspan="2">{{ $beforeBalance }} جنية</td>
-        </tr>
-        <tr>
-            <td>{{ __('main.required') }}</td>
-            <td colspan="2">{{ $totalMoney + $beforeBalance }} جنية</td>
-        </tr>
-        <tr>
-            <td>{{ __('main.paid') }}</td>
-            <td colspan="2">{{ $weekPaid }} جنية</td>
-        </tr>
-        <tr>
-            <td>{{ __('main.remain') }}</td>
-            <td colspan="2">{{ $totalMoney + $beforeBalance - $weekPaid }} جنية</td>
-        </tr>
-        </tfoot>
+       
     </table>
+
+     <table>
+            <thead>
+                <tr>
+                    <th>البيان</th>
+                    <th>بقري</th>
+                    @if($hasBuffalo)
+                    <th>جاموسي</th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>إجمالي الوزن </strong></td>
+                    <td>{{ $meals->sum('weight') }} كيلو</td>
+                    @if($hasBuffalo)
+                    <td>{{ $meals->sum('weight_b') }} كيلو</td>
+                    @endif
+                </tr>
+                <tr>
+                    <td><strong>{{ __('main.price') }}</strong></td>
+                    <td>{{ $meals[0]->price ?? 0 }} جنية</td>
+                    @if($hasBuffalo)
+                    <td>{{ $meals[0]->price_b ?? 0 }} جنية</td>
+                    @endif
+                </tr>
+            </tbody>
+    </table>
+
+         <br>
+
+        <table style="width: 50%; margin-right: auto;">
+            <tbody>
+                <tr>
+                    <td style="background: #f2f2f2; width: 50%;">{{ __('main.total_money') }}</td>
+                    <td>{{ $totalMoney }} جنية</td>
+                </tr>
+                <tr>
+                    <td style="background: #f2f2f2;">{{ __('main.before_balance') }}</td>
+                    <td>{{ $beforeBalance  }} جنية</td>
+                </tr>
+                <tr>
+                    <td style="background: #f2f2f2;">{{ __('main.required') }}</td>
+                    <td><strong>{{ $totalMoney + $beforeBalance }} جنية</strong></td>
+                </tr>
+                <tr>
+                    <td style="background: #f2f2f2;">{{ __('main.paid') }}</td>
+                    <td>{{ $weekPaid }} جنية</td>
+                </tr>
+                <tr style="font-size: 15px; background: #eee;">
+                    <td><strong>{{ __('main.remain') }}</strong></td>
+                    <td><strong>{{ $totalMoney + $beforeBalance - $weekPaid }} جنية</strong></td>
+                </tr>
+            </tbody>
+        </table>
 
 </div>
 

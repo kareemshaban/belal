@@ -454,9 +454,9 @@
                             const buffaloSelector = `input[data-date="${date}"][data-type="${type}"][data-field="1"][data-supplier="${supplierId}"]`;
                             const $buffaloInput = $(buffaloSelector);
 
-                            if ($buffaloInput.length) {
-                                $buffaloInput.val(record.buffalo_weight).trigger('change');
-                            }
+                                if ($buffaloInput.length) {
+                                    $buffaloInput.val(record.buffalo_weight).trigger('change');
+                                }
 
                             // وضع الأسعار (بقري وجاموسي)
                             // ملاحظة: تأكد من إضافة [data-supplier] للـ selector لو فيه موردين كتير في الصفحة

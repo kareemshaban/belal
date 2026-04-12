@@ -180,7 +180,7 @@
         <input type="number" step="any" name="bovine_price[]" data-field="2" data-type="3"
             data-car="{{$supplier -> car_id}}" class="form-control"
             data-date="{{ \Carbon\Carbon::parse($date)->format('Y-m-d') }}" data-supplier="{{ $supplier -> id }}"
-            value="{{$supplier -> bovine_price}}" @if($supplier -> car_id > 0)
+            value="{{$supplier -> bovine_price}}" data-buffalo-price="{{$supplier -> buffalo_price}}"  @if($supplier -> car_id > 0)
         readonly @endif
         @if(optional($meal)->state === 1) disabled @endif/>
     </td>
@@ -330,13 +330,24 @@ $(document).on('click', '.add-sub-row', function() {
                     let newName = name.replace('bovine', 'buffalo');
                     $(this).attr('name', newName);
                 }
+                      if (name && name.includes('price')) {
+            // لو الحقل ده بتاع سعر، نخليه 3
+               $(this).attr('data-field', "3");
+                    } else if ($(this).attr('data-field') === "0") {
+                        // لو حقل وزن (كان 0 في البقري) نخليه 1 في الجاموسي
+                        $(this).attr('data-field', "1");
+                    }
 
-                // تغيير نوع الحقل ليكون 1 (كود الجاموسي لديك)
-                if ($(this).attr('data-field') === "0") {
-                    $(this).attr('data-field', "1");
-                }
+                    if (name && !name.includes('price')) {
+                        $(this).val(''); // تصفير الحقول غير السعرية
+                    } else {
 
-                $(this).val(''); // تصفير القيمة المنسوخة
+                       const $priceInput = $originalRow.find('input[name="bovine_price[]"]');
+                       const buffaloPrice = $priceInput.data('buffalo-price');
+                        $(this).val(buffaloPrice || ''); // نسخ سعر الجاموسي من بيانات البقري أو تركه فارغاً إذا لم يتوفر
+                    }
+
+
 
             });
 
@@ -626,137 +637,137 @@ $(document).on('click', '.remove-sub-row', function() {
     }
 
 
-function loadMilkMealData(weaklyMealId) {
-    fetch(`/weakMeals/${weaklyMealId}`)
-        .then(response => response.json())
-        .then(data => {
-            var meals = data.meals;
-            var prices = data.prices;
-            var totals = data.totals;
+    function loadMilkMealData(weaklyMealId) {
+        fetch(`/weakMeals/${weaklyMealId}`)
+            .then(response => response.json())
+            .then(data => {
+                var meals = data.meals;
+                var prices = data.prices;
+                var totals = data.totals;
 
-            meals.forEach(record => {
-                const date = record.date.split(' ')[0];
-                const type = record.type;
-                const supplierId = record.supplier_id;
-                const state = record.state;
-                const car_id = record.car_id;
+                meals.forEach(record => {
+                    const date = record.date.split(' ')[0];
+                    const type = record.type;
+                    const supplierId = record.supplier_id;
+                    const state = record.state;
+                    const car_id = record.car_id;
 
-                // --- الخطوة السحرية: إضافة سطر الجاموسي تلقائياً لو فيه وزن ---
+                    // --- الخطوة السحرية: إضافة سطر الجاموسي تلقائياً لو فيه وزن ---
 
-               if (parseFloat(record.buffalo_weight) > 0) {
-                    injectBuffaloRow(supplierId);
-                }
+                if (parseFloat(record.buffalo_weight) > 0) {
+                        injectBuffaloRow(supplierId);
+                    }
 
-                // تسكين بيانات البقري (Field 0)
-                const bovineInput = document.querySelector(`input[data-date="${date}"][data-type="${type}"][data-field="0"][data-supplier="${supplierId}"]`);
-                if (bovineInput) {
-                    bovineInput.value = formatNumberSmart(record.bovine_weight);
-                    bovineInput.readOnly = (record.isManufactured == 1);
-                }
+                    // تسكين بيانات البقري (Field 0)
+                    const bovineInput = document.querySelector(`input[data-date="${date}"][data-type="${type}"][data-field="0"][data-supplier="${supplierId}"]`);
+                    if (bovineInput) {
+                        bovineInput.value = formatNumberSmart(record.bovine_weight);
+                        bovineInput.readOnly = (record.isManufactured == 1);
+                    }
 
-                // تسكين بيانات الجاموسي (Field 1) - دلوقتي الـ Selector هيلاقيه لأنه اتضاف فوق
-                const buffaloInput = document.querySelector(`input[data-date="${date}"][data-type="${type}"][data-field="1"][data-supplier="${supplierId}"]`);
-                if (buffaloInput) {
-                    buffaloInput.value = formatNumberSmart(record.buffalo_weight);
-                    buffaloInput.readOnly = (record.isManufactured == 1);
-                }
+                    // تسكين بيانات الجاموسي (Field 1) - دلوقتي الـ Selector هيلاقيه لأنه اتضاف فوق
+                    const buffaloInput = document.querySelector(`input[data-date="${date}"][data-type="${type}"][data-field="1"][data-supplier="${supplierId}"]`);
+                    if (buffaloInput) {
+                        buffaloInput.value = formatNumberSmart(record.buffalo_weight);
+                        buffaloInput.readOnly = (record.isManufactured == 1);
+                    }
 
-                // معالجة الأسعار والإجماليات
-                const bovinePriceInp = document.querySelector(`input[data-type="3"][data-field="2"][data-supplier="${supplierId}"][name="bovine_price[]"]`);
-                const buffaloPriceInp = document.querySelector(`input[data-type="3"][data-field="3"][data-supplier="${supplierId}"][name="buffalo_price[]"]`);
-                const moneyTotalInput = document.querySelector(`input[data-supplier="${supplierId}"][name="total_money[]"]`);
+                    // معالجة الأسعار والإجماليات
+                    const bovinePriceInp = document.querySelector(`input[data-type="3"][data-field="2"][data-supplier="${supplierId}"][name="bovine_price[]"]`);
+                    const buffaloPriceInp = document.querySelector(`input[data-type="3"][data-field="3"][data-supplier="${supplierId}"][name="buffalo_price[]"]`);
+                    const moneyTotalInput = document.querySelector(`input[data-supplier="${supplierId}"][name="total_money[]"]`);
 
-                if (bovinePriceInp) {
-                    bovinePriceInp.value = (car_id == 0) ? formatNumberSmart(record.bovine_price) : formatNumberSmart(prices[supplierId]);
-                }
-                if (buffaloPriceInp) {
-                    buffaloPriceInp.value = (car_id == 0) ? formatNumberSmart(record.buffalo_price) : formatNumberSmart(prices[supplierId]);
-                }
+                    if (bovinePriceInp) {
+                        bovinePriceInp.value = (car_id == 0) ? formatNumberSmart(record.bovine_price) : formatNumberSmart(prices[supplierId]);
+                    }
+                    if (buffaloPriceInp) {
+                        buffaloPriceInp.value = (car_id == 0) ? formatNumberSmart(record.buffalo_price) : formatNumberSmart(prices[supplierId]);
+                    }
 
-                if (moneyTotalInput && car_id != 0) {
-                    moneyTotalInput.value = formatNumberSmart(totals[supplierId]);
-                }
+                    if (moneyTotalInput && car_id != 0) {
+                        moneyTotalInput.value = formatNumberSmart(totals[supplierId]);
+                    }
 
-                // حالة القفل (Disable) لو الريكورد معتمد
-                const supplierInputs = document.querySelectorAll(`input[data-supplier="${supplierId}"]`);
-                supplierInputs.forEach(input => {
-                    input.disabled = (state === 1);
+                    // حالة القفل (Disable) لو الريكورد معتمد
+                    const supplierInputs = document.querySelectorAll(`input[data-supplier="${supplierId}"]`);
+                    supplierInputs.forEach(input => {
+                        input.disabled = (state === 1);
+                    });
+
+                    const postBtn = document.querySelector(`.postBtn[data-supplier="${supplierId}"]`);
+                    if (postBtn) {
+                        postBtn.style.display = (state === 1) ? 'none' : '';
+                    }
                 });
 
-                const postBtn = document.querySelector(`.postBtn[data-supplier="${supplierId}"]`);
-                if (postBtn) {
-                    postBtn.style.display = (state === 1) ? 'none' : '';
-                }
+                calculateRowTotals();
+
+                attachEvents();
+            })
+            .catch(err => console.error('Error:', err))
+            .finally(() => {
+                calculateTotals();
             });
-
-            calculateRowTotals();
-
-            attachEvents();
-        })
-        .catch(err => console.error('Error:', err))
-        .finally(() => {
-            calculateTotals();
-        });
-}
-
-function injectBuffaloRow(supplierId) {
-    // 1. تحديد السطر الأصلي
-    const $originalRow = $(`tr.main-row[data-supplier="${supplierId}"]`);
-
-    // منع التكرار
-    if ($originalRow.next().hasClass('buffalo-row') || $originalRow.length === 0) {
-        return;
     }
 
-    // 2. استنساخ السطر الأصلي (نفس منطق الزرار اليدوي)
-    const $newRow = $originalRow.clone();
-    $newRow.addClass('buffalo-row').removeAttr('data-car');
+    function injectBuffaloRow(supplierId) {
+        // 1. تحديد السطر الأصلي
+        const $originalRow = $(`tr.main-row[data-supplier="${supplierId}"]`);
 
-    // 3. ضبط الـ Rowspan للخلايا المشتركة في السطر الأصلي
-    $originalRow.find('td:has(input[name="total_money[]"]), td:last-child')
-                .attr('rowspan', '2')
-                .css('vertical-align', 'middle');
-
-    // 4. حذف الخلايا الزائدة من السطر الجديد
-    $newRow.find('td:has(input[name="total_money[]"]), td:last-child').remove();
-
-    // 5. تحويل الحقول لـ Buffalo وتصفيرها
-    const isRTL = $('html').attr('dir') === 'rtl' || $('body').css('direction') === 'rtl';
-    const subIcon = isRTL ? 'bx-subdirectory-left' : 'bx-subdirectory-right';
-    const marginClass = isRTL ? 'margin-right:15px;' : 'margin-left:15px;';
-
-    $newRow.find('input').each(function() {
-        let name = $(this).attr('name');
-        if (name) {
-            $(this).attr('name', name.replace('bovine', 'buffalo'));
+        // منع التكرار
+        if ($originalRow.next().hasClass('buffalo-row') || $originalRow.length === 0) {
+            return;
         }
-        if (name && name.includes('price')) {
-        // لو الحقل ده بتاع سعر، نخليه 3
-        $(this).attr('data-field', "3");
-    } else if ($(this).attr('data-field') === "0") {
-        // لو حقل وزن (كان 0 في البقري) نخليه 1 في الجاموسي
-        $(this).attr('data-field', "1");
+
+        // 2. استنساخ السطر الأصلي (نفس منطق الزرار اليدوي)
+        const $newRow = $originalRow.clone();
+        $newRow.addClass('buffalo-row').removeAttr('data-car');
+
+        // 3. ضبط الـ Rowspan للخلايا المشتركة في السطر الأصلي
+        $originalRow.find('td:has(input[name="total_money[]"]), td:last-child')
+                    .attr('rowspan', '2')
+                    .css('vertical-align', 'middle');
+
+        // 4. حذف الخلايا الزائدة من السطر الجديد
+        $newRow.find('td:has(input[name="total_money[]"]), td:last-child').remove();
+
+        // 5. تحويل الحقول لـ Buffalo وتصفيرها
+        const isRTL = $('html').attr('dir') === 'rtl' || $('body').css('direction') === 'rtl';
+        const subIcon = isRTL ? 'bx-subdirectory-left' : 'bx-subdirectory-right';
+        const marginClass = isRTL ? 'margin-right:15px;' : 'margin-left:15px;';
+
+        $newRow.find('input').each(function() {
+            let name = $(this).attr('name');
+            if (name) {
+                $(this).attr('name', name.replace('bovine', 'buffalo'));
+            }
+            if (name && name.includes('price')) {
+            // لو الحقل ده بتاع سعر، نخليه 3
+            $(this).attr('data-field', "3");
+        } else if ($(this).attr('data-field') === "0") {
+            // لو حقل وزن (كان 0 في البقري) نخليه 1 في الجاموسي
+            $(this).attr('data-field', "1");
+        }
+            $(this).val(''); // بنصفره عشان loadMilkMealData هي اللي هتملاه
+        });
+
+        // 6. شكل خلية الاسم (أيقونة الجاموسي)
+        const $nameCell = $newRow.find('.supplier-cell-content');
+        $nameCell.html(`
+            <span class="supplier-name" style="${marginClass} color:#6610f2; display: inline-flex; align-items: center; gap: 5px;">
+                <i class='bx ${subIcon}'></i>
+                <span>جاموسي</span>
+            </span>
+            <i class='bx bx-minus-circle text-danger remove-sub-row' style="cursor:pointer; display:none"  title="حذف"></i>
+        `);
+
+
+
+        // 7. حقن السطر في الجدول
+        $newRow.insertAfter($originalRow);
+
+
     }
-        $(this).val(''); // بنصفره عشان loadMilkMealData هي اللي هتملاه
-    });
-
-    // 6. شكل خلية الاسم (أيقونة الجاموسي)
-    const $nameCell = $newRow.find('.supplier-cell-content');
-    $nameCell.html(`
-        <span class="supplier-name" style="${marginClass} color:#6610f2; display: inline-flex; align-items: center; gap: 5px;">
-            <i class='bx ${subIcon}'></i>
-            <span>جاموسي</span>
-        </span>
-        <i class='bx bx-minus-circle text-danger remove-sub-row' style="cursor:pointer; display:none"  title="حذف"></i>
-    `);
-
-
-
-    // 7. حقن السطر في الجدول
-    $newRow.insertAfter($originalRow);
-
-
-}
     function calculateRowTotals() {
         const rows = document.querySelectorAll('table tbody tr'); // Adjust the selector if needed
 
